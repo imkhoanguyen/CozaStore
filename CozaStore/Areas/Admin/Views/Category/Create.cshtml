@@ -1,0 +1,12 @@
+﻿@model Category
+<content>
+    <h3>Thêm danh mục sản phẩm</h3>
+    <form method="post" class="row">
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control ms-2" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-success">Thêm</button>
+    </form>
+</content>
