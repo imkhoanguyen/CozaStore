@@ -1,4 +1,4 @@
-namespace CozaStore.Models
+namespace CozaStore.Entities
 {
     public class ErrorViewModel
     {
