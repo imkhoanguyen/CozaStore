@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="wwwroot\NewFolder\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\css\admin\core.css" />
+    <None Include="wwwroot\css\admin\demo.css" />
+    <None Include="wwwroot\css\admin\theme-default.css" />
+    <None Include="wwwroot\js\admin\bootstrap.js" />
+    <None Include="wwwroot\js\admin\config.js" />
+    <None Include="wwwroot\js\admin\helpers.js" />
+    <None Include="wwwroot\js\admin\jquery.js" />
+    <None Include="wwwroot\js\admin\main.js" />
+    <None Include="wwwroot\js\admin\menu.js" />
+    <None Include="wwwroot\js\admin\perfect-scrollbar.js" />
+    <None Include="wwwroot\js\admin\popper.js" />
+  </ItemGroup>
+
+</Project>
