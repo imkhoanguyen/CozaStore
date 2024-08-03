@@ -1,4 +1,5 @@
 ﻿using CozaStore.Entities;
+using CozaStore.Helpers;
 using CozaStore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,19 +17,36 @@ namespace CozaStore.Data
             _context.Categories.Add(category);
         }
 
-        public async Task<IEnumerable<Category>> GetAllCategories()
+        public void DeleteCategory(Category category)
         {
-            return await _context.Categories.ToListAsync();
+            _context.Categories.Remove(category);
         }
 
-        public Task<Category> GetCategory(int id)
+        public async Task<PagedList<Category>> GetAllCategoriesAsync(string searchString, int pageNumber = 1)
         {
-            throw new NotImplementedException();
+            var query = _context.Categories.AsQueryable();
+
+            if (searchString != null)
+            {
+                query = query.Include(x => x.SubCategories).Where(x => x.Name.ToLower().Contains(searchString.ToLower())
+                || x.Id.ToString() == searchString);
+
+                  
+            }
+
+            if (pageNumber < 1) pageNumber = 1;
+
+            return await PagedList<Category>.CreateAsync(query.AsNoTracking(), pageNumber, 10);
+        }
+
+        public async Task<Category?> GetCategoryAsync(int id)
+        {
+            return await _context.Categories.Include(x => x.SubCategories).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public void UpdateCategory(Category category)
         {
-            throw new NotImplementedException();
+            _context.Categories.Update(category);
         }
     }
 }

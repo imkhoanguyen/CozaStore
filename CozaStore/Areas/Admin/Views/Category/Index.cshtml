@@ -1,5 +1,158 @@
-﻿@model IEnumerable<Category>
+﻿@model PagedList<Category>
 <content>
-    <h3>Category</h3>
-    <button asp-controller="Category" asp-action="Create" class="btn btn-primary">Add</button>
+    <h3 class="mb-3">Danh mục sản phẩm</h3>
+    <div class="row">
+        <div class="col-6">
+            <a asp-controller="Category" asp-action="Create" class="btn btn-primary">Thêm</a>
+        </div>
+        <div class="col-6 text-end">
+            <form method="get" asp-controller="Category" asp-action="Index" >
+                <div class="d-flex gap-2">
+                    <input type="text" name="searchString" class="form-control" 
+                    placeholder="Nhập tên danh mục chính, con hoặc id danh mục"
+                           value="@ViewData["SearchString"]" />
+                    <button type="submit" style="width: 48px;" class="rounded btn btn-outline-dark p-0" >
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <a asp-controller="Category" asp-action="Index" style="width: 48px;" class="rounded btn btn-info px-0">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </a>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+    
+    <div class="table-responsive text-nowrap mt-3">
+        <table class="table">
+            <thead>
+                <tr class="fw-bold">
+                    <td style="width: 10%;">ID</td>
+                    <td style="width: 60%;">Tên danh mục</td>
+                    <td>Hành động</td>
+                </tr>
+            </thead>
+            <tbody class="align-middle table-border-bottom-0">
+                @foreach (var category in Model)
+                {
+                    <tr>
+                        <td>@category.Id</td>
+                        <td>@category.Name</td>
+                        <td style="color: #fff">
+                            <a asp-controller="Category" asp-action="SubCategory" asp-route-categoryId="@category.Id" class="btn btn-primary mx-1">Danh mục con</a>
+                            <a asp-controller="Category" asp-action="Update" asp-route-categoryId="@category.Id" class="btn btn-warning mx-1">Sửa</a>
+                            <button onclick="getCategoryId(@category.Id)" 
+                                    class="btn btn-danger mx-1"
+                                    type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalToggle">
+                                Xóa
+                            </button>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @* paging *@
+    @{
+        var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+        var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+        var firstDisabled = Model.PageIndex <= 1 ? "disabled" : "";
+        var lastDisabled = Model.PageIndex == Model.TotalPages ? "disabled" : "";
+
+    }
+    <div class="row mt-3">
+        <ul class="pagination justify-content-center">
+            <li class="mx-1 page-item @firstDisabled">
+                <a class="rounded page-link"
+                    asp-route-page="1"
+                   asp-route-searchString="@ViewData["SearchString"]">
+                    <span>First</span>
+                </a>
+            </li>
+            <li class="mx-1 page-item @prevDisabled">
+                <a class="rounded page-link" asp-route-page="@(Model.PageIndex - 1)">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="mx-1 page-item">
+                    <a class="rounded page-link @(Model.PageIndex == i ? "active" : "")"
+                    asp-route-page="@(i)"
+                    asp-route-searchString="@ViewData["SearchString"]"
+                    > @i</a>
+                </li>
+            }
+            <li class="mx-1 page-item @nextDisabled">
+                <a class="rounded page-link"
+                asp-route-page="@(Model.PageIndex + 1)"
+                   asp-route-searchString="@ViewData["SearchString"]">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            </li>
+            <li class="mx-1 page-item @lastDisabled">
+                <a class="rounded page-link" 
+                asp-route-page="@(Model.TotalPages)"
+                   asp-route-searchString="@ViewData["SearchString"]"
+                >
+                    <span>Last</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    
 </content>
+
+<!-- Modal Delete-->
+<div class="modal fade"
+     id="modalToggle"
+     aria-labelledby="modalToggleLabel"
+     tabindex="-1"
+     style="display: none"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalToggleLabel">Xóa danh mục</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body pb-1">Bạn muốn xóa danh mục này?</div>
+            <div class="modal-footer">
+                <button id="btnDelete" class="btn btn-danger">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let categoryId = 0;
+        $(document).ready(function () {
+            $('#btnDelete').click(function () {
+                deleteCategory(categoryId);
+            });
+        });
+        function getCategoryId(id) {
+            categoryId = id;
+        }
+
+        function deleteCategory(categoryId) {
+            $.ajax({
+                type: "POST",
+                url: `/Admin/Category/Delete?categoryId=${categoryId}`,
+                success: function (response) {
+                    if (response.message === "Xóa thành công") {
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+    </script>
+}

@@ -1,4 +1,5 @@
 ﻿using CozaStore.Entities;
+using CozaStore.Helpers;
 
 namespace CozaStore.Interfaces
 {
@@ -6,8 +7,8 @@ namespace CozaStore.Interfaces
     {
         void AddCategory(Category category);
         void UpdateCategory(Category category);
-        Task<Category> GetCategory(int id);
-        Task<IEnumerable<Category>> GetAllCategories();
-
+        void DeleteCategory(Category category);
+        Task<Category?> GetCategoryAsync(int id);
+        Task<PagedList<Category>> GetAllCategoriesAsync(string searchString, int pageNumber = 1);
     }
 }
