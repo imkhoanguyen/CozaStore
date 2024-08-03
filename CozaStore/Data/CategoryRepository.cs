@@ -28,10 +28,13 @@ namespace CozaStore.Data
 
             if (searchString != null)
             {
-                query = query.Include(x => x.SubCategories).Where(x => x.Name.ToLower().Contains(searchString.ToLower())
-                || x.Id.ToString() == searchString);
+                query = query.Include(x => x.SubCategories)
+                    .Where(x => x.Name.ToLower().Contains(searchString.ToLower())
+                        || x.Id.ToString() == searchString
+                        || x.SubCategories.Any(x=>x.Id.ToString() == searchString)
+                        || x.SubCategories.Any(x => x.Name.ToLower().Contains(searchString.ToLower())));
 
-                  
+
             }
 
             if (pageNumber < 1) pageNumber = 1;
