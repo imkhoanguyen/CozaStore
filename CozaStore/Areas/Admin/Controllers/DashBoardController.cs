@@ -2,12 +2,18 @@
 
 namespace CozaStore.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    public class DashBoardController : Controller
+    [Area("admin")]
+    public class DashboardController : Controller
     {
         [Route("/admin")]
         [Route("/admin/dashboard")]
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        [Route("/error")]
+        public IActionResult Error()
         {
             return View();
         }

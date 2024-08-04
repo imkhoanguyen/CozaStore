@@ -5,19 +5,19 @@ using Microsoft.AspNetCore.Mvc;
 namespace CozaStore.Areas.Admin.Controllers
 {
     [Area("admin")]
-    public class SizeController : Controller
+    public class ColorController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public SizeController(IUnitOfWork unitOfWork)
+        public ColorController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<IActionResult> Index(int page)
+        public async Task<IActionResult> Index(string searchString, int page)
         {
-            var sizes = await _unitOfWork.SizeRepository.GetAllSizesAsync(page);
-            return View(sizes);
+            ViewData["searchString"] = searchString;
+            var colors = await _unitOfWork.ColorRepository.GetAllColorsAsync(searchString, page);
+            return View(colors);
         }
-
 
         public IActionResult Create()
         {
@@ -25,39 +25,38 @@ namespace CozaStore.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Size size)
+        public async Task<IActionResult> Create(Color color)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.SizeRepository.AddSize(size);
+                _unitOfWork.ColorRepository.AddColor(color);
 
                 if (await _unitOfWork.Complete())
                 {
-                    TempData["success"] = "The size has been created successfully.";
+                    TempData["success"] = "The color has been created successfully.";
                     return RedirectToAction(nameof(Index));
                 }
-
             }
             return View();
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var size = await _unitOfWork.SizeRepository.GetSizeAsync(id);
-            if (size != null) return View(size);
+            var color = await _unitOfWork.ColorRepository.GetColorAsync(id);
+            if (color != null) return View(color);
             return RedirectToAction("Error", "Dashboard");
-
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Size size)
+        public async Task<IActionResult> Edit(Color color)
         {
-            if (ModelState.IsValid && size.Id > 0)
+            if (ModelState.IsValid && color.Id > 0)
             {
-                _unitOfWork.SizeRepository.UpdateSize(size);
+                _unitOfWork.ColorRepository.UpdateColor(color);
+
                 if (await _unitOfWork.Complete())
                 {
-                    TempData["success"] = "The size has been edited successfully.";
+                    TempData["success"] = "The color has been edited successfully.";
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -67,28 +66,28 @@ namespace CozaStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var size = await _unitOfWork.SizeRepository.GetSizeAsync(id);
-            if (size != null)
+            var color = await _unitOfWork.ColorRepository.GetColorAsync(id);
+            if (color != null)
             {
-                bool isDelte = size.IsDelete;
-                _unitOfWork.SizeRepository.ToggleDelete(size);
+                bool isDelte = color.IsDelete;
+                _unitOfWork.ColorRepository.ToggleDelete(color);
 
                 if (await _unitOfWork.Complete())
                 {
                     if (!isDelte)
                     {
-                        TempData["success"] = "The size has been deleted successfully.";
+                        TempData["success"] = "The color has been deleted successfully.";
                         return Json(new { message = "success" });
                     }
                     else
                     {
-                        TempData["success"] = "The size has been recoverd successfully.";
+                        TempData["success"] = "The color has been recoverd successfully.";
                         return RedirectToAction(nameof(Index));
                     }
 
                 }
             }
-            TempData["error"] = "Can not find size";
+            TempData["error"] = "Can not find color";
             return Json(new { message = "fail" });
         }
     }

@@ -10,6 +10,6 @@ namespace CozaStore.Interfaces
         void UpdateSubCategory(SubCategory subCategory);
         Task<SubCategory?> GetSubCategoryAsync(int subCategoryId);
 
-        Task<PagedList<SubCategory>> GetAllSubCategoriesAsync(int categoryId, int pageNumber = 1);
+        Task<PagedList<SubCategory>> GetAllSubCategoriesAsync(int categoryId, int pageNumber);
     }
 }

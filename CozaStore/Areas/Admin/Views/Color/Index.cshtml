@@ -1,11 +1,27 @@
-﻿@model PagedList<Size>
+﻿@model PagedList<Color>
 <content>
-    <h3 class="mb-3">List Sizes</h3>
+    <h3 class="mb-3">List Color</h3>
     <div class="row">
         <div class="col-6">
-            <a asp-controller="size" asp-action="create" class="btn btn-primary">
+            <a asp-controller="color" asp-action="create" class="btn btn-primary">
                 Create
             </a>
+        </div>
+        <div class="col-6 text-end">
+            <form method="get" asp-controller="color" asp-action="Index">
+                <div class="d-flex gap-2">
+                    <input type="text" name="searchString" class="form-control"
+                           placeholder="Enter color name or id"
+                           value="@ViewData["searchString"]" />
+                    <button type="submit" style="width: 48px;" class="rounded btn btn-outline-dark p-0">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <a asp-controller="color" asp-action="Index" style="width: 48px;" class="rounded btn btn-info px-0">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </a>
+                </div>
+
+            </form>
         </div>
     </div>
 
@@ -22,29 +38,36 @@
             <tbody class="align-middle table-border-bottom-0">
                 @if (Model != null)
                 {
-                    @foreach (var size in Model)
+                    @foreach (var color in Model)
                     {
                         <tr>
-                            <td>@size.Id</td>
-                            <td>@size.Name</td>
-                            @if (size.IsDelete)
+                            <td>@color.Id</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <div style="width: 20px; height: 20px; background-color: @color.Name; display: inline-block"></div>
+                                    <div>@color.Name</div>
+                                </div>
+                                
+                                
+                            </td>
+                            @if (color.IsDelete)
                             {
                                 <td>
                                     <span class="badge bg-label-danger me-1">Deleted</span>
                                 </td>
 
                                 <td style="color: #fff">
-                                    <a asp-controller="size" asp-action="edit" asp-route-id="@size.Id" class="btn btn-warning mx-1">
+                                    <a asp-controller="color" asp-action="edit" asp-route-id="@color.Id" class="btn btn-warning mx-1">
                                         Edit
                                     </a>
-                                    <form method="post" asp-controller="size" asp-action="delete" asp-route-id="@size.Id" style="display: inline;">
+                                    <form method="post" asp-controller="color" asp-action="delete" asp-route-id="@color.Id" style="display: inline;">
                                         <button type="submit"
-                                           class="btn btn-info mx-1">
+                                                class="btn btn-info mx-1">
                                             Recovery
                                         </button>
                                     </form>
-                                    
-                                    
+
+
                                 </td>
 
                             }
@@ -55,10 +78,10 @@
                                 </td>
 
                                 <td style="color: #fff">
-                                    <a asp-controller="size" asp-action="edit" asp-route-id="@size.Id" class="btn btn-warning mx-1">
+                                    <a asp-controller="color" asp-action="edit" asp-route-id="@color.Id" class="btn btn-warning mx-1">
                                         Edit
                                     </a>
-                                    <button onclick="getId(@size.Id)"
+                                    <button onclick="getId(@color.Id)"
                                             class="btn btn-danger mx-1"
                                             type="button"
                                             data-bs-toggle="modal"
@@ -68,7 +91,7 @@
                                 </td>
 
                             }
-                            
+
 
                         </tr>
                     }
@@ -91,13 +114,16 @@
             <ul class="pagination justify-content-center">
                 <li class="mx-1 page-item @firstDisabled">
                     <a class="rounded page-link"
+                       asp-route-searchString="@ViewData["searchString"]"
                        asp-route-page="1"
-                       asp-route-searchString="@ViewData["SearchString"]">
+                       >
                         <span>First</span>
                     </a>
                 </li>
                 <li class="mx-1 page-item @prevDisabled">
-                    <a class="rounded page-link" asp-route-page="@(Model.PageIndex - 1)">
+                    <a class="rounded page-link"
+                       asp-route-searchString="@ViewData["searchString"]"
+                    asp-route-page="@(Model.PageIndex - 1)">
                         <i class="fa-solid fa-chevron-left"></i>
                     </a>
                 </li>
@@ -105,21 +131,24 @@
                 {
                     <li class="mx-1 page-item">
                         <a class="rounded page-link @(Model.PageIndex == i ? "active" : "")"
-                           asp-route-page="@(i)"
-                           asp-route-searchString="@ViewData["SearchString"]"> @i</a>
+                           asp-route-searchString="@ViewData["searchString"]"
+                        asp-route-page="@(i)"
+                           > @i</a>
                     </li>
                 }
                 <li class="mx-1 page-item @nextDisabled">
                     <a class="rounded page-link"
+                       asp-route-searchString="@ViewData["searchString"]"
                        asp-route-page="@(Model.PageIndex + 1)"
-                       asp-route-searchString="@ViewData["SearchString"]">
+                      >
                         <i class="fa-solid fa-chevron-right"></i>
                     </a>
                 </li>
                 <li class="mx-1 page-item @lastDisabled">
                     <a class="rounded page-link"
+                       asp-route-searchString="@ViewData["searchString"]"
                        asp-route-page="@(Model.TotalPages)"
-                       asp-route-searchString="@ViewData["SearchString"]">
+                      >
                         <span>Last</span>
                     </a>
                 </li>
@@ -155,21 +184,21 @@
 
 @section Scripts {
     <script>
-        let sizeId = 0;
+        let colorId = 0;
         $(document).ready(function () {
             $('#btnDelete').click(function () {
-                deleteSize(sizeId);
+                deleteColor(colorId);
             });
         });
 
         function getId(id) {
-            sizeId = id;
+            colorId = id;
         }
 
-        function deleteSize(id) {
+        function deleteColor(id) {
             $.ajax({
                 type: "POST",
-                url: `/admin/size/delete?id=${id}`,
+                url: `/admin/color/delete?id=${id}`,
                 success: function (response) {
                     if (response.message === "success") {
                         window.location.reload();

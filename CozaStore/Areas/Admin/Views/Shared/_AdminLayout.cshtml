@@ -33,6 +33,9 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="~/js/admin/config.js"></script>
+
+    <link rel="stylesheet" href="~/lib/toastr.js/toastr.css" />
+
 </head>
 <body>
     <div class="layout-wrapper layout-content-navbar">
@@ -138,18 +141,18 @@
                         </a>
                         <ul class="menu-sub">
                             <li class="menu-item">
-                                <a asp-controller="Category" asp-action="Index" class="menu-link">
-                                    <div>Danh mục</div>
+                                <a asp-controller="category" asp-action="Index" class="menu-link">
+                                    <div>Category</div>
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a href="ui-accordion.html" class="menu-link">
-                                    <div>Kích cỡ</div>
+                                <a asp-controller="size" asp-action="Index" class="menu-link">
+                                    <div>Size</div>
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a href="ui-alerts.html" class="menu-link">
-                                    <div>Màu sắc</div>
+                                <a asp-controller="color" asp-action="Index" class="menu-link">
+                                    <div>Color</div>
                                 </a>
                             </li>
                         </ul>
@@ -270,6 +273,7 @@
                                 <div class="card mb-4">
                                     <!-- RenderBody -->
                                     <div class="card-body">
+                                        <partial name="_Notification" />
                                         @RenderBody()
                                     </div>
                                 </div>

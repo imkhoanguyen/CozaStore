@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

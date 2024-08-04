@@ -4,6 +4,8 @@
     {
         ICategoryRepository CategoryRepository { get; }
         ISubCategoryRepository SubCategoryRepository { get; }
+        ISizeRepository SizeRepository { get; }
+        IColorRepository ColorRepository { get; }
 
         Task<bool> Complete();
     }

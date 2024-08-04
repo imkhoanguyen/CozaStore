@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\NewFolder\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="wwwroot\css\admin\core.css" />
     <None Include="wwwroot\css\admin\demo.css" />
     <None Include="wwwroot\css\admin\theme-default.css" />
