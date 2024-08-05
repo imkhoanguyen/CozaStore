@@ -7,6 +7,8 @@
         ISizeRepository SizeRepository { get; }
         IColorRepository ColorRepository { get; }
 
+        IProductRepository ProductRepository { get; }
+
         Task<bool> Complete();
     }
 }

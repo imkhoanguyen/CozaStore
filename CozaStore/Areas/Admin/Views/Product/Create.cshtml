@@ -1,0 +1,60 @@
+﻿@model Product
+<content>
+    <div class="row d-flex justify-content-between">
+        <h3 class="col-6">Create product</h3>
+        <div class="col-6 d-flex justify-content-end">
+            <div class="form-check form-switch mb-2">
+                <label class="form-check-label fw-bold" asp-for="IsFeatured">Is Feature?</label>
+                <input class="form-check-input" type="checkbox" asp-for="IsFeatured">
+            </div>
+        </div>
+    </div>
+
+    <form method="post" class="row mt-3" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input type="product" asp-for="Name" class="form-control ms-2"  />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="DisplayPrice" class="form-label"></label>
+            <input type="product" asp-for="DisplayPrice" class="form-control ms-2" />
+            <span asp-validation-for="DisplayPrice" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="SubCategoryId" class="form-label"></label>
+            <select asp-for="SubCategoryId" class="form-select ms-2"
+                    asp-items="ViewBag.SubCategories">
+                <option disabled selected>Choose Category</option>
+            </select>
+
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" rows="4" class="form-control ms-2"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ImagesFile" class="form-label"></label>
+            <input type="file" asp-for="ImagesFile" multiple class="form-control ms-2" style="height: 40px;" />
+            <span asp-validation-for="ImagesFile" class="text-danger"></span>
+        </div>
+
+        
+
+        <div class="d-flex justify-content-end gap-2 pe-1">
+            <a asp-controller="product" asp-action="Index" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+
+    </form>
+</content>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

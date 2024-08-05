@@ -1,6 +1,4 @@
-﻿using Azure;
-using CozaStore.Entities;
-using CozaStore.Helpers;
+﻿using CozaStore.Entities;
 using CozaStore.Interfaces;
 using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;

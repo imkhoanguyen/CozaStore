@@ -15,5 +15,8 @@ namespace CozaStore.Data
         public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Size> Sizes { get; set; }
         public DbSet<Color> Colors { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Variant> Variants { get; set; }
+        public DbSet<Image> Images { get; set; }
     }
 }

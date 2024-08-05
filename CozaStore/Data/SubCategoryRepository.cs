@@ -1,6 +1,7 @@
 ﻿using CozaStore.Entities;
 using CozaStore.Helpers;
 using CozaStore.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CozaStore.Data
 {
@@ -21,6 +22,11 @@ namespace CozaStore.Data
             var query =  _context.SubCategories.AsQueryable().Where(x=>x.CategoryId == categoryId);
             if (pageNumber < 1) pageNumber = 1;
             return await PagedList<SubCategory>.CreateAsync(query, pageNumber, 5);
+        }
+
+        public IEnumerable<SubCategory> GetAllSubCategories()
+        {
+            return _context.SubCategories.ToList();
         }
 
         public async Task<SubCategory?> GetSubCategoryAsync(int subCategoryId)

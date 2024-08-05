@@ -11,5 +11,7 @@ namespace CozaStore.Interfaces
         Task<SubCategory?> GetSubCategoryAsync(int subCategoryId);
 
         Task<PagedList<SubCategory>> GetAllSubCategoriesAsync(int categoryId, int pageNumber);
+
+        IEnumerable<SubCategory> GetAllSubCategories();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CozaStore.Entities;
 using CozaStore.Helpers;
 using CozaStore.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CozaStore.Data
 {
@@ -45,6 +46,11 @@ namespace CozaStore.Data
             {
                 sizeFromDb.Name = size.Name;
             }
+        }
+
+        public async Task<IEnumerable<Size>> GetAllSizesAsync()
+        {
+            return await _context.Sizes.ToListAsync();
         }
     }
 }

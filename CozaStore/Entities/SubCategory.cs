@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CozaStore.Entities
 {
@@ -10,6 +12,8 @@ namespace CozaStore.Entities
 
         //navtigation property
         public int CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+        [ValidateNever]
         public Category? Category { get; set; }
     }
 }

@@ -42,6 +42,11 @@ namespace CozaStore.Data
             return await PagedList<Category>.CreateAsync(query.AsNoTracking(), pageNumber, 10);
         }
 
+        public IEnumerable<Category> GetAllCategories()
+        {
+            return  _context.Categories.ToList();
+        }
+
         public async Task<Category?> GetCategoryAsync(int id)
         {
             return await _context.Categories.Include(x => x.SubCategories).FirstOrDefaultAsync(x => x.Id == id);
