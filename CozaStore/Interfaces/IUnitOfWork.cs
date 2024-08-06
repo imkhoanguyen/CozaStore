@@ -8,7 +8,7 @@
         IColorRepository ColorRepository { get; }
 
         IProductRepository ProductRepository { get; }
-
+        IVariantRepository VariantRepository { get; }
         Task<bool> Complete();
     }
 }

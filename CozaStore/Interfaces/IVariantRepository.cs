@@ -4,6 +4,9 @@ namespace CozaStore.Interfaces
 {
     public interface IVariantRepository
     {
-        Task<Variant?> GetMainVariant(int productId);
+        void UpdateVariant(Variant variant);
+        Task<Variant?> GetVariantAsync(int id);
+
+        void ToggleStatusVariant(Variant variant);
     }
 }

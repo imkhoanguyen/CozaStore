@@ -35,5 +35,30 @@ namespace CozaStore.Data
             if (page < 1) page = 1;
             return await PagedList<Product>.CreateAsync(query, page, 10);
         }
+
+        public async Task<Product?> GetProductAsync(int id)
+        {
+            return await _context.Products
+            .Include(x => x.Images)
+            .Include(x => x.SubCategory)
+            .Include(x => x.Variants!)
+                .ThenInclude(x => x.Color!)
+            .Include(x => x.Variants!)
+                .ThenInclude(x => x.Size!)
+            .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public void UpdateProduct(Product product)
+        {
+            var productFromDb = _context.Products.FirstOrDefault(x =>x.Id == product.Id);
+            if (productFromDb != null)
+            {
+                productFromDb.Name = product.Name;
+                productFromDb.Description = product.Description;
+                productFromDb.DisplayPrice = product.DisplayPrice;
+                productFromDb.IsFeatured = product.IsFeatured;
+                productFromDb.Status = product.Status;
+            }
+        }
     }
 }

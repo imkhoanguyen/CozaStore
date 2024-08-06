@@ -48,9 +48,9 @@ namespace CozaStore.Data
             }
         }
 
-        public async Task<IEnumerable<Size>> GetAllSizesAsync()
+        public IEnumerable<Size> GetAllSizes()
         {
-            return await _context.Sizes.ToListAsync();
+            return _context.Sizes.ToList();
         }
     }
 }

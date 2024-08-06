@@ -24,6 +24,7 @@ namespace CozaStore.Services
                 var uploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(file.FileName, stream),
+                    Transformation = new Transformation().Width(600).Height(900).Crop("fit"), // options: "fill", "limit", "scale"
                     Folder = "cozastorage-net8"
                 };
                 uploadResult = await _cloudinary.UploadAsync(uploadParams);

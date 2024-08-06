@@ -1,34 +1,45 @@
 ﻿@model Product
+
 <content>
-    <div class="row d-flex justify-content-between">
-        <h3 class="col-6">Create product</h3>
-        <div class="col-6 d-flex justify-content-end">
-            <div class="form-check form-switch mb-2">
-                <label class="form-check-label fw-bold" asp-for="IsFeatured">Is Feature?</label>
-                <input class="form-check-input" type="checkbox" asp-for="IsFeatured">
+    <form method="post" class="row mt-3" enctype="multipart/form-data">
+        <div class="row d-flex justify-content-between">
+            <h3 class="col-6">Create product</h3>
+            <div class="col-6 d-flex justify-content-end">
+                <div class="form-check form-switch mb-2">
+                    <label class="form-check-label fw-bold" asp-for="IsFeatured">Is Feature?</label>
+                    <input class="form-check-input" type="checkbox" asp-for="IsFeatured">
+                </div>
             </div>
         </div>
-    </div>
 
-    <form method="post" class="row mt-3" enctype="multipart/form-data">
+
         <div class="mb-3">
             <label asp-for="Name" class="form-label"></label>
-            <input type="product" asp-for="Name" class="form-control ms-2"  />
+            <input asp-for="Name" class="form-control ms-2" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label asp-for="DisplayPrice" class="form-label"></label>
-            <input type="product" asp-for="DisplayPrice" class="form-control ms-2" />
+            <input asp-for="DisplayPrice" class="form-control ms-2" />
             <span asp-validation-for="DisplayPrice" class="text-danger"></span>
         </div>
 
-        <div class="mb-3">
-            <label asp-for="SubCategoryId" class="form-label"></label>
-            <select asp-for="SubCategoryId" class="form-select ms-2"
-                    asp-items="ViewBag.SubCategories">
-                <option disabled selected>Choose Category</option>
-            </select>
+        <div class="row mb-3 pe-0">
+            <div class="col-6">
+                <label asp-for="SubCategoryId" class="form-label"></label>
+                <select asp-for="SubCategoryId" class="form-select ms-2"
+                        asp-items="ViewBag.SubCategories">
+                    <option disabled selected>Choose Category</option>
+                </select>
+            </div>
 
+            <div class="col-6 pe-0">
+                <label asp-for="Status" class="form-label"></label>
+                <select asp-for="Status" class="form-select ms-2"
+                        asp-items="ViewBag.ProductStatuses">
+                    <option disabled selected>Choose Status</option>
+                </select>
+            </div>
         </div>
 
         <div class="mb-3">
@@ -43,7 +54,9 @@
             <span asp-validation-for="ImagesFile" class="text-danger"></span>
         </div>
 
-        
+        <div class="img-container row row-cols-1 row-cols-md-6 g-4 m-3  mx-2 mt-0">
+        </div>
+
 
         <div class="d-flex justify-content-end gap-2 pe-1">
             <a asp-controller="product" asp-action="Index" class="btn btn-secondary">Cancel</a>
@@ -57,4 +70,25 @@
     @{
         <partial name="_ValidationScriptsPartial" />
     }
+
+    <script src="~/lib/tinymce/tinymce.min.js"></script>
+    <script src="~/js/tinymceSettings.js"></script>
+    
+    <script>
+        document.getElementById('ImagesFile').onchange = function () {
+            const imgContainer = document.querySelector(".img-container");
+            const fileList = document.getElementById('ImagesFile').files;
+
+            imgContainer.innerHTML = '';
+
+            for (let file of fileList) {
+                const imgSrc = URL.createObjectURL(file);
+                console.log(file);
+                if (imgSrc) {
+                    const content = `<img src="${imgSrc}" alt="Alternate Text" class="col" style="max-height: 300px;object-fit: cover; " />`;
+                    imgContainer.innerHTML += content;
+                }
+            }
+        };
+    </script>
 }

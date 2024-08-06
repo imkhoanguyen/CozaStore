@@ -30,7 +30,8 @@
             <thead>
                 <tr class="fw-bold">
                     <td>ID</td>
-                    <td style="width: 60%">Name</td>
+                    <td>Image</td>
+                    <td style="width: 40%">Name</td>
                     <td>Price</td>
                     <td>Status</td>
                     <td>Actions</td>
@@ -44,11 +45,10 @@
                         <tr>
                             <td>@product.Id</td>
                             <td>
-                                <div class="d-flex gap-2 align-items-center">
-                                    <img src="@product.Images.FirstOrDefault(x=>x.ProductId == product.Id).Url" style="max-height: 60px;" />
-                                    <div>@product.Name</div>
-                                </div>
-                                
+                                <img src="@product.Images.FirstOrDefault(x=>x.ProductId == product.Id).Url" style="max-height: 150px;" />
+                            </td>
+                            <td>
+                                <div>@product.Name</div>
                             </td>
                             <td>@product.DisplayPrice</td>
                             @if (product.Status == (int)ProductStatus.Deleted)
@@ -58,6 +58,9 @@
                                 </td>
 
                                 <td style="color: #fff">
+                                    <a asp-controller="product" asp-action="detail" asp-route-id="@product.Id" class="btn btn-info mx-1">
+                                        Detail
+                                    </a>
                                     <a asp-controller="product" asp-action="edit" asp-route-id="@product.Id" class="btn btn-warning mx-1">
                                         Edit
                                     </a>
@@ -76,6 +79,9 @@
                                 </td>
 
                                 <td style="color: #fff">
+                                    <a asp-controller="product" asp-action="detail" asp-route-id="@product.Id" class="btn btn-info mx-1">
+                                        Detail
+                                    </a>
                                     <a asp-controller="product" asp-action="edit" asp-route-id="@product.Id" class="btn btn-warning mx-1">
                                         Edit
                                     </a>

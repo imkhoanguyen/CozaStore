@@ -12,6 +12,6 @@ namespace CozaStore.Interfaces
         Task<PagedList<Size>> GetAllSizesAsync(int pageNumber);
         Task<Size?> GetSizeAsync(int id);
 
-        Task<IEnumerable<Size>> GetAllSizesAsync();
+        IEnumerable<Size> GetAllSizes();
     }
 }

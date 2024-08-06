@@ -17,6 +17,11 @@ namespace CozaStore.Data
             _context.Colors.Add(color);
         }
 
+        public IEnumerable<Color> GetAllColors()
+        {
+            return _context.Colors.ToList();
+        }
+
         public Task<PagedList<Color>> GetAllColorsAsync(string searchString, int page = 1)
         {
             var query = _context.Colors.OrderByDescending(x => x.IsDelete == false).ThenByDescending(x => x.Id).AsQueryable();

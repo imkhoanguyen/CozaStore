@@ -1,0 +1,40 @@
+﻿.select2-container .select2-selection--single {
+    height: 38px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 36px;
+}
+/* Apply Bootstrap border styles to select elements */
+.form-select {
+    border: 1px solid #ced4da; /* Bootstrap's default border color */
+    border-radius: 0.375rem; /* Bootstrap's default border radius */
+    padding: 0.375rem 0.75rem; /* Bootstrap's default padding */
+    font-size: 1rem; /* Bootstrap's default font size */
+    line-height: 1.5; /* Bootstrap's default line height */
+    background-color: #fff; /* Bootstrap's default background color */
+    color: #495057; /* Bootstrap's default text color */
+}
+
+    /* Optional: To remove the box shadow on focus (if needed) */
+    .form-select:focus {
+        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25); /* Adjust the box shadow to match Bootstrap's focus style */
+        outline: 0; /* Remove default outline */
+    }
+
+/*icon dropdown*/
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 5px;
+}
+
+/* Custom border color for Select2 elements */
+.select2-container--default .select2-selection--single {
+    border: 1px solid #ced4da; /* Bootstrap's default border color */
+    border-radius: 0.375rem; /* Bootstrap's default border radius */
+}
+
+    /* Optional: Adjust border color on focus */
+    .select2-container--default .select2-selection--single:focus-within {
+        border-color: #80bdff; /* Bootstrap's focus border color */
+        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25); /* Adjust shadow to match Bootstrap */
+    }

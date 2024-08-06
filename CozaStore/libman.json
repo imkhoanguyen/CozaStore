@@ -9,6 +9,18 @@
     {
       "library": "toastr.js@2.1.4",
       "destination": "wwwroot/lib/toastr.js/"
+    },
+    {
+      "library": "tinymce@7.2.1",
+      "destination": "wwwroot/lib/tinymce/"
+    },
+    {
+      "library": "select2@4.0.13",
+      "destination": "wwwroot/lib/select2/"
+    },
+    {
+      "library": "sweetalert2@11.12.4",
+      "destination": "wwwroot/sweetalert2/"
     }
   ]
 }

@@ -36,8 +36,11 @@
 
     <link rel="stylesheet" href="~/lib/toastr.js/toastr.css" />
 
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
+    
+
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
