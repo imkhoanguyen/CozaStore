@@ -6,26 +6,22 @@ namespace CozaStore.Data
     {
         private readonly DataContext _context;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly ISubCategoryRepository _subCategoryRepository;
         private readonly ISizeRepository _sizeRepository;
         private readonly IColorRepository _colorRepository;
         private readonly IProductRepository _productRepository;
         private readonly IVariantRepository _variantRepository;
         public UnitOfWork(DataContext context, ICategoryRepository categoryRepository,
-            ISubCategoryRepository subCategoryRepository, ISizeRepository sizeRepository, 
-            IColorRepository colorRepository, IProductRepository productRepository, 
-            IVariantRepository variantRepository)
+             ISizeRepository sizeRepository, IColorRepository colorRepository,
+             IProductRepository productRepository, IVariantRepository variantRepository)
         {
             _context = context;
             _categoryRepository = categoryRepository;
-            _subCategoryRepository = subCategoryRepository;
             _sizeRepository = sizeRepository;
             _colorRepository = colorRepository;
             _productRepository = productRepository;
             _variantRepository = variantRepository;
         }
         public ICategoryRepository CategoryRepository => _categoryRepository;
-        public ISubCategoryRepository SubCategoryRepository => _subCategoryRepository;
 
         public ISizeRepository SizeRepository => _sizeRepository;
 

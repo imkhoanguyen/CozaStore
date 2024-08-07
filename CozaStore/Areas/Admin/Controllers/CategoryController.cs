@@ -1,4 +1,4 @@
-﻿using CozaStore.Entities;
+﻿using CozaStore.Models;
 using CozaStore.Interfaces;
 using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -74,93 +74,6 @@ namespace CozaStore.Areas.Admin.Controllers
             }
             return Json(new { message = "Xóa thất bại" });
         }
-
-        [Route("/Admin/Category/SubCategory")]
-        [HttpGet]
-        public async Task<IActionResult> SubCategory(int categoryId, int page)
-        {
-            ViewData["CategoryId"] = categoryId;
-            var subCategories = await _unitOfWork.SubCategoryRepository.GetAllSubCategoriesAsync(categoryId, page);
-            SubCategoryVM vm = new SubCategoryVM()
-            {
-                SubCategories = subCategories,
-                CategoryId = categoryId
-            };
-            return View(vm);
-        }
-
-        [Route("/Admin/Category/SubCategory/Create")]
-        public IActionResult SubCategoryCreate(int categoryId)
-        {
-            SubCategoryVM vm = new SubCategoryVM()
-            {
-                CategoryId = categoryId
-            };
-            return View(vm);
-        }
-
-        [HttpPost]
-        [Route("/Admin/Category/SubCategory/Create")]
-        public async Task<IActionResult> SubCategoryCreate(SubCategoryVM vm)
-        {
-
-            if (ModelState.IsValid && vm.SubCategory != null)
-            {
-                vm.SubCategory.CategoryId = vm.CategoryId;
-                _unitOfWork.SubCategoryRepository.AddSubCategory(vm.SubCategory);
-
-                if (await _unitOfWork.Complete())
-                    return RedirectToAction(nameof(SubCategory), new { categoryId = vm.SubCategory.CategoryId });
-            }
-
-            return View();
-        }
-
-
-        [Route("/Admin/Category/SubCategory/Update")]
-        public async Task<IActionResult> SubCategoryUpdate(int categoryId, int subCategoryId)
-        {
-            var subCategory = await _unitOfWork.SubCategoryRepository.GetSubCategoryAsync(subCategoryId);
-            if (subCategory != null)
-            {
-                SubCategoryVM vm = new SubCategoryVM()
-                {
-                    SubCategory = subCategory,
-                    CategoryId = subCategory.CategoryId
-                };
-                return View(vm);
-            }
-            return RedirectToAction(nameof(SubCategory), new { categoryId = categoryId });
-        }
-
-        [HttpPost]
-        [Route("/Admin/Category/SubCategory/Update")]
-        public async Task<IActionResult> SubCategoryUpdate(SubCategoryVM vm)
-        {
-            if (ModelState.IsValid && vm.SubCategory != null)
-            {
-                vm.SubCategory.CategoryId = vm.CategoryId;
-                _unitOfWork.SubCategoryRepository.UpdateSubCategory(vm.SubCategory);
-                if (await _unitOfWork.Complete())
-                    return RedirectToAction(nameof(SubCategory), new { categoryId = vm.SubCategory.CategoryId });
-            }
-            return View();
-        }
-
-        [HttpPost]
-        [Route("/Admin/Category/SubCategory/Delete")]
-        public async Task<IActionResult> SubCategoryDelete(int subCategoryId)
-        {
-            var subCategory = await _unitOfWork.SubCategoryRepository.GetSubCategoryAsync(subCategoryId);
-            if (subCategory != null)
-            {
-                _unitOfWork.SubCategoryRepository.RemoveSubCategory(subCategory);
-
-                if (await _unitOfWork.Complete())
-                    return Json(new { message = "Xóa thành công" });
-
-            }
-            return Json(new { message = "Xóa thất bại" });
-        }
+        
     }
 }

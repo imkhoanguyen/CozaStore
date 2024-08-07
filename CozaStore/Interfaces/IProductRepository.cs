@@ -1,4 +1,4 @@
-﻿    using CozaStore.Entities;
+﻿    using CozaStore.Models;
 using CozaStore.Helpers;
 
 namespace CozaStore.Interfaces

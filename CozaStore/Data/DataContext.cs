@@ -1,4 +1,4 @@
-﻿using CozaStore.Entities;
+﻿using CozaStore.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +12,6 @@ namespace CozaStore.Data
         }
 
         public DbSet<Category> Categories { get; set; }
-        public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Size> Sizes { get; set; }
         public DbSet<Color> Colors { get; set; }
         public DbSet<Product> Products { get; set; }

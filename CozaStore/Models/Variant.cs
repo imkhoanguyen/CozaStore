@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CozaStore.Entities
+namespace CozaStore.Models
 {
     public class Variant
     {

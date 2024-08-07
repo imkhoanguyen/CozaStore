@@ -1,4 +1,4 @@
-﻿namespace CozaStore.Entities
+﻿namespace CozaStore.Models
 {
     public class Size
     {

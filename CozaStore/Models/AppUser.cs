@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace CozaStore.Entities
+namespace CozaStore.Models
 {
     public class AppUser : IdentityUser
     {

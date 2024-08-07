@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CozaStore.Entities
+namespace CozaStore.Models
 {
     public class Product
     {
@@ -16,11 +16,11 @@ namespace CozaStore.Entities
        
 
         //navigation property
-        //subcategory
-        public int SubCategoryId { get; set; }
-        [ForeignKey("SubCategoryId")]
+        //category
+        public int CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
         [ValidateNever]
-        public SubCategory? SubCategory { get; set; }
+        public Category? Category { get; set; }
 
         //variant
         public ICollection<Variant>? Variants { get; set; }

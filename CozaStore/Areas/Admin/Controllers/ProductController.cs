@@ -1,4 +1,4 @@
-﻿using CozaStore.Entities;
+﻿using CozaStore.Models;
 using CozaStore.Helpers;
 using CozaStore.Interfaces;
 using CozaStore.Services;
@@ -27,7 +27,7 @@ namespace CozaStore.Areas.Admin.Controllers
         public IActionResult Create()
         {
 
-            ViewBag.SubCategories = _unitOfWork.SubCategoryRepository.GetAllSubCategories();
+            ViewBag.Categories = _unitOfWork.CategoryRepository.GetAllCategories();
             ViewBag.ProductStatuses = SD.ProductStatusList;
             return View();
         }
@@ -71,7 +71,7 @@ namespace CozaStore.Areas.Admin.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            ViewBag.SubCategories = _unitOfWork.SubCategoryRepository.GetAllSubCategories();
+            ViewBag.Categories = _unitOfWork.CategoryRepository.GetAllCategories();
             ViewBag.ProductStatuses = SD.ProductStatusList;
 
             var product = await _unitOfWork.ProductRepository.GetProductAsync(id);

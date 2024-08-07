@@ -22,7 +22,7 @@ namespace CozaStore.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CozaStore.Entities.AppUser", b =>
+            modelBuilder.Entity("CozaStore.Models.AppUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -90,13 +90,16 @@ namespace CozaStore.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("CozaStore.Entities.Category", b =>
+            modelBuilder.Entity("CozaStore.Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -107,7 +110,7 @@ namespace CozaStore.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("CozaStore.Entities.Color", b =>
+            modelBuilder.Entity("CozaStore.Models.Color", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -127,7 +130,7 @@ namespace CozaStore.Migrations
                     b.ToTable("Colors");
                 });
 
-            modelBuilder.Entity("CozaStore.Entities.Image", b =>
+            modelBuilder.Entity("CozaStore.Models.Image", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,13 +158,16 @@ namespace CozaStore.Migrations
                     b.ToTable("Images");
                 });
 
-            modelBuilder.Entity("CozaStore.Entities.Product", b =>
+            modelBuilder.Entity("CozaStore.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -182,17 +188,14 @@ namespace CozaStore.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("SubCategoryId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("SubCategoryId");
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("CozaStore.Entities.Size", b =>
+            modelBuilder.Entity("CozaStore.Models.Size", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -212,29 +215,7 @@ namespace CozaStore.Migrations
                     b.ToTable("Sizes");
                 });
 
-            modelBuilder.Entity("CozaStore.Entities.SubCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("SubCategories");
-                });
-
-            modelBuilder.Entity("CozaStore.Entities.Variant", b =>
+            modelBuilder.Entity("CozaStore.Models.Variant", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -407,9 +388,9 @@ namespace CozaStore.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CozaStore.Entities.Image", b =>
+            modelBuilder.Entity("CozaStore.Models.Image", b =>
                 {
-                    b.HasOne("CozaStore.Entities.Product", "Product")
+                    b.HasOne("CozaStore.Models.Product", "Product")
                         .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -418,21 +399,10 @@ namespace CozaStore.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("CozaStore.Entities.Product", b =>
+            modelBuilder.Entity("CozaStore.Models.Product", b =>
                 {
-                    b.HasOne("CozaStore.Entities.SubCategory", "SubCategory")
-                        .WithMany()
-                        .HasForeignKey("SubCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SubCategory");
-                });
-
-            modelBuilder.Entity("CozaStore.Entities.SubCategory", b =>
-                {
-                    b.HasOne("CozaStore.Entities.Category", "Category")
-                        .WithMany("SubCategories")
+                    b.HasOne("CozaStore.Models.Category", "Category")
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -440,21 +410,21 @@ namespace CozaStore.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("CozaStore.Entities.Variant", b =>
+            modelBuilder.Entity("CozaStore.Models.Variant", b =>
                 {
-                    b.HasOne("CozaStore.Entities.Color", "Color")
+                    b.HasOne("CozaStore.Models.Color", "Color")
                         .WithMany()
                         .HasForeignKey("ColorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CozaStore.Entities.Product", "Product")
+                    b.HasOne("CozaStore.Models.Product", "Product")
                         .WithMany("Variants")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CozaStore.Entities.Size", "Size")
+                    b.HasOne("CozaStore.Models.Size", "Size")
                         .WithMany()
                         .HasForeignKey("SizeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -478,7 +448,7 @@ namespace CozaStore.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("CozaStore.Entities.AppUser", null)
+                    b.HasOne("CozaStore.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -487,7 +457,7 @@ namespace CozaStore.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("CozaStore.Entities.AppUser", null)
+                    b.HasOne("CozaStore.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -502,7 +472,7 @@ namespace CozaStore.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CozaStore.Entities.AppUser", null)
+                    b.HasOne("CozaStore.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -511,19 +481,19 @@ namespace CozaStore.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("CozaStore.Entities.AppUser", null)
+                    b.HasOne("CozaStore.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CozaStore.Entities.Category", b =>
+            modelBuilder.Entity("CozaStore.Models.Category", b =>
                 {
-                    b.Navigation("SubCategories");
+                    b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("CozaStore.Entities.Product", b =>
+            modelBuilder.Entity("CozaStore.Models.Product", b =>
                 {
                     b.Navigation("Images");
 

@@ -1,4 +1,4 @@
-﻿using CozaStore.Entities;
+﻿using CozaStore.Models;
 using CozaStore.Helpers;
 using CozaStore.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -28,11 +28,8 @@ namespace CozaStore.Data
 
             if (searchString != null)
             {
-                query = query.Include(x => x.SubCategories)
-                    .Where(x => x.Name.ToLower().Contains(searchString.ToLower())
-                        || x.Id.ToString() == searchString
-                        || x.SubCategories.Any(x=>x.Id.ToString() == searchString)
-                        || x.SubCategories.Any(x => x.Name.ToLower().Contains(searchString.ToLower())));
+                query = query.Where(x => x.Name.ToLower().Contains(searchString.ToLower())
+                        || x.Id.ToString() == searchString);
 
 
             }
@@ -49,7 +46,7 @@ namespace CozaStore.Data
 
         public async Task<Category?> GetCategoryAsync(int id)
         {
-            return await _context.Categories.Include(x => x.SubCategories).FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Categories.FindAsync(id);
         }
 
         public void UpdateCategory(Category category)

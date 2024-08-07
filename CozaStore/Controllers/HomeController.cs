@@ -1,4 +1,4 @@
-using CozaStore.Entities;
+using CozaStore.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

@@ -32,12 +32,12 @@
 
         <div class="row mb-3 pe-0">
             <div class="col-6">
-                <label asp-for="SubCategoryId" class="form-label"></label>
-                <select asp-for="SubCategoryId" class="form-select ms-2">
+                <label asp-for="CategoryId" class="form-label"></label>
+                <select asp-for="CategoryId" class="form-select ms-2">
                     <option disabled selected>Choose Category</option>
-                    @foreach (var subCategory in (IEnumerable<SubCategory>)ViewBag.SubCategories)
+                    @foreach (var category in (IEnumerable<Category>)ViewBag.Categories)
                     {
-                        <option value="@subCategory.Id">@subCategory.Name</option>
+                        <option value="@category.Id">@category.Name</option>
                     }
                 </select>
             </div>
