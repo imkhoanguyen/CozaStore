@@ -10,5 +10,14 @@
             Name = Enum.GetName(typeof(VariantStatus), status) ?? string.Empty
         })
         .ToList();
+
+        public static readonly IEnumerable<ProductStatusDto> ProductStatusList = Enum.GetValues(typeof(ProductStatus))
+        .Cast<ProductStatus>()
+        .Select(status => new ProductStatusDto
+        {
+            Id = (int)status,
+            Name = Enum.GetName(typeof(ProductStatus), status) ?? string.Empty
+        })
+        .ToList();
     }
 }

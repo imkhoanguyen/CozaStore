@@ -1,6 +1,8 @@
 ﻿using CozaStore.Entities;
 using CozaStore.Helpers;
 using CozaStore.Interfaces;
+using CozaStore.Services;
+using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -10,11 +12,11 @@ namespace CozaStore.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IProductImageService _productImageService;
-        public ProductController(IUnitOfWork unitOfWork, IProductImageService productImageService)
+        private readonly IImageService _imageService;
+        public ProductController(IUnitOfWork unitOfWork, IImageService imageService)
         {
             _unitOfWork = unitOfWork;
-            _productImageService = productImageService;
+            _imageService = imageService;
         }
         public async Task<IActionResult> Index(string searchString, int page)
         {
@@ -24,25 +26,9 @@ namespace CozaStore.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            IEnumerable<SelectListItem> subCategoryList = _unitOfWork.SubCategoryRepository.GetAllSubCategories()
-                .Select(x => new SelectListItem
-                {
-                    Text = x.Name,
-                    Value = x.Id.ToString(),
-                });
 
-            ViewBag.SubCategories = subCategoryList;
-
-            IEnumerable<SelectListItem> productStatusList = Enum.GetValues(typeof(ProductStatus))
-               .Cast<ProductStatus>()
-               .Select(status => new SelectListItem
-               {
-                   Text = status.ToString(),
-                   Value = ((int)status).ToString(),
-                   Selected = status == ProductStatus.Private
-               });
-
-            ViewBag.ProductStatuses = productStatusList;
+            ViewBag.SubCategories = _unitOfWork.SubCategoryRepository.GetAllSubCategories();
+            ViewBag.ProductStatuses = SD.ProductStatusList;
             return View();
         }
 
@@ -55,10 +41,10 @@ namespace CozaStore.Areas.Admin.Controllers
                 {
                     foreach (var img in product.ImagesFile)
                     {
-                        var resultUpload = await _productImageService.AddImageAsync(img);
+                        var resultUpload = await _imageService.AddImageAsync(img);
                         if (resultUpload.Error != null)
                         {
-                            TempData["error"] = "Error uploading photo. Try again!";
+                            TempData["error"] = "Error uploading image. Try again!";
                             return View();
                         }
                         var productImg = new Image
@@ -85,25 +71,8 @@ namespace CozaStore.Areas.Admin.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            IEnumerable<SelectListItem> subCategoryList = _unitOfWork.SubCategoryRepository.GetAllSubCategories()
-                .Select(x => new SelectListItem
-                {
-                    Text = x.Name,
-                    Value = x.Id.ToString(),
-                });
-
-            ViewBag.SubCategories = subCategoryList;
-
-            IEnumerable<SelectListItem> productStatusList = Enum.GetValues(typeof(ProductStatus))
-               .Cast<ProductStatus>()
-               .Select(status => new SelectListItem
-               {
-                   Text = status.ToString(),
-                   Value = ((int)status).ToString(),
-                   Selected = status == ProductStatus.Private
-               });
-
-            ViewBag.ProductStatuses = productStatusList;
+            ViewBag.SubCategories = _unitOfWork.SubCategoryRepository.GetAllSubCategories();
+            ViewBag.ProductStatuses = SD.ProductStatusList;
 
             var product = await _unitOfWork.ProductRepository.GetProductAsync(id);
             if (product == null) return RedirectToAction("Error", "Dashboard");
@@ -124,6 +93,29 @@ namespace CozaStore.Areas.Admin.Controllers
                 }
             }
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ToggleProductStatus(int productId)
+        {
+            var product = await _unitOfWork.ProductRepository.GetProductAsync(productId);
+            if (product == null) return NotFound();
+            int status = product.Status;
+            _unitOfWork.ProductRepository.ToggleProductStatus(product);
+            if (await _unitOfWork.Complete())
+            {
+                if (status == (int)ProductStatus.Deleted)
+                {
+                    TempData["success"] = "The variant has been recoverd successfully.";
+                    return Ok();
+                }
+                else
+                {
+                    TempData["success"] = "The variant has been deleted successfully.";
+                    return Ok();
+                }
+            }
+            return BadRequest("Something wrong");
         }
 
         public async Task<IActionResult> Detail(int id)
@@ -214,13 +206,111 @@ namespace CozaStore.Areas.Admin.Controllers
                 {
                     TempData["success"] = "The variant has been recoverd successfully.";
                     return Ok();
-                } else
+                }
+                else
                 {
                     TempData["success"] = "The variant has been deleted successfully.";
                     return Ok();
                 }
             }
             return BadRequest("Something wrong");
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SetMainImage(int productId, int imgId)
+        {
+            var product = await _unitOfWork.ProductRepository.GetProductAsync(productId);
+            if (product == null) return NotFound();
+
+            var img = product.Images.FirstOrDefault(x => x.Id == imgId);
+            if (img == null || img.IsMain) return BadRequest("Can not use this as main image");
+
+            var currentMain = product.Images.FirstOrDefault(x => x.IsMain);
+            if (currentMain != null) currentMain.IsMain = false;
+
+            img.IsMain = true;
+
+            if (await _unitOfWork.Complete())
+            {
+                TempData["success"] = "The img has been set main successfully.";
+                return RedirectToAction(nameof(Detail), new { id = product.Id });
+            }
+            return BadRequest("Problem set main image");
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteImage(int productId, int imgId)
+        {
+            var product = await _unitOfWork.ProductRepository.GetProductAsync(productId);
+            if (product == null) return NotFound();
+
+            var img = product.Images.FirstOrDefault(x => x.Id == imgId);
+            var listImg = product.Images.ToList();
+            if (img == null || img.IsMain || listImg.Count == 1) return BadRequest("This image cannot be deleted");
+
+            if (img.ProductId != null)
+            {
+                var result = await _imageService.DeleteImageAsync(img.PublicId);
+                if (result.Error != null) return BadRequest(result.Error.Message);
+            }
+
+            product.Images.Remove(img);
+
+            if (await _unitOfWork.Complete())
+            {
+                TempData["success"] = "The img has been deleted successfully.";
+                return RedirectToAction(nameof(Detail), new { id = product.Id });
+            }
+
+            return BadRequest("Problem deleting image");
+        }
+
+        public IActionResult AddImages(int productId)
+        {
+            AddProductImageVM vm = new AddProductImageVM();
+            vm.ProductId = productId;
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddImages(AddProductImageVM vm)
+        {
+            if (vm != null && vm.ProductId > 0)
+            {
+                var product = await _unitOfWork.ProductRepository.GetProductAsync(vm.ProductId);
+                if (product == null) return BadRequest();
+
+                if (vm.Images.Count == 0)
+                {
+                    ModelState.AddModelError("Images", "You have not uploaded the image file");
+                    return View();
+                }
+
+                foreach (var img in vm.Images)
+                {
+                    var resultUpload = await _imageService.AddImageAsync(img);
+                    if (resultUpload.Error != null)
+                    {
+                        TempData["error"] = "Error uploading image. Try again!";
+                        return View();
+                    }
+                    var productImg = new Image
+                    {
+                        Url = resultUpload.SecureUri.AbsoluteUri,
+                        PublicId = resultUpload.PublicId,
+                    };
+
+                    product.Images.Add(productImg);
+                }
+
+                if (await _unitOfWork.Complete())
+                {
+                    TempData["success"] = "The images has been added successfully.";
+                    return RedirectToAction(nameof(Detail), new { id = vm.ProductId });
+                }
+            }
+            return View(vm);
         }
     }
 }

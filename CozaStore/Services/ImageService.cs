@@ -6,10 +6,10 @@ using Microsoft.Extensions.Options;
 
 namespace CozaStore.Services
 {
-    public class ProductImageService : IProductImageService
+    public class ImageService : IImageService
     {
         private readonly Cloudinary _cloudinary;
-        public ProductImageService(IOptions<CloudinarySettings> config)
+        public ImageService(IOptions<CloudinarySettings> config)
         {
             var acc = new Account(config.Value.CloudName, config.Value.ApiKey, config.Value.ApiSecret);
             _cloudinary = new Cloudinary(acc);

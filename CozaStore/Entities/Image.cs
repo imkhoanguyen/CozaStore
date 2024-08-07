@@ -8,8 +8,8 @@ namespace CozaStore.Entities
     {
         public int Id { get; set; }
         public required string Url { get; set; }
-        public int Status { get; set; } = (int)ImageStatus.Public;
-        public string? PublicId { get; set; }
+        public bool IsMain { get; set; } = false;
+        public string? PublicId { get; set; } // cloudinary
 
         //navigation property
         public int ProductId { get; set; }

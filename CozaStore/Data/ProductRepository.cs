@@ -48,6 +48,17 @@ namespace CozaStore.Data
             .FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public void ToggleProductStatus(Product product)
+        {
+            var productFromDb = _context.Products.FirstOrDefault(x=>x.Id == product.Id);
+            if (productFromDb != null)
+            {
+                if(productFromDb.Status == (int)ProductStatus.Deleted) productFromDb.Status = (int)ProductStatus.Private;
+                else 
+                    productFromDb.Status = (int)ProductStatus.Deleted;
+            }
+        }
+
         public void UpdateProduct(Product product)
         {
             var productFromDb = _context.Products.FirstOrDefault(x =>x.Id == product.Id);

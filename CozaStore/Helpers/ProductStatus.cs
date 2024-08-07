@@ -6,4 +6,10 @@
         Public = 1,
         Private = 2,
     }
+
+    public class ProductStatusDto
+    {
+        public int Id { get; set; }
+        public required string Name { get; set; }
+    }
 }

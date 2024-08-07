@@ -2,7 +2,7 @@
 
 namespace CozaStore.Interfaces
 {
-    public interface IProductImageService
+    public interface IImageService
     {
         Task<ImageUploadResult> AddImageAsync(IFormFile file);
         Task<DeletionResult> DeleteImageAsync(string publicId);
