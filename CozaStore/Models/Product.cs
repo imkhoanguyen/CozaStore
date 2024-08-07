@@ -8,7 +8,7 @@ namespace CozaStore.Models
     {
         public int Id { get; set; }
         public required string Name { get; set; }
-        public decimal DisplayPrice { get; set; }
+        public decimal DisplayPrice { get; set; } // default price if no choose variant
         public int Status { get; set; } = (int)ProductStatus.Private;
         public bool IsFeatured { get; set; } = false;
         public DateTime Created { get; set; } = DateTime.UtcNow;

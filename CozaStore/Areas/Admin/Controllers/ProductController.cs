@@ -13,15 +13,51 @@ namespace CozaStore.Areas.Admin.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IImageService _imageService;
+        private const int _pageSize = 10;
         public ProductController(IUnitOfWork unitOfWork, IImageService imageService)
         {
             _unitOfWork = unitOfWork;
             _imageService = imageService;
         }
-        public async Task<IActionResult> Index(string searchString, int page)
+        public async Task<IActionResult> Index(string sortOrder, string searchString, int selectedCategory,
+            int selectedStatus, string selectedPriceRange, int selectedColor, int selectedSize, int page = 1)
         {
-            var products = await _unitOfWork.ProductRepository.GetAllProductsAsync(searchString, page);
-            return View(products);
+            var categories = _unitOfWork.CategoryRepository.GetAllCategories();
+            var colors = _unitOfWork.ColorRepository.GetAllColors();
+            var sizes = _unitOfWork.SizeRepository.GetAllSizes();
+
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["IdSortParm"] = sortOrder == "id" ? "id_desc" : "id";
+            ViewData["PriceSortParm"] = sortOrder == "price" ? "price_desc" : "price";
+            ViewData["StatusSortParm"] = sortOrder == "status" ? "status_desc" : "status";
+            ViewData["CurrentFilter"] = searchString;
+
+            var products = await _unitOfWork.ProductRepository
+                .GetAllProductsAsync(sortOrder, searchString, selectedCategory,
+             selectedStatus, selectedPriceRange, selectedSize, selectedColor, page, _pageSize);
+
+            var vm = new ProductVM
+            {
+                Products = products,
+                CurrentSort = sortOrder,
+                NameSortParm = ViewData["NameSortParm"].ToString(),
+                IdSortParm = ViewData["IdSortParm"].ToString(),
+                PriceSortParm = ViewData["PriceSortParm"].ToString(),
+                StatusSortParm = ViewData["StatusSortParm"].ToString(),
+                CurrentFilter = searchString,
+                SelectedCategory = selectedCategory,
+                SelectedStatus = selectedStatus,
+                SelectedColor = selectedColor,
+                SelectedSize = selectedSize,
+                SelectedPriceRange = selectedPriceRange,
+                Categories = categories.ToList(),
+                Sizes = sizes.ToList(),
+                Colors = colors.ToList(),
+                PriceRanges = SD.PriceRangeList
+            };
+
+            return View(vm);
         }
 
         public IActionResult Create()

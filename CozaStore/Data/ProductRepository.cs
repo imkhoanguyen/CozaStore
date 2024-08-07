@@ -2,6 +2,7 @@
 using CozaStore.Helpers;
 using CozaStore.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 
 namespace CozaStore.Data
 {
@@ -18,23 +19,54 @@ namespace CozaStore.Data
             _context.Products.Add(product);
         }
 
-        public async Task<PagedList<Product>> GetAllProductsAsync(string searchString, int page = 1)
+        public async Task<PagedList<Product>> GetAllProductsAsync(string sortOrder, string searchString, int categoryId, int status, string priceRange, int sizeId, int colorId, int page, int pageSize)
         {
-            var query = _context.Products.OrderByDescending(x=>x.Status == (int)ProductStatus.Public)
-                .ThenByDescending(x=> x.Status == (int)ProductStatus.Private).ThenByDescending(x=>x.Id)
-                .Include(x=> x.Variants)
-                .Include(x=>x.Images)
-                .AsQueryable();
+            var query = _context.Products
+                    .Include(x => x.Variants)
+                    .Include(x => x.Images)
+                    .AsQueryable();
 
-            if(searchString != null)
+            if (!string.IsNullOrEmpty(searchString))
             {
-                query = query.Where(x=> x.Name.ToLower().Contains(searchString.ToLower())
-                || x.Id.ToString() == searchString
-                || x.Variants.Any(x=>x.Id.ToString() == searchString));
+                searchString = searchString.ToLower();
+                query = query.Where(x => x.Name.ToLower().Contains(searchString)
+                    || x.Id.ToString() == searchString
+                    || x.Variants.Any(v => v.Id.ToString() == searchString));
             }
 
+            if (categoryId > 0) query = query.Where(x => x.CategoryId == categoryId);
+            if (colorId > 0) query = query.Where(x => x.Variants.Any(x => x.ColorId == colorId));
+            if (sizeId > 0) query =  query.Where(x => x.Variants.Any(x => x.SizeId == sizeId));
+
+            if (!string.IsNullOrEmpty(priceRange))
+            {
+                query = priceRange switch
+                {
+                    "$0-$50" => query.Where(x => x.DisplayPrice >= 0 && x.DisplayPrice <= 50),
+                    "$50-$100" => query.Where(x => x.DisplayPrice > 50 && x.DisplayPrice <= 100),
+                    "$100-$150" => query.Where(x => x.DisplayPrice > 100 && x.DisplayPrice <= 150),
+                    "$150-$200" => query.Where(x => x.DisplayPrice > 150 && x.DisplayPrice <= 200),
+                    "$200+" => query.Where(x => x.DisplayPrice > 200),
+                    _ => query
+                };
+                
+            }
+
+            query = sortOrder switch
+            {
+                "name_desc" => query.OrderByDescending(x => x.Name),
+                "name" => query.OrderBy(x => x.Name),
+                "id_desc" => query.OrderByDescending(x => x.Id),
+                "id" => query.OrderBy(x => x.Id),
+                "price_desc" => query.OrderBy(x => x.DisplayPrice),
+                "price" => query.OrderByDescending(x => x.DisplayPrice),
+                "status_desc" => query.OrderByDescending(x => x.Status == (int)ProductStatus.Public).ThenBy(x => x.Status == (int)ProductStatus.Private),
+                "status" => query.OrderBy(x => x.Status == (int)ProductStatus.Public).ThenBy(x => x.Status == (int)ProductStatus.Private),
+                _ => query.OrderByDescending(x => x.Id)
+            };
 
             if (page < 1) page = 1;
+
             return await PagedList<Product>.CreateAsync(query, page, 10);
         }
 

@@ -19,5 +19,14 @@
             Name = Enum.GetName(typeof(ProductStatus), status) ?? string.Empty
         })
         .ToList();
+
+        public static readonly List<string> PriceRangeList = new List<string>
+        {
+            "$0-$50",
+            "$50-$100",
+            "$100-$150",
+            "$150-$200",
+            "$200+"
+        };
     }
 }
