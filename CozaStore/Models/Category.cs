@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace CozaStore.Models
 {
@@ -7,7 +8,6 @@ namespace CozaStore.Models
         public int Id { get; set; }
         public required string Name { get; set; }
         public bool? IsDelete { get; set; } = false;
-        public ICollection<Product>? Products { get; set; }
     }
 
 }

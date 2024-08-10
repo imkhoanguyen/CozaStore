@@ -1,24 +1,30 @@
-﻿namespace CozaStore.Helpers
+﻿using CozaStore.DTOs;
+using CozaStore.Helpers.Enum;
+
+namespace CozaStore.Helpers
 {
     public static class SD
     {
-        public static readonly IEnumerable<VariantStatusDto> VariantStatusList = Enum.GetValues(typeof(VariantStatus))
-        .Cast<VariantStatus>()
-        .Select(status => new VariantStatusDto
+        public static IEnumerable<StatusDto> GetVariantStatusList()
         {
-            Id = (int)status,
-            Name = Enum.GetName(typeof(VariantStatus), status) ?? string.Empty
-        })
-        .ToList();
+            List<StatusDto> statusList = new List<StatusDto>
+            {
+                new StatusDto {Id = (int)VariantStatus.Private, Name = VariantStatus.Private.ToString()},
+                new StatusDto {Id = (int)VariantStatus.Public, Name = VariantStatus.Public.ToString()},
+            };
+            return statusList;
+        }
 
-        public static readonly IEnumerable<ProductStatusDto> ProductStatusList = Enum.GetValues(typeof(ProductStatus))
-        .Cast<ProductStatus>()
-        .Select(status => new ProductStatusDto
+        public static IEnumerable<StatusDto> GetProductStatusList()
         {
-            Id = (int)status,
-            Name = Enum.GetName(typeof(ProductStatus), status) ?? string.Empty
-        })
-        .ToList();
+            List<StatusDto> statusList = new List<StatusDto>
+            {
+                new StatusDto {Id = (int)ProductStatus.Deleted, Name = ProductStatus.Deleted.ToString()},
+                new StatusDto {Id = (int)ProductStatus.Private, Name = ProductStatus.Private.ToString()},
+                 new StatusDto {Id = (int)ProductStatus.Public, Name = ProductStatus.Public.ToString()},
+            };
+            return statusList;
+        }
 
         public static readonly List<string> PriceRangeList = new List<string>
         {

@@ -11,7 +11,7 @@ namespace CozaStore.Interfaces
         Task<Color?> GetColorAsync(int id);
         Task<PagedList<Color>> GetAllColorsAsync(string searchString,int page);
 
-        IEnumerable<Color> GetAllColors();
+        Task<IEnumerable<Color>> GetAllColorsAsync();
 
     }
 }

@@ -1,4 +1,4 @@
-﻿@model Variant
+﻿@model VariantCreateVM
 
 @section Styles {
     <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
@@ -11,27 +11,27 @@
     <form method="post" asp-controller="product" asp-action="createvariant">
         <div class="row mb-3">
             <div class="col-12">
-                <label asp-for="@Model.ProductId" class="form-label"></label>
-                <input class="form-control" asp-for="@Model.ProductId" readonly />
+                <label asp-for="Variant.ProductId" class="form-label"></label>
+                <input class="form-control" asp-for="Variant.ProductId" readonly />
             </div>
             
         </div>
         <div class="row mb-3">
             <div class="col-6">
-                <label asp-for="@Model.SizeId" class="form-label"></label>
-                <select asp-for="@Model.SizeId" class="form-select">
+                <label asp-for="Variant.SizeId" class="form-label"></label>
+                <select asp-for="Variant.SizeId" class="form-select">
                     <option disabled selected>Choose Size</option>
-                    @foreach (var size in (IEnumerable<Size>)ViewBag.Sizes)
+                    @foreach (var size in Model.SizeList)
                     {
                         <option value="@size.Id">@size.Name</option>
                     }
                 </select>
             </div>
             <div class="col-6">
-                <label asp-for="@Model.ColorId" class="form-label"></label>
-                <select asp-for="@Model.ColorId" class="form-select">
+                <label asp-for="Variant.ColorId" class="form-label"></label>
+                <select asp-for="Variant.ColorId" class="form-select">
                     <option value="" disabled selected>Choose Color</option>
-                    @foreach (var color in (IEnumerable<Color>)ViewBag.Colors)
+                    @foreach (var color in Model.ColorList)
                     {
                         <option value="@color.Id" data-color="@color.Name">@color.Name</option>
                     }
@@ -41,25 +41,25 @@
 
         <div class="row mb-3">
             <div class="col-6">
-                <label asp-for="@Model.PriceImport" class="form-label"></label>
-                <input class="form-control" asp-for="@Model.PriceImport" />
+                <label asp-for="Variant.Price" class="form-label"></label>
+                <input class="form-control" asp-for="Variant.Price" />
             </div>
             <div class="col-6">
-                <label asp-for="@Model.PriceSell" class="form-label"></label>
-                <input class="form-control" asp-for="@Model.PriceSell" />
+                <label asp-for="Variant.PriceSell" class="form-label"></label>
+                <input class="form-control" asp-for="Variant.PriceSell" />
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-6">
-                <label asp-for="@Model.Quantity" class="form-label"></label>
-                <input class="form-control" asp-for="@Model.Quantity" />
+                <label asp-for="Variant.Quantity" class="form-label"></label>
+                <input class="form-control" asp-for="Variant.Quantity" />
             </div>
             <div class="col-6">
-                <label asp-for="@Model.Status" class="form-label"></label>
-                <select asp-for="@Model.Status" class="form-select">
+                <label asp-for="Variant.Status" class="form-label"></label>
+                <select asp-for="Variant.Status" class="form-select">
                     <option disabled selected>Choose Status</option>
-                    @foreach (var status in (IEnumerable<VariantStatusDto>)ViewBag.VariantStatuses)
+                    @foreach (var status in Model.StatusList)
                     {
                         <option value="@status.Id" data-style="@status.Name">@status.Name</option>
                     }
@@ -67,17 +67,8 @@
             </div>
         </div>
 
-        <div class="row mb-3">
-            <div class="col-12">
-                <div class="alert alert-primary alert-dismissible" role="alert">
-                    Set status to main if you want to select the price of this product to display
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            </div>
-        </div>
-
         <div class="d-flex justify-content-end gap-2 pe-1">
-            <a asp-controller="product" asp-action="detail" asp-route-id="@Model.ProductId" class="btn btn-secondary">Cancel</a>
+            <a asp-controller="product" asp-action="detail" asp-route-id="@Model.Variant.ProductId" class="btn btn-secondary">Cancel</a>
             <button type="submit" class="btn btn-primary">Save</button>
         </div>
     </form>
@@ -92,7 +83,7 @@
     <script>
         $(document).ready(function () {
             // Initialize Select2 color
-            $('#ColorId').select2({
+            $('#Variant_ColorId').select2({
                 templateResult: formatState,
                 templateSelection: formatState
             });
@@ -108,10 +99,10 @@
                 return $state;
             }
             // Initialize Select2 Size
-            $('#SizeId').select2();
+            $('#Variant_SizeId').select2();
 
             // Initialize Select2 Status
-            $('#Status').select2({
+            $('#Variant_Status').select2({
                 templateResult: formatState1,
                 templateSelection: formatState1
             });
@@ -124,10 +115,8 @@
 
                 var $state = $(
                     '<span class="badge rounded-pill ' +
-                    (state.element.dataset.style === 'Deleted' ? 'bg-danger' :
-                        state.element.dataset.style === 'Public' ? 'bg-primary' :
+                    (state.element.dataset.style === 'Public' ? 'bg-primary' :
                             state.element.dataset.style === 'Private' ? 'bg-warning' :
-                                state.element.dataset.style === 'Main' ? 'bg-info' :
                                     'bg-secondary') +
                     '">' + state.text + '</span>'
                 );

@@ -7,6 +7,6 @@ namespace CozaStore.Interfaces
         void UpdateVariant(Variant variant);
         Task<Variant?> GetVariantAsync(int id);
 
-        void ToggleStatusVariant(Variant variant);
+        void DeleteVariant(Variant variant);
     }
 }

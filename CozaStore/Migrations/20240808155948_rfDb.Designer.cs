@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CozaStore.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240807070029_rfDb")]
+    [Migration("20240808155948_rfDb")]
     partial class rfDb
     {
         /// <inheritdoc />
@@ -169,17 +169,11 @@ namespace CozaStore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("DisplayPrice")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsFeatured")
                         .HasColumnType("bit");
@@ -188,14 +182,36 @@ namespace CozaStore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PriceSell")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("CozaStore.Models.ProductCategory", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId", "CategoryId");
+
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("ProductCategory");
                 });
 
             modelBuilder.Entity("CozaStore.Models.Size", b =>
@@ -229,7 +245,7 @@ namespace CozaStore.Migrations
                     b.Property<int>("ColorId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("PriceImport")
+                    b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("PriceSell")
@@ -402,15 +418,23 @@ namespace CozaStore.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("CozaStore.Models.Product", b =>
+            modelBuilder.Entity("CozaStore.Models.ProductCategory", b =>
                 {
                     b.HasOne("CozaStore.Models.Category", "Category")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CozaStore.Models.Product", "Product")
+                        .WithMany("ProductCategories")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Category");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("CozaStore.Models.Variant", b =>
@@ -491,14 +515,11 @@ namespace CozaStore.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CozaStore.Models.Category", b =>
-                {
-                    b.Navigation("Products");
-                });
-
             modelBuilder.Entity("CozaStore.Models.Product", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("ProductCategories");
 
                     b.Navigation("Variants");
                 });

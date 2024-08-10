@@ -1,52 +1,64 @@
-﻿@model Product
+﻿@model ProductCreateVM
 
 @section Styles {
     <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
     <link rel="stylesheet" href="~/css/custom-select2.css" />
 }
-<content>
-    <form method="post" class="row mt-3" enctype="multipart/form-data">
 
-        <input asp-for="Id" hidden />
+<content>
+    <form method="post" class="px-3 mt-3 container-fluid" enctype="multipart/form-data">
+        <input asp-for="Product.Id" hidden />
         <div class="row d-flex justify-content-between">
             <h3 class="col-6">Create product</h3>
             <div class="col-6 d-flex justify-content-end">
                 <div class="form-check form-switch mb-2">
-                    <label class="form-check-label fw-bold" asp-for="IsFeatured">Is Feature?</label>
-                    <input class="form-check-input" type="checkbox" asp-for="IsFeatured">
+                    <label class="form-check-label fw-bold" asp-for="Product.IsFeatured">Is Feature?</label>
+                    <input class="form-check-input" type="checkbox" asp-for="Product.IsFeatured">
                 </div>
             </div>
         </div>
 
-
-        <div class="mb-3">
-            <label asp-for="Name" class="form-label"></label>
-            <input asp-for="Name" class="form-control ms-2" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="DisplayPrice" class="form-label"></label>
-            <input asp-for="DisplayPrice" class="form-control ms-2" />
-            <span asp-validation-for="DisplayPrice" class="text-danger"></span>
+        <div class="row mb-3">
+            <div class="col-12">
+                <label asp-for="Product.Name" class="form-label"></label>
+                <input asp-for="Product.Name" class="form-control" />
+                <span asp-validation-for="Product.Name" class="text-danger"></span>
+            </div>
         </div>
 
-        <div class="row mb-3 pe-0">
-            <div class="col-6">
-                <label asp-for="CategoryId" class="form-label"></label>
-                <select asp-for="CategoryId" class="form-select ms-2">
+        <div class="row mb-3 g-2">
+            <div class="col-12 col-md-4">
+                <label asp-for="Product.Price" class="form-label"></label>
+                <input asp-for="Product.Price" class="form-control" />
+                <span asp-validation-for="Product.Price" class="text-danger"></span>
+            </div>
+            <div class="col-12 col-md-4">
+                <label asp-for="Product.PriceSell" class="form-label"></label>
+                <input asp-for="Product.PriceSell" class="form-control" />
+                <span asp-validation-for="Product.PriceSell" class="text-danger"></span>
+            </div>
+            <div class="col-12 col-md-4">
+                <label asp-for="Product.Quantity" class="form-label"></label>
+                <input asp-for="Product.Quantity" class="form-control" />
+                <span asp-validation-for="Product.Quantity" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row mb-3 g-2">
+            <div class="col-12 col-md-6">
+                <label asp-for="SelectedCategory" class="form-label">Categories</label>
+                <select asp-for="SelectedCategory" class="form-select" multiple="multiple" style="max-width: 100%;">
                     <option disabled selected>Choose Category</option>
-                    @foreach (var category in (IEnumerable<Category>)ViewBag.Categories)
+                    @foreach (var category in Model.CategoryList)
                     {
                         <option value="@category.Id">@category.Name</option>
                     }
                 </select>
             </div>
-
-            <div class="col-6 pe-0">
-                <label asp-for="@Model.Status" class="form-label"></label>
-                <select asp-for="@Model.Status" class="form-select">
-                    <option disabled selected>Choose Status</option>
-                    @foreach (var status in (IEnumerable<ProductStatusDto>)ViewBag.ProductStatuses)
+            <div class="col-12 col-md-6">
+                <label asp-for="Product.Status" class="form-label">Status</label>
+                <select asp-for="Product.Status" class="form-select" style="max-width: 100%;">
+                    @foreach (var status in Model.StatusList)
                     {
                         <option value="@status.Id" data-style="@status.Name">@status.Name</option>
                     }
@@ -54,17 +66,19 @@
             </div>
         </div>
 
-        <div class="mb-3">
-            <label asp-for="Description" class="form-label"></label>
-            <textarea asp-for="Description" rows="4" class="form-control ms-2"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
+
+        <div class="row mb-3">
+            <div class="col-12">
+                <label asp-for="Product.Description" class="form-label"></label>
+                <textarea asp-for="Product.Description" class="form-control"></textarea>
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div>
         </div>
 
-        <div class="d-flex justify-content-end gap-2 pe-1">
+        <div class="d-flex justify-content-end gap-2">
             <a asp-controller="product" asp-action="Index" class="btn btn-secondary">Cancel</a>
             <button type="submit" class="btn btn-primary">Save</button>
         </div>
-
     </form>
 </content>
 
@@ -79,11 +93,12 @@
     <script>
 
         $(document).ready(function () {
-            // Initialize Select2 Size
-            $('#SubCategoryId').select2();
 
-            // Initialize Select2 Status
-            $('#Status').select2({
+            // Initialize Select2
+            $('#SelectedCategory').select2();
+
+            // Initialize Select2 
+            $('#Product_Status').select2({
                 templateResult: formatState1,
                 templateSelection: formatState1
             });
@@ -104,23 +119,6 @@
 
                 return $state;
             }
-
-            // view img when upload
-            document.getElementById('ImagesFile').onchange = function () {
-                const imgContainer = document.querySelector(".img-container");
-                const fileList = document.getElementById('ImagesFile').files;
-
-                imgContainer.innerHTML = '';
-
-                for (let file of fileList) {
-                    const imgSrc = URL.createObjectURL(file);
-                    console.log(file);
-                    if (imgSrc) {
-                        const content = `<img src="${imgSrc}" alt="Alternate Text" class="col" style="max-height: 300px;object-fit: cover; " />`;
-                        imgContainer.innerHTML += content;
-                    }
-                }
-            };
 
         });
 

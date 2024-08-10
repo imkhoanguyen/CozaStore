@@ -3,6 +3,7 @@ using CozaStore.Helpers;
 using CozaStore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
+using CozaStore.Helpers.Enum;
 
 namespace CozaStore.Data
 {
@@ -34,7 +35,6 @@ namespace CozaStore.Data
                     || x.Variants.Any(v => v.Id.ToString() == searchString));
             }
 
-            if (categoryId > 0) query = query.Where(x => x.CategoryId == categoryId);
             if (colorId > 0) query = query.Where(x => x.Variants.Any(x => x.ColorId == colorId));
             if (sizeId > 0) query =  query.Where(x => x.Variants.Any(x => x.SizeId == sizeId));
 
@@ -42,11 +42,11 @@ namespace CozaStore.Data
             {
                 query = priceRange switch
                 {
-                    "$0-$50" => query.Where(x => x.DisplayPrice >= 0 && x.DisplayPrice <= 50),
-                    "$50-$100" => query.Where(x => x.DisplayPrice > 50 && x.DisplayPrice <= 100),
-                    "$100-$150" => query.Where(x => x.DisplayPrice > 100 && x.DisplayPrice <= 150),
-                    "$150-$200" => query.Where(x => x.DisplayPrice > 150 && x.DisplayPrice <= 200),
-                    "$200+" => query.Where(x => x.DisplayPrice > 200),
+                    "$0-$50" => query.Where(x => x.Price >= 0 && x.Price <= 50),
+                    "$50-$100" => query.Where(x => x.Price > 50 && x.Price <= 100),
+                    "$100-$150" => query.Where(x => x.Price > 100 && x.Price <= 150),
+                    "$150-$200" => query.Where(x => x.Price > 150 && x.Price <= 200),
+                    "$200+" => query.Where(x => x.Price > 200),
                     _ => query
                 };
                 
@@ -58,8 +58,8 @@ namespace CozaStore.Data
                 "name" => query.OrderBy(x => x.Name),
                 "id_desc" => query.OrderByDescending(x => x.Id),
                 "id" => query.OrderBy(x => x.Id),
-                "price_desc" => query.OrderBy(x => x.DisplayPrice),
-                "price" => query.OrderByDescending(x => x.DisplayPrice),
+                "price_desc" => query.OrderBy(x => x.Price),
+                "price" => query.OrderByDescending(x => x.Price),
                 "status_desc" => query.OrderByDescending(x => x.Status == (int)ProductStatus.Public).ThenBy(x => x.Status == (int)ProductStatus.Private),
                 "status" => query.OrderBy(x => x.Status == (int)ProductStatus.Public).ThenBy(x => x.Status == (int)ProductStatus.Private),
                 _ => query.OrderByDescending(x => x.Id)
@@ -74,12 +74,22 @@ namespace CozaStore.Data
         {
             return await _context.Products
             .Include(x => x.Images)
-            .Include(x => x.Category)
-            .Include(x => x.Variants!)
-                .ThenInclude(x => x.Color!)
-            .Include(x => x.Variants!)
-                .ThenInclude(x => x.Size!)
+            .Include(x => x.Variants)
+            .Include(x=>x.ProductCategories)
             .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<Product?> GetProductDetailAsync(int id)
+        {
+            return await _context.Products
+                .Include(x => x.Images)
+                .Include(x => x.Variants)
+                    .ThenInclude(v => v.Color)
+                .Include(x => x.Variants)
+                    .ThenInclude(v => v.Size)
+                .Include(x => x.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public void ToggleProductStatus(Product product)
@@ -87,7 +97,8 @@ namespace CozaStore.Data
             var productFromDb = _context.Products.FirstOrDefault(x=>x.Id == product.Id);
             if (productFromDb != null)
             {
-                if(productFromDb.Status == (int)ProductStatus.Deleted) productFromDb.Status = (int)ProductStatus.Private;
+                if(productFromDb.Status == (int)ProductStatus.Deleted) 
+                    productFromDb.Status = (int)ProductStatus.Private;
                 else 
                     productFromDb.Status = (int)ProductStatus.Deleted;
             } 
@@ -100,9 +111,12 @@ namespace CozaStore.Data
             {
                 productFromDb.Name = product.Name;
                 productFromDb.Description = product.Description;
-                productFromDb.DisplayPrice = product.DisplayPrice;
+                productFromDb.Price = product.Price;
+                productFromDb.PriceSell = product.PriceSell;
+                productFromDb.Quantity = product.Quantity;
                 productFromDb.IsFeatured = product.IsFeatured;
                 productFromDb.Status = product.Status;
+
             }
         }
     }

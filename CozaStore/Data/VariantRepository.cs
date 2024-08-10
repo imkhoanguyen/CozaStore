@@ -1,7 +1,7 @@
 ﻿using CozaStore.Models;
-using CozaStore.Helpers;
 using CozaStore.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using CozaStore.Helpers.Enum;
 
 namespace CozaStore.Data
 {
@@ -18,33 +18,14 @@ namespace CozaStore.Data
             return await _context.Variants.FindAsync(id);
         }
 
-        public void ToggleStatusVariant(Variant variant)
+        public void DeleteVariant(Variant variant)
         {
-            var variantFromDb = _context.Variants.FirstOrDefault(x => x.Id == variant.Id);
-            if (variantFromDb != null)
-            {
-                if(variantFromDb.Status == (int)VariantStatus.Deleted) variantFromDb.Status = (int)VariantStatus.Private;
-                else if(variantFromDb.Status == (int)VariantStatus.Public
-                  || variantFromDb.Status == (int)VariantStatus.Private) variantFromDb.Status = (int)VariantStatus.Deleted;
-
-            }
+           _context.Variants.Remove(variant);
         }
 
         public void UpdateVariant(Variant variant)
         {
-
-
-            var variantFromDb = _context.Variants.FirstOrDefault(x=>x.Id == variant.Id);
-
-            if (variantFromDb != null)
-            {
-                variantFromDb.Quantity = variant.Quantity;
-                variantFromDb.SizeId = variant.SizeId;
-                variantFromDb.ColorId = variant.ColorId;
-                variantFromDb.Status = variant.Status;
-                variantFromDb.PriceSell = variant.PriceSell;
-                variantFromDb.PriceImport = variant.PriceImport;
-            }
+           _context.Variants.Update(variant);
         }
     }
 }

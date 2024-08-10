@@ -14,5 +14,7 @@ namespace CozaStore.Interfaces
 
         void ToggleProductStatus(Product product);
 
+        Task<Product?> GetProductDetailAsync(int id);
+
     }
 }

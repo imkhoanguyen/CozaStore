@@ -1,4 +1,4 @@
-﻿using CozaStore.Helpers;
+﻿using CozaStore.Helpers.Enum;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,7 +7,7 @@ namespace CozaStore.Models
     public class Variant
     {
         public int Id { get; set; }
-        public decimal PriceImport { get; set; }
+        public decimal Price { get; set; }
         public decimal PriceSell { get; set; }
         public int Quantity { get; set; }
         public int Status { get; set; } = (int)VariantStatus.Private;

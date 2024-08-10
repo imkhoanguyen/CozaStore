@@ -2,6 +2,7 @@
 using CozaStore.Helpers;
 using CozaStore.Interfaces;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace CozaStore.Data
 {
@@ -17,9 +18,9 @@ namespace CozaStore.Data
             _context.Colors.Add(color);
         }
 
-        public IEnumerable<Color> GetAllColors()
+        public async Task<IEnumerable<Color>> GetAllColorsAsync()
         {
-            return _context.Colors.ToList();
+            return await _context.Colors.ToListAsync();
         }
 
         public Task<PagedList<Color>> GetAllColorsAsync(string searchString, int page = 1)

@@ -10,6 +10,6 @@ namespace CozaStore.Interfaces
         void DeleteCategory(Category category);
         Task<Category?> GetCategoryAsync(int id);
         Task<PagedList<Category>> GetAllCategoriesAsync(string searchString, int pageNumber);
-        IEnumerable<Category> GetAllCategories();
+        Task<IEnumerable<Category>> GetAllCategoriesAsync();
     }
 }

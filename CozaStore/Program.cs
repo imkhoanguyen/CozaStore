@@ -1,4 +1,5 @@
 using CozaStore.Data;
+using CozaStore.Data.Seed;
 using CozaStore.Helpers;
 using CozaStore.Interfaces;
 using CozaStore.Services;
@@ -50,6 +51,22 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+try
+{
+    var context = services.GetRequiredService<DataContext>();
+    context.Database.Migrate();
+    ColorSeed.Seed(context);
+    CategorySeed.Seed(context);
+    SizeSeed.Seed(context);
+
+} catch(Exception ex)
+{
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occurred during migration");
+}
 
 
 app.Run();

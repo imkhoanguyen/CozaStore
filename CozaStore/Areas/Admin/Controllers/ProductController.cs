@@ -5,6 +5,8 @@ using CozaStore.Services;
 using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using CozaStore.Helpers.Enum;
+using Microsoft.CodeAnalysis;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
@@ -22,9 +24,9 @@ namespace CozaStore.Areas.Admin.Controllers
         public async Task<IActionResult> Index(string sortOrder, string searchString, int selectedCategory,
             int selectedStatus, string selectedPriceRange, int selectedColor, int selectedSize, int page = 1)
         {
-            var categories = _unitOfWork.CategoryRepository.GetAllCategories();
-            var colors = _unitOfWork.ColorRepository.GetAllColors();
-            var sizes = _unitOfWork.SizeRepository.GetAllSizes();
+            var categories = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
+            var colors = await _unitOfWork.ColorRepository.GetAllColorsAsync();
+            var sizes = await _unitOfWork.SizeRepository.GetAllSizesAsync();
 
             ViewData["CurrentSort"] = sortOrder;
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
@@ -60,22 +62,22 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(vm);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-
-            ViewBag.Categories = _unitOfWork.CategoryRepository.GetAllCategories();
-            ViewBag.ProductStatuses = SD.ProductStatusList;
-            return View();
+            ProductCreateVM vm = new ProductCreateVM();
+            vm.CategoryList = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
+            return View(vm);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Product product)
+        public async Task<IActionResult> Create(ProductCreateVM vm)
         {
             if (ModelState.IsValid)
             {
-                if (product.ImagesFile != null && product.ImagesFile.Count > 0)
+                if (vm.ImagesFile != null && vm.ImagesFile.Count > 0)
                 {
-                    foreach (var img in product.ImagesFile)
+                    // add product img
+                    foreach (var img in vm.ImagesFile)
                     {
                         var resultUpload = await _imageService.AddImageAsync(img);
                         if (resultUpload.Error != null)
@@ -89,17 +91,33 @@ namespace CozaStore.Areas.Admin.Controllers
                             PublicId = resultUpload.PublicId,
                         };
 
-                        product.Images.Add(productImg);
+                        vm.Product.Images.Add(productImg);
+                        _unitOfWork.ProductRepository.AddProduct(vm.Product);
                     }
+                } else
+                {
+                    return View();
+                }
 
-                    _unitOfWork.ProductRepository.AddProduct(product);
-
-                    if (await _unitOfWork.Complete())
+                if(vm.SelectedCategory != null && vm.SelectedCategory.Count > 0)
+                {
+                   foreach(int categoryId in vm.SelectedCategory)
                     {
-                        TempData["success"] = "The product has been created successfully.";
-                        return RedirectToAction(nameof(Index));
+                        var productCategory = new ProductCategory
+                        {
+                            ProductId = vm.Product.Id,
+                            CategoryId = categoryId
+                        };
+                        vm.Product.ProductCategories.Add(productCategory);
                     }
                 }
+
+                if (await _unitOfWork.Complete())
+                {
+                    TempData["success"] = "The product has been created successfully.";
+                    return RedirectToAction(nameof(Index));
+                }
+
             }
             return View();
         }
@@ -107,20 +125,49 @@ namespace CozaStore.Areas.Admin.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            ViewBag.Categories = _unitOfWork.CategoryRepository.GetAllCategories();
-            ViewBag.ProductStatuses = SD.ProductStatusList;
-
             var product = await _unitOfWork.ProductRepository.GetProductAsync(id);
-            if (product == null) return RedirectToAction("Error", "Dashboard");
-            return View(product);
+            if (product == null) return NotFound();
+            ProductCreateVM vm = new ProductCreateVM();
+            vm.Product = product;
+            vm.CategoryList = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
+            vm.SelectedCategory = product.ProductCategories.Select(x=>x.CategoryId).ToList();
+            return View(vm);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Product product)
+        public async Task<IActionResult> Edit(ProductCreateVM vm)
         {
-            if (ModelState.IsValid && product.Id > 0)
+            if (ModelState.IsValid && vm.Product.Id > 0)
             {
-                _unitOfWork.ProductRepository.UpdateProduct(product);
+                var productFromDb = await _unitOfWork.ProductRepository.GetProductAsync(vm.Product.Id);
+                if(productFromDb == null) return NotFound();
+                var existingCategoryIds = productFromDb.ProductCategories.Select(pc => pc.CategoryId).ToList();
+
+                var categoriesToRemove = existingCategoryIds.Except(vm.SelectedCategory).ToList();
+                var categoriesToAdd = vm.SelectedCategory.Except(existingCategoryIds).ToList();
+
+                // delete category
+                foreach (int categoryId in categoriesToRemove)
+                {
+                    var productCategory = productFromDb.ProductCategories.FirstOrDefault(pc => pc.CategoryId == categoryId);
+                    if (productCategory != null)
+                    {
+                        productFromDb.ProductCategories.Remove(productCategory);
+                    }
+                }
+
+                // add category
+                foreach (int categoryId in categoriesToAdd)
+                {
+                    var productCategory = new ProductCategory
+                    {
+                        CategoryId = categoryId,
+                        ProductId = productFromDb.Id,
+                    };
+                    productFromDb.ProductCategories.Add(productCategory);
+                }
+                
+                _unitOfWork.ProductRepository.UpdateProduct(vm.Product);
 
                 if (await _unitOfWork.Complete())
                 {
@@ -128,7 +175,9 @@ namespace CozaStore.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            return View();
+            vm.CategoryList = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
+            vm.SelectedCategory = vm.Product.ProductCategories.Select(x => x.CategoryId).ToList();
+            return View(vm);
         }
 
         [HttpPost]
@@ -156,43 +205,42 @@ namespace CozaStore.Areas.Admin.Controllers
 
         public async Task<IActionResult> Detail(int id)
         {
-            var product = await _unitOfWork.ProductRepository.GetProductAsync(id);
+            var product = await _unitOfWork.ProductRepository.GetProductDetailAsync(id);
             return View(product);
         }
 
-        public IActionResult CreateVariant(int productId)
+        public async Task<IActionResult> CreateVariant(int productId)
         {
-
-            ViewBag.Colors = _unitOfWork.ColorRepository.GetAllColors();
-
-            ViewBag.Sizes = _unitOfWork.SizeRepository.GetAllSizes();
-
-
-            ViewBag.VariantStatuses = SD.VariantStatusList;
-
             Variant variant = new Variant();
             variant.ProductId = productId;
-            return View("variantcreate", variant);
+
+            VariantCreateVM vm = new VariantCreateVM()
+            {
+                ColorList = await _unitOfWork.ColorRepository.GetAllColorsAsync(),
+                SizeList = await _unitOfWork.SizeRepository.GetAllSizesAsync(),
+                Variant = variant
+            };
+            return View("variantcreate", vm);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateVariant(Variant variant)
+        public async Task<IActionResult> CreateVariant(VariantCreateVM vm)
         {
             if (ModelState.IsValid)
             {
-                var product = await _unitOfWork.ProductRepository.GetProductAsync(variant.ProductId);
+                var product = await _unitOfWork.ProductRepository.GetProductAsync(vm.Variant.ProductId);
                 if (product == null)
                 {
                     TempData["error"] = "Something wrong";
                     return BadRequest();
                 }
 
-                product.Variants.Add(variant);
+                product.Variants.Add(vm.Variant);
 
                 if (await _unitOfWork.Complete())
                 {
                     TempData["success"] = "The variant has been created successfully.";
-                    return RedirectToAction(nameof(Detail), new { id = variant.ProductId });
+                    return RedirectToAction(nameof(Detail), new { id = vm.Variant.ProductId });
                 }
             }
             return View();
@@ -200,54 +248,49 @@ namespace CozaStore.Areas.Admin.Controllers
 
         public async Task<IActionResult> EditVariant(int productId, int variantId)
         {
-            ViewBag.Colors = _unitOfWork.ColorRepository.GetAllColors();
+            var product = await _unitOfWork.ProductRepository.GetProductAsync(productId);
+            var variant = product.Variants.FirstOrDefault(v => v.Id == variantId);
 
-            ViewBag.Sizes = _unitOfWork.SizeRepository.GetAllSizes();
+            if (variant == null || variant.ProductId != product.Id) return NotFound();
 
+            VariantCreateVM vm = new VariantCreateVM
+            {
+                Variant = variant,
+                ColorList = await _unitOfWork.ColorRepository.GetAllColorsAsync(),
+                SizeList = await _unitOfWork.SizeRepository.GetAllSizesAsync()
+            };
 
-            ViewBag.VariantStatuses = SD.VariantStatusList;
-
-            var variant = await _unitOfWork.VariantRepository.GetVariantAsync(variantId);
-            if (variant == null || variant.ProductId != productId) return NotFound();
-
-            return View("variantedit", variant);
+            return View("variantedit", vm);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditVariant(Variant variant)
+        public async Task<IActionResult> EditVariant(VariantCreateVM vm)
         {
-            if (ModelState.IsValid && variant.Id > 0 && variant.ProductId > 0)
+            if (ModelState.IsValid && vm.Variant.Id > 0 && vm.Variant.ProductId > 0)
             {
-                _unitOfWork.VariantRepository.UpdateVariant(variant);
+                _unitOfWork.VariantRepository.UpdateVariant(vm.Variant);
+
 
                 if (await _unitOfWork.Complete())
                 {
                     TempData["success"] = "The variant has been edited successfully.";
-                    return RedirectToAction(nameof(Detail), new { id = variant.ProductId });
+                    return RedirectToAction(nameof(Detail), new { id = vm.Variant.ProductId });
                 }
             }
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> ToggleStatusVariant(int variantId)
+        public async Task<IActionResult> DeleteVariant(int variantId)
         {
             var variant = await _unitOfWork.VariantRepository.GetVariantAsync(variantId);
             if (variant == null) return NotFound();
-            int status = variant.Status;
-            _unitOfWork.VariantRepository.ToggleStatusVariant(variant);
+            
+            _unitOfWork.VariantRepository.DeleteVariant(variant);
             if (await _unitOfWork.Complete())
             {
-                if (status == (int)VariantStatus.Deleted)
-                {
-                    TempData["success"] = "The variant has been recoverd successfully.";
-                    return Ok();
-                }
-                else
-                {
-                    TempData["success"] = "The variant has been deleted successfully.";
-                    return Ok();
-                }
+                TempData["success"] = "The variant has been deleted successfully.";
+                return Ok();
             }
             return BadRequest("Something wrong");
         }
@@ -270,7 +313,7 @@ namespace CozaStore.Areas.Admin.Controllers
             if (await _unitOfWork.Complete())
             {
                 TempData["success"] = "The img has been set main successfully.";
-                return RedirectToAction(nameof(Detail), new { id = product.Id });
+                return Ok();
             }
             return BadRequest("Problem set main image");
         }
@@ -296,7 +339,7 @@ namespace CozaStore.Areas.Admin.Controllers
             if (await _unitOfWork.Complete())
             {
                 TempData["success"] = "The img has been deleted successfully.";
-                return RedirectToAction(nameof(Detail), new { id = product.Id });
+                return Ok();
             }
 
             return BadRequest("Problem deleting image");

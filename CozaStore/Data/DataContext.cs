@@ -1,6 +1,7 @@
 ﻿using CozaStore.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace CozaStore.Data
 {
@@ -17,5 +18,11 @@ namespace CozaStore.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Variant> Variants { get; set; }
         public DbSet<Image> Images { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<ProductCategory>().HasKey(x => new { x.ProductId, x.CategoryId });
+        }
     }
 }
