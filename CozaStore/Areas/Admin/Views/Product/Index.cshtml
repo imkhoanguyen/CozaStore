@@ -43,7 +43,7 @@
             <div class="col-12 col-md">
                 <select asp-for="SelectedCategory" class="form-select">
                     <option disabled selected>Category</option>
-                    @foreach (var category in Model.Categories)
+                    @foreach (var category in Model.CategoryList)
                     {
                         <option value="@category.Id">@category.Name</option>
                     }
@@ -53,7 +53,7 @@
             <div class="col-12 col-md">
                 <select asp-for="SelectedSize" class="form-select">
                     <option disabled selected>Size</option>
-                    @foreach (var size in Model.Sizes)
+                    @foreach (var size in Model.SizeList)
                     {
                         <option value="@size.Id">@size.Name</option>
                     }
@@ -63,7 +63,7 @@
             <div class="col-12 col-md">
                 <select asp-for="SelectedColor" class="form-select">
                     <option value="" disabled selected>Color</option>
-                    @foreach (var color in Model.Colors)
+                    @foreach (var color in Model.ColorList)
                     {
                         <option value="@color.Id" data-color="@color.Name">@color.Name</option>
                     }
@@ -73,12 +73,13 @@
             <div class="col-12 col-md">
                 <select asp-for="SelectedPriceRange" class="form-select">
                     <option disabled selected>Price</option>
-                    @foreach (var price in Model.PriceRanges)
+                    @foreach (var price in Model.PriceRangeList)
                     {
                         <option value="@price">@price</option>
                     }
                 </select>
             </div>
+
             <div class="col-12 col-md">
                 <button type="submit" class="btn btn-primary">Apply Filter</button>
             </div>
@@ -96,35 +97,35 @@
                     <td>
                         <a asp-action="Index" asp-route-sortOrder="@Model.IdSortParm"
                            asp-route-searchString="@Model.CurrentFilter"
-                           asp-route-selectedCategory="@Model.SelectedCategory"
                            asp-route-selectedPriceRange="@Model.SelectedPriceRange"
                            asp-route-selectedColor="@Model.SelectedColor"
-                           asp-route-selectedSize="@Model.SelectedSize">ID</a>
+                           asp-route-selectedSize="@Model.SelectedSize"
+                           asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)">ID</a>
                     </td>
                     <td>Image</td>
                     <td style="width: 40%">
                         <a asp-action="Index" asp-route-sortOrder="@Model.NameSortParm"
                            asp-route-searchString="@Model.CurrentFilter"
-                           asp-route-selectedCategory="@Model.SelectedCategory"
                            asp-route-selectedPriceRange="@Model.SelectedPriceRange"
                            asp-route-selectedColor="@Model.SelectedColor"
-                           asp-route-selectedSize="@Model.SelectedSize">Name</a>
+                           asp-route-selectedSize="@Model.SelectedSize"
+                           asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)">Name</a>
                     </td>
                     <td>
                         <a asp-action="Index" asp-route-sortOrder="@Model.PriceSortParm"
                            asp-route-searchString="@Model.CurrentFilter"
-                           asp-route-selectedCategory="@Model.SelectedCategory"
                            asp-route-selectedPriceRange="@Model.SelectedPriceRange"
                            asp-route-selectedColor="@Model.SelectedColor"
-                           asp-route-selectedSize="@Model.SelectedSize">Price</a>
+                           asp-route-selectedSize="@Model.SelectedSize"
+                           asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)">Price</a>
                     </td>
                     <td>
                         <a asp-action="Index" asp-route-sortOrder="@Model.StatusSortParm"
                            asp-route-searchString="@Model.CurrentFilter"
-                           asp-route-selectedCategory="@Model.SelectedCategory"
                            asp-route-selectedPriceRange="@Model.SelectedPriceRange"
                            asp-route-selectedColor="@Model.SelectedColor"
-                           asp-route-selectedSize="@Model.SelectedSize">Status</a>
+                           asp-route-selectedSize="@Model.SelectedSize"
+                           asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)">Status</a>
                     </td>
                     <td>Actions</td>
                 </tr>
@@ -221,10 +222,10 @@
                 <li class="mx-1 page-item @firstDisabled">
                     <a class="rounded page-link"
                        asp-route-sortOrder="@Model.CurrentSort" asp-route-searchString="@Model.CurrentFilter"
-                       asp-route-selectedCategory="@Model.SelectedCategory"
                        asp-route-selectedPriceRange="@Model.SelectedPriceRange"
                        asp-route-selectedColor="@Model.SelectedColor"
                        asp-route-selectedSize="@Model.SelectedSize"
+                       asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)"
                        asp-route-page="1">
                         <span>First</span>
                     </a>
@@ -232,10 +233,10 @@
                 <li class="mx-1 page-item @prevDisabled">
                     <a class="rounded page-link"
                        asp-route-sortOrder="@Model.CurrentSort" asp-route-searchString="@Model.CurrentFilter"
-                       asp-route-selectedCategory="@Model.SelectedCategory"
                        asp-route-selectedPriceRange="@Model.SelectedPriceRange"
                        asp-route-selectedColor="@Model.SelectedColor"
                        asp-route-selectedSize="@Model.SelectedSize"
+                       asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)"
                        asp-route-page="@(Model.Products.PageIndex - 1)">
                         <i class="fa-solid fa-chevron-left"></i>
                     </a>
@@ -245,20 +246,20 @@
                     <li class="mx-1 page-item">
                         <a class="rounded page-link @(Model.Products.PageIndex == i ? "active" : "")"
                            asp-route-sortOrder="@Model.CurrentSort" asp-route-searchString="@Model.CurrentFilter"
-                           asp-route-selectedCategory="@Model.SelectedCategory"
                            asp-route-selectedPriceRange="@Model.SelectedPriceRange"
                            asp-route-selectedColor="@Model.SelectedColor"
                            asp-route-selectedSize="@Model.SelectedSize"
+                           asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)"
                            asp-route-page="@(i)"> @i</a>
                     </li>
                 }
                 <li class="mx-1 page-item @nextDisabled">
                     <a class="rounded page-link"
                        asp-route-sortOrder="@Model.CurrentSort" asp-route-searchString="@Model.CurrentFilter"
-                       asp-route-selectedCategory="@Model.SelectedCategory"
                        asp-route-selectedPriceRange="@Model.SelectedPriceRange"
                        asp-route-selectedColor="@Model.SelectedColor"
                        asp-route-selectedSize="@Model.SelectedSize"
+                       asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)"
                        asp-route-page="@(Model.Products.PageIndex + 1)">
                         <i class="fa-solid fa-chevron-right"></i>
                     </a>
@@ -266,10 +267,10 @@
                 <li class="mx-1 page-item @lastDisabled">
                     <a class="rounded page-link"
                        asp-route-sortOrder="@Model.CurrentSort" asp-route-searchString="@Model.CurrentFilter"
-                       asp-route-selectedCategory="@Model.SelectedCategory"
                        asp-route-selectedPriceRange="@Model.SelectedPriceRange"
                        asp-route-selectedColor="@Model.SelectedColor"
                        asp-route-selectedSize="@Model.SelectedSize"
+                       asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)"
                        asp-route-page="@(Model.Products.TotalPages)">
                         <span>Last</span>
                     </a>

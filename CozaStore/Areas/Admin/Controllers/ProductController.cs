@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CozaStore.Helpers.Enum;
 using Microsoft.CodeAnalysis;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
@@ -21,42 +22,44 @@ namespace CozaStore.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
             _imageService = imageService;
         }
-        public async Task<IActionResult> Index(string sortOrder, string searchString, int selectedCategory,
-            int selectedStatus, string selectedPriceRange, int selectedColor, int selectedSize, int page = 1)
+        public async Task<IActionResult> Index(ProductParams productParams)
         {
             var categories = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
             var colors = await _unitOfWork.ColorRepository.GetAllColorsAsync();
             var sizes = await _unitOfWork.SizeRepository.GetAllSizesAsync();
+            if (!string.IsNullOrEmpty(productParams.SelectedCategoryString))
+            {
+                productParams.SelectedCategory = productParams.SelectedCategoryString
+                    .Split(',')
+                    .Select(int.Parse)
+                    .ToList();
+            }
 
-            ViewData["CurrentSort"] = sortOrder;
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["IdSortParm"] = sortOrder == "id" ? "id_desc" : "id";
-            ViewData["PriceSortParm"] = sortOrder == "price" ? "price_desc" : "price";
-            ViewData["StatusSortParm"] = sortOrder == "status" ? "status_desc" : "status";
-            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentSort"] = productParams.SortOrder;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(productParams.SortOrder) ? "name_desc" : "";
+            ViewData["IdSortParm"] = productParams.SortOrder == "id" ? "id_desc" : "id";
+            ViewData["PriceSortParm"] = productParams.SortOrder == "price" ? "price_desc" : "price";
+            ViewData["StatusSortParm"] = productParams.SortOrder == "status" ? "status_desc" : "status";
+            ViewData["CurrentFilter"] = productParams.SearchString;
 
-            var products = await _unitOfWork.ProductRepository
-                .GetAllProductsAsync(sortOrder, searchString, selectedCategory,
-             selectedStatus, selectedPriceRange, selectedSize, selectedColor, page, _pageSize);
+            var products = await _unitOfWork.ProductRepository.GetAllProductsAsync(productParams);
 
             var vm = new ProductVM
             {
                 Products = products,
-                CurrentSort = sortOrder,
+                CurrentSort = productParams.SortOrder,
                 NameSortParm = ViewData["NameSortParm"].ToString(),
                 IdSortParm = ViewData["IdSortParm"].ToString(),
                 PriceSortParm = ViewData["PriceSortParm"].ToString(),
                 StatusSortParm = ViewData["StatusSortParm"].ToString(),
-                CurrentFilter = searchString,
-                SelectedCategory = selectedCategory,
-                SelectedStatus = selectedStatus,
-                SelectedColor = selectedColor,
-                SelectedSize = selectedSize,
-                SelectedPriceRange = selectedPriceRange,
-                Categories = categories.ToList(),
-                Sizes = sizes.ToList(),
-                Colors = colors.ToList(),
-                PriceRanges = SD.PriceRangeList
+                CurrentFilter = productParams.SearchString,
+                SelectedColor = productParams.SelectedColor,
+                SelectedSize = productParams.SelectedSize,
+                SelectedPriceRange = productParams.SelectedPriceRange,
+                SelectedCategory = productParams.SelectedCategory,
+                CategoryList = categories.ToList(),
+                SizeList = sizes.ToList(),
+                ColorList = colors.ToList(),
             };
 
             return View(vm);

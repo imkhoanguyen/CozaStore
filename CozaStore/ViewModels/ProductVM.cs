@@ -13,15 +13,13 @@ namespace CozaStore.ViewModels
         public string? PriceSortParm { get; set; }
         public string? StatusSortParm { get; set; }
         public string? CurrentFilter { get; set; }
-        public int SelectedStatus { get; set; }
         public string? SelectedPriceRange { get; set; }
         public int SelectedColor { get; set; }
-        public int SelectedCategory { get; set; }
         public int SelectedSize { get; set; }
-        public List<Category>? Categories { get; set; }
-        public List<StatusDto>? Statuses { get; set; }
-        public List<Color>? Colors { get; set; }
-        public List<string>? PriceRanges { get; set; }
-        public List<Size>? Sizes { get; set; }
+        public List<int>? SelectedCategory { get; set; }
+        public IEnumerable<Category>? CategoryList { get; set; }
+        public IEnumerable<Color>? ColorList { get; set; }
+        public IEnumerable<string>? PriceRangeList { get; set; } = SD.PriceRangeList;
+        public IEnumerable<Size>? SizeList { get; set; }
     }
 }

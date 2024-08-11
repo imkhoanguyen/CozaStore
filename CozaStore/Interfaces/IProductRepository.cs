@@ -5,7 +5,7 @@ namespace CozaStore.Interfaces
 {
     public interface IProductRepository
     {
-        Task<PagedList<Product>> GetAllProductsAsync(string sortOrder, string searchString, int categoryId, int status, string priceRange, int sizeId, int colorId, int page, int pageSize);
+        Task<PagedList<Product>> GetAllProductsAsync(ProductParams productParams);
         void AddProduct(Product product);
 
         Task<Product?> GetProductAsync(int id);
