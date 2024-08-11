@@ -7,7 +7,7 @@ namespace CozaStore.Models
     {
         public int Id { get; set; }
         public required string Name { get; set; }
-        public bool? IsDelete { get; set; } = false;
+        public bool IsDelete { get; set; } = false;
     }
 
 }

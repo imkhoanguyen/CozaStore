@@ -19,7 +19,12 @@ namespace CozaStore.Data
 
         public void DeleteCategory(Category category)
         {
-            _context.Categories.Remove(category);
+            var categoryFromDb = _context.Categories.FirstOrDefault(c => c.Id == category.Id);
+            if(categoryFromDb != null)
+            {
+                if (categoryFromDb.IsDelete) categoryFromDb.IsDelete = false;
+                else categoryFromDb.IsDelete = true;
+            }
         }
 
         public async Task<PagedList<Category>> GetAllCategoriesAsync(string searchString, int pageNumber = 1)
@@ -30,8 +35,6 @@ namespace CozaStore.Data
             {
                 query = query.Where(x => x.Name.ToLower().Contains(searchString.ToLower())
                         || x.Id.ToString() == searchString);
-
-
             }
 
             if (pageNumber < 1) pageNumber = 1;

@@ -36,7 +36,6 @@ namespace CozaStore.Areas.Admin.Controllers
                     TempData["success"] = "The size has been created successfully.";
                     return RedirectToAction(nameof(Index));
                 }
-
             }
             return View();
         }
@@ -45,7 +44,7 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             var size = await _unitOfWork.SizeRepository.GetSizeAsync(id);
             if (size != null) return View(size);
-            return RedirectToAction("Error", "Dashboard");
+            return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Size not found" });
 
         }
 
@@ -75,21 +74,20 @@ namespace CozaStore.Areas.Admin.Controllers
 
                 if (await _unitOfWork.Complete())
                 {
-                    if (!isDelte)
+                    if (isDelte)
                     {
-                        TempData["success"] = "The size has been deleted successfully.";
-                        return Json(new { message = "success" });
+                        TempData["success"] = "The size has been reverted successfully.";
+                        return NoContent();
                     }
                     else
                     {
-                        TempData["success"] = "The size has been recoverd successfully.";
-                        return RedirectToAction(nameof(Index));
+                        TempData["success"] = "The size has been deleted successfully.";
+                        return NoContent();
                     }
-
                 }
             }
-            TempData["error"] = "Can not find size";
-            return Json(new { message = "fail" });
+            TempData["error"] = "Size not found!!!";
+            return NoContent();
         }
     }
 }

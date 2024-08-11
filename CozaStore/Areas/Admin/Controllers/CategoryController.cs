@@ -34,29 +34,35 @@ namespace CozaStore.Areas.Admin.Controllers
             {
                 _unitOfWork.CategoryRepository.AddCategory(category);
 
-                if (await _unitOfWork.Complete()) return RedirectToAction(nameof(Index));
+                if (await _unitOfWork.Complete())
+                {
+                    TempData["success"] = "The category has been created successfully.";
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View();
         }
 
-        public async Task<IActionResult> Update(int categoryId)
+        public async Task<IActionResult> Edit(int categoryId)
         {
             var category = await _unitOfWork.CategoryRepository.GetCategoryAsync(categoryId);
-            if(category != null)
-            {
-                return View(category);
-            }
-            return RedirectToAction(nameof(Index));
+            if (category == null)
+                return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Category not found" });
+            return View(category);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(Category category)
+        public async Task<IActionResult> Edit(Category category)
         {
-            if(category != null && ModelState.IsValid)
+            if (category != null && ModelState.IsValid)
             {
                 _unitOfWork.CategoryRepository.UpdateCategory(category);
 
-                if (await _unitOfWork.Complete()) return RedirectToAction(nameof(Index));
+                if (await _unitOfWork.Complete())
+                {
+                    TempData["success"] = "The category has been edited successfully.";
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View();
         }
@@ -65,15 +71,33 @@ namespace CozaStore.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int categoryId)
         {
             var category = await _unitOfWork.CategoryRepository.GetCategoryAsync(categoryId);
-            if(category != null)
+            if (category != null)
             {
+                bool isDeleted = category.IsDelete;
+
                 _unitOfWork.CategoryRepository.DeleteCategory(category);
 
-                if(await _unitOfWork.Complete())
-                    return Json(new { message = "Xóa thành công" });
+                if (await _unitOfWork.Complete())
+                {
+                    if (isDeleted)
+                    {
+                        TempData["success"] = "The category has been reverted successfully.";
+                        return NoContent();
+                    } else
+                    {
+                        TempData["success"] = "The category has been deleted successfully.";
+                        return NoContent();
+                    }
+                        
+                }
+
+                TempData["error"] = "Problem delete category!!!";
+                return NoContent();
+
             }
-            return Json(new { message = "Xóa thất bại" });
+            TempData["error"] = "Category not found!!!";
+            return NoContent();
         }
-        
+
     }
 }

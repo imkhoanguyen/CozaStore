@@ -11,11 +11,5 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             return View();
         }
-
-        [Route("/error")]
-        public IActionResult Error()
-        {
-            return View();
-        }
     }
 }
