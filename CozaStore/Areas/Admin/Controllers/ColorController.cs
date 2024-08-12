@@ -44,7 +44,7 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             var color = await _unitOfWork.ColorRepository.GetColorAsync(id);
             if (color != null) return View(color);
-            return RedirectToAction("Error", "Dashboard");
+            return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Color not found" });
         }
 
         [HttpPost]
@@ -74,21 +74,21 @@ namespace CozaStore.Areas.Admin.Controllers
 
                 if (await _unitOfWork.Complete())
                 {
-                    if (!isDelte)
+                    if (isDelte)
                     {
-                        TempData["success"] = "The color has been deleted successfully.";
+                        TempData["success"] = "The color has been reverted successfully.";
                         return Json(new { message = "success" });
                     }
                     else
                     {
-                        TempData["success"] = "The color has been recoverd successfully.";
-                        return RedirectToAction(nameof(Index));
+                        TempData["success"] = "The color has been deleted successfully.";
+                        return NoContent();
                     }
 
                 }
             }
-            TempData["error"] = "Can not find color";
-            return Json(new { message = "fail" });
+            TempData["error"] = "Color not found!!!";
+            return NoContent();
         }
     }
 }

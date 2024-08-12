@@ -27,6 +27,7 @@ namespace CozaStore.Areas.Admin.Controllers
             var categories = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
             var colors = await _unitOfWork.ColorRepository.GetAllColorsAsync();
             var sizes = await _unitOfWork.SizeRepository.GetAllSizesAsync();
+
             if (!string.IsNullOrEmpty(productParams.SelectedCategoryString))
             {
                 productParams.SelectedCategory = productParams.SelectedCategoryString
@@ -69,6 +70,8 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             ProductCreateVM vm = new ProductCreateVM();
             vm.CategoryList = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
+            if (vm.CategoryList.Count() < 1)
+                return RedirectToAction("GetBadRequest", "Buggy", new { area = "", message = "Category is empty. Please add category and come back!!!" });
             return View(vm);
         }
 
@@ -85,7 +88,8 @@ namespace CozaStore.Areas.Admin.Controllers
                         var resultUpload = await _imageService.AddImageAsync(img);
                         if (resultUpload.Error != null)
                         {
-                            TempData["error"] = "Error uploading image. Try again!";
+                            TempData["error"] = resultUpload.Error.Message;
+                            vm.CategoryList = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
                             return View();
                         }
                         var productImg = new Image
@@ -97,14 +101,11 @@ namespace CozaStore.Areas.Admin.Controllers
                         vm.Product.Images.Add(productImg);
                         _unitOfWork.ProductRepository.AddProduct(vm.Product);
                     }
-                } else
-                {
-                    return View();
                 }
 
-                if(vm.SelectedCategory != null && vm.SelectedCategory.Count > 0)
+                if (vm.SelectedCategory != null && vm.SelectedCategory.Count > 0)
                 {
-                   foreach(int categoryId in vm.SelectedCategory)
+                    foreach (int categoryId in vm.SelectedCategory)
                     {
                         var productCategory = new ProductCategory
                         {
@@ -122,6 +123,7 @@ namespace CozaStore.Areas.Admin.Controllers
                 }
 
             }
+            vm.CategoryList = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
             return View();
         }
 
@@ -129,11 +131,14 @@ namespace CozaStore.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var product = await _unitOfWork.ProductRepository.GetProductAsync(id);
-            if (product == null) return NotFound();
+            if (product == null)
+                return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Product not found!!!" });
             ProductCreateVM vm = new ProductCreateVM();
             vm.Product = product;
+            vm.SelectedCategory = product.ProductCategories.Select(x => x.CategoryId).ToList();
             vm.CategoryList = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
-            vm.SelectedCategory = product.ProductCategories.Select(x=>x.CategoryId).ToList();
+            if (vm.CategoryList.Count() < 1)
+                return RedirectToAction("GetBadRequest", "Buggy", new { area = "", message = "Category is empty. Please add category and come back!!!" });
             return View(vm);
         }
 
@@ -143,7 +148,8 @@ namespace CozaStore.Areas.Admin.Controllers
             if (ModelState.IsValid && vm.Product.Id > 0)
             {
                 var productFromDb = await _unitOfWork.ProductRepository.GetProductAsync(vm.Product.Id);
-                if(productFromDb == null) return NotFound();
+                if (productFromDb == null)
+                    return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Product not found!!!" });
                 var existingCategoryIds = productFromDb.ProductCategories.Select(pc => pc.CategoryId).ToList();
 
                 var categoriesToRemove = existingCategoryIds.Except(vm.SelectedCategory).ToList();
@@ -169,7 +175,7 @@ namespace CozaStore.Areas.Admin.Controllers
                     };
                     productFromDb.ProductCategories.Add(productCategory);
                 }
-                
+
                 _unitOfWork.ProductRepository.UpdateProduct(vm.Product);
 
                 if (await _unitOfWork.Complete())
@@ -187,28 +193,32 @@ namespace CozaStore.Areas.Admin.Controllers
         public async Task<IActionResult> ToggleProductStatus(int productId)
         {
             var product = await _unitOfWork.ProductRepository.GetProductAsync(productId);
-            if (product == null) return NotFound();
+            if (product == null)
+                return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Product not found!!!" });
             int status = product.Status;
             _unitOfWork.ProductRepository.ToggleProductStatus(product);
             if (await _unitOfWork.Complete())
             {
                 if (status == (int)ProductStatus.Deleted)
                 {
-                    TempData["success"] = "The variant has been recoverd successfully.";
-                    return Ok();
+                    TempData["success"] = "The product has been recoverd successfully.";
+                    return NoContent();
                 }
                 else
                 {
-                    TempData["success"] = "The variant has been deleted successfully.";
-                    return Ok();
+                    TempData["success"] = "The product has been deleted successfully.";
+                    return NoContent();
                 }
             }
-            return BadRequest("Something wrong");
+            TempData["error"] = "Problem delete/revert product";
+            return NoContent();
         }
 
         public async Task<IActionResult> Detail(int id)
         {
             var product = await _unitOfWork.ProductRepository.GetProductDetailAsync(id);
+            if (product == null)
+                return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Product not found!!!" });
             return View(product);
         }
 
@@ -223,6 +233,13 @@ namespace CozaStore.Areas.Admin.Controllers
                 SizeList = await _unitOfWork.SizeRepository.GetAllSizesAsync(),
                 Variant = variant
             };
+
+            if (vm.ColorList.Count() < 1)
+                return RedirectToAction("GetBadRequest", "Buggy", new { area = "", message = "Color is empty. Please add category and come back!!!" });
+
+            if (vm.SizeList.Count() < 1)
+                return RedirectToAction("GetBadRequest", "Buggy", new { area = "", message = "Size is empty. Please add category and come back!!!" });
+
             return View("variantcreate", vm);
         }
 
@@ -233,10 +250,7 @@ namespace CozaStore.Areas.Admin.Controllers
             {
                 var product = await _unitOfWork.ProductRepository.GetProductAsync(vm.Variant.ProductId);
                 if (product == null)
-                {
-                    TempData["error"] = "Something wrong";
-                    return BadRequest();
-                }
+                    return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Product not found!!!" });
 
                 product.Variants.Add(vm.Variant);
 
@@ -246,6 +260,8 @@ namespace CozaStore.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Detail), new { id = vm.Variant.ProductId });
                 }
             }
+            vm.SizeList = await _unitOfWork.SizeRepository.GetAllSizesAsync();
+            vm.ColorList = await _unitOfWork.ColorRepository.GetAllColorsAsync();
             return View();
         }
 
@@ -280,22 +296,29 @@ namespace CozaStore.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Detail), new { id = vm.Variant.ProductId });
                 }
             }
+            vm.SizeList = await _unitOfWork.SizeRepository.GetAllSizesAsync();
+            vm.ColorList = await _unitOfWork.ColorRepository.GetAllColorsAsync();
             return View();
         }
 
-        [HttpPost]
+        [HttpDelete]
         public async Task<IActionResult> DeleteVariant(int variantId)
         {
             var variant = await _unitOfWork.VariantRepository.GetVariantAsync(variantId);
-            if (variant == null) return NotFound();
-            
+            if (variant == null)
+            {
+                TempData["error"] = "Variant not found!!!";
+                return NoContent();
+            }
+
             _unitOfWork.VariantRepository.DeleteVariant(variant);
             if (await _unitOfWork.Complete())
             {
                 TempData["success"] = "The variant has been deleted successfully.";
-                return Ok();
+                return NoContent();
             }
-            return BadRequest("Something wrong");
+            TempData["error"] = "Problem delete variant!!!";
+            return NoContent();
         }
 
 
@@ -303,10 +326,18 @@ namespace CozaStore.Areas.Admin.Controllers
         public async Task<IActionResult> SetMainImage(int productId, int imgId)
         {
             var product = await _unitOfWork.ProductRepository.GetProductAsync(productId);
-            if (product == null) return NotFound();
+            if (product == null)
+            {
+                TempData["error"] = "Product not found!!!";
+                return NoContent();
+            }
 
             var img = product.Images.FirstOrDefault(x => x.Id == imgId);
-            if (img == null || img.IsMain) return BadRequest("Can not use this as main image");
+            if (img == null || img.IsMain)
+            {
+                TempData["error"] = "Can not use this as main image";
+                return NoContent();
+            }
 
             var currentMain = product.Images.FirstOrDefault(x => x.IsMain);
             if (currentMain != null) currentMain.IsMain = false;
@@ -316,25 +347,38 @@ namespace CozaStore.Areas.Admin.Controllers
             if (await _unitOfWork.Complete())
             {
                 TempData["success"] = "The img has been set main successfully.";
-                return Ok();
+                return NoContent();
             }
-            return BadRequest("Problem set main image");
+            TempData["error"] = "Problem set main image!!!";
+            return NoContent();
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteImage(int productId, int imgId)
         {
             var product = await _unitOfWork.ProductRepository.GetProductAsync(productId);
-            if (product == null) return NotFound();
+            if (product == null)
+            {
+                TempData["error"] = "Product not found!!!";
+                return NoContent();
+            }
 
             var img = product.Images.FirstOrDefault(x => x.Id == imgId);
             var listImg = product.Images.ToList();
-            if (img == null || img.IsMain || listImg.Count == 1) return BadRequest("This image cannot be deleted");
+            if (img == null || img.IsMain || listImg.Count == 1)
+            {
+                TempData["error"] = "This image cannot be delete!!!";
+                return NoContent();
+            }
 
             if (img.ProductId != null)
             {
                 var result = await _imageService.DeleteImageAsync(img.PublicId);
-                if (result.Error != null) return BadRequest(result.Error.Message);
+                if (result.Error != null)
+                {
+                    TempData["error"] = result.Error.Message;
+                    return NoContent();
+                }
             }
 
             product.Images.Remove(img);
@@ -342,10 +386,10 @@ namespace CozaStore.Areas.Admin.Controllers
             if (await _unitOfWork.Complete())
             {
                 TempData["success"] = "The img has been deleted successfully.";
-                return Ok();
+                return NoContent();
             }
-
-            return BadRequest("Problem deleting image");
+            TempData["error"] = "Problem deleting image";
+            return NoContent();
         }
 
         public IActionResult AddImages(int productId)
@@ -361,20 +405,16 @@ namespace CozaStore.Areas.Admin.Controllers
             if (vm != null && vm.ProductId > 0)
             {
                 var product = await _unitOfWork.ProductRepository.GetProductAsync(vm.ProductId);
-                if (product == null) return BadRequest();
-
-                if (vm.Images.Count == 0)
-                {
-                    ModelState.AddModelError("Images", "You have not uploaded the image file");
-                    return View();
-                }
+                if (product == null)
+                    return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Product not found!!!" });
 
                 foreach (var img in vm.Images)
                 {
                     var resultUpload = await _imageService.AddImageAsync(img);
                     if (resultUpload.Error != null)
                     {
-                        TempData["error"] = "Error uploading image. Try again!";
+                        TempData["error"] = resultUpload.Error.Message;
+                        vm.ProductId = product.Id;
                         return View();
                     }
                     var productImg = new Image
@@ -392,7 +432,7 @@ namespace CozaStore.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Detail), new { id = vm.ProductId });
                 }
             }
-            return View(vm);
+            return View();
         }
     }
 }
