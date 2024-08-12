@@ -1,13 +1,10 @@
 ﻿using CozaStore.Models;
 using CozaStore.Helpers;
 using CozaStore.Interfaces;
-using CozaStore.Services;
 using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using CozaStore.Helpers.Enum;
 using Microsoft.CodeAnalysis;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
