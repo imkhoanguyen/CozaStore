@@ -1,0 +1,57 @@
+﻿@model RegisterVM
+<div class="container pt-5">
+    <div class="card border shadow">
+        <div class="card-header bg-primary text-white p-3">
+            <h3 class="text-center">Register</h3>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="text-danger" asp-validation-summary="All"></div>
+                <div class="mb-3">
+                    <label asp-for="UserName"></label>
+                    <input class="form-control" asp-for="UserName" />
+                    <span class="text-danger" asp-validation-for="UserName"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email"></label>
+                    <input class="form-control" asp-for="Email" />
+                    <span class="text-danger" asp-validation-for="Email"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Gender"></label>
+                    <select class="form-select" asp-for="Gender">
+                        <option selected disabled>Choose Gender</option>
+                        <option value="0">Male</option>
+                        <option value="1">Female</option>
+                        <option value="2">Other</option>
+                    </select>
+                    <span class="text-danger" asp-validation-for="Email"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password"></label>
+                    <input type="password" class="form-control" asp-for="Password" />
+                    <span class="text-danger" asp-validation-for="Password"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ComfirmPassword"></label>
+                    <input type="password" class="form-control" asp-for="ComfirmPassword" />
+                    <span class="text-danger" asp-validation-for="ComfirmPassword"></span>
+                </div>
+
+
+                <div class="mb-3">
+                    <input type="submit" class="btn btn-primary" value="Register" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

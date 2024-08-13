@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CozaStore.styles.css" asp-append-version="true" />
     <link rel="icon" type="image/png" href="~/img/favicon.png" />
+    @* Icon *@
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.css" />
 	<!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="~/css/fonts/iconic/css/material-design-iconic-font.min.css">
     <link rel="stylesheet" type="text/css" href="~/css/fonts/linearicons-v1.0.0/icon-font.min.css">
@@ -30,7 +32,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between mtext-110">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -48,6 +50,7 @@
                             <a class="nav-link text-dark" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin</a>
                         </li>
                     </ul>
+                    <partial name="_LoginStatusPartial" />
                 </div>
             </div>
         </nav>

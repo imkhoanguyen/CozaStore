@@ -3,7 +3,9 @@ using CozaStore.Data.Seed;
 using CozaStore.Helpers;
 using CozaStore.Interfaces;
 using CozaStore.Middleware;
+using CozaStore.Models;
 using CozaStore.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
@@ -16,6 +18,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataContext>(option => 
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ISizeRepository, SizeRepository>();
 builder.Services.AddScoped<IColorRepository, ColorRepository>();
@@ -25,6 +28,11 @@ builder.Services.AddScoped<IVariantRepository, VariantRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
+
+
+//identity services
+builder.Services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<DataContext>();
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
@@ -42,6 +50,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 
