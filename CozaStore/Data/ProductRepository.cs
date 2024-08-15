@@ -38,7 +38,7 @@ namespace CozaStore.Data
             if (productParams.SelectedColor > 0) query = query.Where(x => x.Variants.Any(x => x.ColorId == productParams.SelectedColor));
             if (productParams.SelectedSize > 0) query = query.Where(x => x.Variants.Any(x => x.SizeId == productParams.SelectedSize));
 
-            if(productParams.SelectedCategory != null && productParams.SelectedCategory.Count > 0)
+            if (productParams.SelectedCategory != null && productParams.SelectedCategory.Count > 0)
             {
                 query = query.Where(x => x.ProductCategories
                               .Any(pc => productParams.SelectedCategory.Contains(pc.CategoryId)));
@@ -55,8 +55,8 @@ namespace CozaStore.Data
                     "$100-$150" => query.Where(x => (x.Price > 100 && x.Price <= 150) || (x.PriceSell > 100 && x.PriceSell <= 150)
                     || x.Variants.Any(x => (x.Price > 100 && x.Price <= 150) || (x.PriceSell > 100 && x.PriceSell <= 150))),
                     "$150-$200" => query.Where(x => x.Price > 150 && x.Price <= 200),
-                    "$200+" => query.Where(x => x.Price > 200 || x.PriceSell > 200 || 
-                    x.Variants.Any(x=> x.Price > 200 || x.PriceSell > 200)),
+                    "$200+" => query.Where(x => x.Price > 200 || x.PriceSell > 200 ||
+                    x.Variants.Any(x => x.Price > 200 || x.PriceSell > 200)),
                     _ => query
                 };
             }
@@ -81,12 +81,41 @@ namespace CozaStore.Data
             return await PagedList<Product>.CreateAsync(query, productParams.Page, productParams.PageNumber);
         }
 
+        public async Task<IEnumerable<Color?>> GetAvailableColorsAsync(int productId, int sizeId)
+        {
+            return await _context.Variants.Include(x=>x.Color).Include(x=>x.Size)
+                    .Where(v => v.ProductId == productId && v.Size.Id == sizeId)
+                    .Select(v => v.Color)
+                    .Distinct()
+                    .ToListAsync() ?? [];
+        }
+
+        public async Task<IEnumerable<Size?>> GetAvailableSizesAsync(int productId, int colorId)
+        {
+            return await _context.Variants.Include(x => x.Color).Include(x => x.Size)
+                    .Where(v => v.ProductId == productId && v.Color.Id == colorId)
+                    .Select(v => v.Size)
+                    .Distinct()
+                    .ToListAsync() ?? [];
+        }
+
+        public async Task<Variant?> GetPriceOfProductAsync(int productId, int colorId, int sizeId)
+        {
+            var variant = await _context.Variants
+                .Include(x => x.Color)
+                .Include(x => x.Size)
+                .FirstOrDefaultAsync(v => v.ProductId == productId && v.SizeId == sizeId && v.ColorId == colorId) ?? null;
+
+            return variant;
+
+        }
+
         public async Task<Product?> GetProductAsync(int id)
         {
             return await _context.Products
             .Include(x => x.Images)
             .Include(x => x.Variants)
-            .Include(x=>x.ProductCategories)
+            .Include(x => x.ProductCategories)
             .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -105,19 +134,19 @@ namespace CozaStore.Data
 
         public void ToggleProductStatus(Product product)
         {
-            var productFromDb = _context.Products.FirstOrDefault(x=>x.Id == product.Id);
+            var productFromDb = _context.Products.FirstOrDefault(x => x.Id == product.Id);
             if (productFromDb != null)
             {
-                if(productFromDb.Status == (int)ProductStatus.Deleted) 
+                if (productFromDb.Status == (int)ProductStatus.Deleted)
                     productFromDb.Status = (int)ProductStatus.Private;
-                else 
+                else
                     productFromDb.Status = (int)ProductStatus.Deleted;
-            } 
+            }
         }
 
         public void UpdateProduct(Product product)
         {
-            var productFromDb = _context.Products.FirstOrDefault(x =>x.Id == product.Id);
+            var productFromDb = _context.Products.FirstOrDefault(x => x.Id == product.Id);
             if (productFromDb != null)
             {
                 productFromDb.Name = product.Name;

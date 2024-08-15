@@ -60,7 +60,7 @@
                 customPaging: function(slick, index) {
                     var linkThumb = $(slick.$slides[index]).data('thumb');
                     var caption = $(slick.$slides[index]).data('caption');
-                    return  '<img src="' + linkThumb + '">' +
+                    return `<img src="${linkThumb}">` +
                             '<span class="caption-dots-slick1">' + caption + '</span>';
                 },
             });

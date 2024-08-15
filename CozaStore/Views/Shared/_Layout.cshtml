@@ -9,13 +9,17 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CozaStore.styles.css" asp-append-version="true" />
     <link rel="icon" type="image/png" href="~/img/favicon.png" />
+    <link rel="stylesheet" href="~/lib/toastr.js/toastr.css" />
     @* Icon *@
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.css" />
 	<!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/css/fonts/linearicons-v1.0.0/icon-font.min.css">
     <link rel="stylesheet" type="text/css" href="~/css/fonts/iconic/css/material-design-iconic-font.min.css">
     <link rel="stylesheet" type="text/css" href="~/css/fonts/linearicons-v1.0.0/icon-font.min.css">
 	<link rel="stylesheet" type="text/css" href="~/css/user/animate.css">
 	<link rel="stylesheet" type="text/css" href="~/css/user/animsition.min.css">
+    <link rel="stylesheet" type="text/css" href="~/css/user/slick.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/user/magnific-popup.css">
 	<link rel="stylesheet" type="text/css" href="~/css/user/util.css">
     <link rel="stylesheet" type="text/css" href="~/css/user/main.css">
     @await RenderSectionAsync("Styles", required: false)
@@ -38,7 +42,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Shop</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="shop" asp-action="index">Shop</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Blog</a>
@@ -58,8 +62,9 @@
 
 
     @* body *@
+    @* @await Html.PartialAsync("~/Areas/Admin/Views/Shared/_Notification.cshtml") *@
     @RenderBody()
-     
+    
 
 
 	<!-- Back to top -->
@@ -73,9 +78,30 @@
    @*  <script src="~/js/user/jquery-3.2.1.min.js"></script> *@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/toastr.js/toastr.min.js"></script>
 	<script src="~/js/user/animsition.min.js"></script>
-	<script src="~/js/user/main.js"></script>
-
+    <script src="~/js/user/jquery.magnific-popup.min.js"></script>
+    <script>
+        $('.gallery-lb').each(function () { // the containers for all your galleries
+            $(this).magnificPopup({
+                delegate: 'a', // the selector for gallery item
+                type: 'image',
+                gallery: {
+                    enabled: true
+                },
+                mainClass: 'mfp-fade mfp-with-zoom'
+            });
+        });
+    </script>
+    <script src="~/js/user/slick.min.js"></script>
+    <script src="~/js/user/slick-custom.js"></script>
+    <script src="~/js/user//parallax100.js"></script>
+    <script src="~/js/user/isotope.pkgd.min.js"></script>
+    <script src="~/js/user/popper.js"></script>
+    <script src="~/js/user/main.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    
+    
 </body>
 </html>

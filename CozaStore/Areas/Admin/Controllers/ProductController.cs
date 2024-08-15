@@ -13,7 +13,6 @@ namespace CozaStore.Areas.Admin.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IImageService _imageService;
-        private const int _pageSize = 10;
         public ProductController(IUnitOfWork unitOfWork, IImageService imageService)
         {
             _unitOfWork = unitOfWork;

@@ -62,7 +62,7 @@
 
             <div class="col-12 col-md">
                 <select asp-for="SelectedColor" class="form-select">
-                    <option value="" disabled selected>Color</option>
+                    <option disabled selected>Color</option>
                     @foreach (var color in Model.ColorList)
                     {
                         <option value="@color.Id" data-color="@color.Name">@color.Name</option>

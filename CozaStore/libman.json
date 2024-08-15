@@ -21,6 +21,11 @@
     {
       "library": "sweetalert2@11.12.4",
       "destination": "wwwroot/sweetalert2/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "OwlCarousel2@2.3.4",
+      "destination": "wwwroot/lib/OwlCarousel2/"
     }
   ]
 }
