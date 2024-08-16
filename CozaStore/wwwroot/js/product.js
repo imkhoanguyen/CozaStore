@@ -1,6 +1,7 @@
 ﻿let productIdGlb = 0;
 let defaultSizeList = [];
 let defaultColorList = [];
+let defaultPrice = 0;
 function GetProductDetail(productId) {
     productIdGlb = productId;
     console.log(productIdGlb);
@@ -13,6 +14,9 @@ function GetProductDetail(productId) {
             $('.js-name-detail').text(data.name);
             $('.product-price').text('$' + data.priceSell);
             $('.product-description').html(data.description); // important @Html.Raw
+
+            defaultPrice = data.priceSell;
+            console.log("defaultprice1: " + defaultPrice);
 
             // Populate size dropdown
             var sizeOptions = '<option value="" selected>Choose an option</option>';
@@ -55,8 +59,11 @@ let selectedColor = '';
 $(document).ready(function () {
     // handle size change
     $('.size-select').on('change', function () {
+        console.log("defaultprice2: " + defaultPrice);
+
+        $('.product-price').text('$' + defaultPrice);
+
         selectedSize = $(this).val();
-        console.log("click size day la colorId: " + selectedColor);
 
         if (!selectedSize) {
             refeshSelect();
@@ -90,8 +97,10 @@ $(document).ready(function () {
 
     // handle color change
     $('.color-select').on('change', function () {
+        console.log("defaultprice3: " + defaultPrice);
+
+        $('.product-price').text('$' + defaultPrice);
         selectedColor = $(this).val();
-        console.log("click color day la sizeId: " + selectedSize);
 
         if (!selectedColor) {
             refeshSelect();
@@ -152,8 +161,7 @@ function getPrice(sizeId, colorId) {
 
 function refeshSelect() {
     selectedColor = '';
-    selectedSize = '';
-
+    selectedSize = ''; 
     //size
     $('.size-select').html('');
     var sizeOptions = '<option value="" selected>Choose an option</option>';
