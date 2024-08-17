@@ -12,6 +12,8 @@ namespace CozaStore.Data
             
         }
 
+        public DbSet<AppUser> AppUser { get; set; }
+        public DbSet<AppRole> AppRole { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Size> Sizes { get; set; }
         public DbSet<Color> Colors { get; set; }

@@ -31,6 +31,7 @@ namespace CozaStore.Data
 
         public IVariantRepository VariantRepository => _variantRepository;
 
+
         public async Task<bool> Complete()
         {
             return await _context.SaveChangesAsync() > 0;

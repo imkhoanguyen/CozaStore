@@ -31,7 +31,7 @@ builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(
 
 
 //identity services
-builder.Services.AddIdentity<AppUser, IdentityRole>()
+builder.Services.AddIdentity<AppUser, AppRole>()
     .AddEntityFrameworkStores<DataContext>();
 
 var app = builder.Build();
