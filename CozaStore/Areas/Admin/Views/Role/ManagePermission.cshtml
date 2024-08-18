@@ -1,0 +1,43 @@
+﻿@model RolePermissionVM
+
+<div class="container">
+    <h3 class="mb-4">Access Permission</h3>
+    <form method="post">
+        <input asp-for="AppRole.Id" hidden />
+        <div class="row mb-5">
+            <div class="col-6">
+                <label asp-for="AppRole.Name" class="form-label"></label>
+                <input asp-for="AppRole.Name" class="form-control" readonly />
+            </div>
+            <div class="col-6">
+                <label asp-for="AppRole.Description" class="form-label"></label>
+                <input asp-for="AppRole.Description" class="form-control" readonly />
+            </div>
+        </div>
+        <div class="row">
+            @foreach (var group in Model.PermissionGroups)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header border-1 bg-primary">
+                            <h5 class="mb-0 text-white">@group.GroupName</h5>
+                        </div>
+                        <div class="card-body mt-3">
+                            @foreach (var permission in group.Permissions)
+                            {
+                                <div class="form-switch d-flex gap-3 mb-2">
+                                    <input type="checkbox" class="form-check-input" id="@permission.ClaimValue" name="SelectedClaimValueList" value="@permission.ClaimValue" @(permission.IsSelected ? "checked" : "") />
+                                    <label class="form-check-label" for="@permission.ClaimValue">@permission.Name</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="d-flex justify-content-end gap-2 pe-1">
+            <a asp-controller="role" asp-action="Index" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </form>
+</div>

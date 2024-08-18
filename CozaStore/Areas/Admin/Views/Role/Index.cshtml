@@ -34,6 +34,7 @@
                     <td>ID</td>
                     <td>Name</td>
                     <td>Description</td>
+                    <td>Permission</td>
                     <td>Actions</td>
                 </tr>
             </thead>
@@ -46,6 +47,11 @@
                                     <td>@role.Id</td>
                                     <td>@role.Name</td>
                                     <td>@role.Description</td>
+                                    <td>
+                                        <a class="btn btn-info" asp-controller="role" asp-action="managepermission" asp-route-roleId="@role.Id">
+                                            Manage
+                                        </a>
+                                    </td>
                                     <td style="color: #fff;">
                                         <a asp-controller="role" asp-action="edit" asp-route-id="@role.Id"
                                             class="btn btn-warning mx-1">

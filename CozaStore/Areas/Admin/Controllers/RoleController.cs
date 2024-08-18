@@ -1,10 +1,13 @@
 ﻿using Azure;
+using CloudinaryDotNet.Actions;
 using CozaStore.Data;
+using CozaStore.DTOs;
 using CozaStore.Helpers;
 using CozaStore.Models;
 using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CozaStore.Areas.Admin.Controllers
@@ -24,9 +27,9 @@ namespace CozaStore.Areas.Admin.Controllers
             if (page < 1) page = 1;
 
             var query = _context.AppRole.AsQueryable();
-            if(!string.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
-                query = query.Where(x=>x.Name!.ToLower().Contains(searchString.ToLower()));
+                query = query.Where(x => x.Name!.ToLower().Contains(searchString.ToLower()));
             }
 
             var role = await PagedList<AppRole>.CreateAsync(query, page, 10);
@@ -114,7 +117,7 @@ namespace CozaStore.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             var role = _context.AppRole.Find(id);
-            if(role == null) 
+            if (role == null)
                 return RedirectToAction("GeNotFound", "Buggy", new { area = "", message = "Role not found!!!" });
 
             var result = await _roleManager.DeleteAsync(role);
@@ -133,6 +136,74 @@ namespace CozaStore.Areas.Admin.Controllers
                 TempData["error"] = errorStr;
                 return NoContent();
             }
+        }
+
+        public async Task<IActionResult> ManagePermission(string roleId)
+        {
+            var role = await _context.AppRole.FindAsync(roleId);
+            var roleClaimList = await _context.RoleClaims.Where(rc => rc.RoleId == roleId).ToListAsync();
+
+            var perrmissionGroup = ClaimStore.AllPermissionGroups
+                 .Select(group => new PermissionGroupDto
+                 {
+                     GroupName = group.GroupName,
+                     Permissions = group.Permissions.Select(permissionItem => new PermissionItemDto
+                     {
+                         Name = permissionItem.Name,
+                         ClaimValue = permissionItem.ClaimValue,
+                         IsSelected = roleClaimList.Any(rc => rc.ClaimValue == permissionItem.ClaimValue)
+                     }).ToList()
+                 }).ToList();
+
+            var vm = new RolePermissionVM
+            {
+                AppRole = role,
+                PermissionGroups = perrmissionGroup,
+            };
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ManagePermission(RolePermissionVM vm)
+        {
+            var roleClaimList = await _context.RoleClaims.Where(rc => rc.RoleId == vm.AppRole.Id).ToListAsync();
+            var selectedClaimValueList = vm.SelectedClaimValueList;
+
+            var claimValueToAdd = selectedClaimValueList.Except(roleClaimList.Select(rc => rc.ClaimValue));
+            var claimValueToDelete = roleClaimList.Select(rc => rc.ClaimValue).Except(selectedClaimValueList);
+
+            var listClaimToAdd = claimValueToAdd.Select(claimValue => new IdentityRoleClaim<string>
+            {
+                RoleId = vm.AppRole.Id,
+                ClaimType = "Permission",
+                ClaimValue = claimValue
+            }).ToList();
+
+            if(listClaimToAdd.Any())
+                await _context.RoleClaims.AddRangeAsync(listClaimToAdd);
+
+            // cái này là tạo mới nên nó sẽ tạo ra một instance mới của identityRoleClaim nó có id hoặc giá trị tạm thời (id mới) => ko tìm được id để xóa => lỗi
+            //var listClaimToDelete = claimValueToDelete.Select(claimValue => new IdentityRoleClaim<string>
+            //{
+            //    RoleId = vm.AppRole.Id,
+            //    ClaimType = "Permission",
+            //    ClaimValue = claimValue
+            //}).ToList();
+
+            var listClaimToDelete = roleClaimList
+            .Where(rc => claimValueToDelete.Contains(rc.ClaimValue))
+            .ToList();
+
+            if (listClaimToDelete.Any())
+                _context.RoleClaims.RemoveRange(listClaimToDelete);
+
+            if(await _context.SaveChangesAsync() > 0)
+            {
+                TempData["success"] = "Update premission success";
+                return RedirectToAction(nameof(Index));
+            }
+            TempData["error"] = "Update permission error";
+            return RedirectToAction(nameof(Index));
         }
     }
 }
