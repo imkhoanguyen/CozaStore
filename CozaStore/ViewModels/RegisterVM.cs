@@ -6,6 +6,8 @@ namespace CozaStore.ViewModels
     {
         [Display(Name ="Username")]
         public required string UserName { get; set; }
+        public required string FullName { get; set; }
+        public required string PhoneNumber { get; set; }
 
         public required string Password { get; set; }
         [Display(Name ="Comfirm password")]
