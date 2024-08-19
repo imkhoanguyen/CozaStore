@@ -1,5 +1,6 @@
 ﻿using CozaStore.Helpers.Enum;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CozaStore.Models
 {
@@ -10,5 +11,8 @@ namespace CozaStore.Models
         public int Gender { get; set; }
         public string? Image { get; set; }
         public int Status { get; set; } = (int)UserStatus.Active;
+
+        [NotMapped]
+        public string? Role { get; set; }
     }
 }

@@ -14,12 +14,12 @@
             <form method="get" asp-controller="user" asp-action="Index">
                 <div class="d-flex gap-2">
                     <input type="text" name="searchString" class="form-control"
-                           placeholder="Enter name or id of Color"
+                           placeholder="Enter fullname or phone of user"
                            value="@ViewData["searchString"]" />
                     <button type="submit" style="width: 48px;" class="rounded btn btn-outline-dark p-0">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
-                    <a asp-controller="color" asp-action="Index" style="width: 48px;" class="rounded btn btn-info px-0">
+                    <a asp-controller="user" asp-action="Index" style="width: 48px;" class="rounded btn btn-info px-0">
                         <i class="fa-solid fa-arrows-rotate"></i>
                     </a>
                 </div>
@@ -37,6 +37,7 @@
                     <td>Username</td>
                     <td>Email</td>
                     <td>Gender</td>
+                    <td>Role</td>
                     <td>Actions</td>
                 </tr>
             </thead>
@@ -52,6 +53,17 @@
                             <td>@user.UserName</td>
                             <td>@user.Email</td>
                             <td>@(user.Gender == 0 ? "Male" : user.Gender == 1 ? "Female" : "Orther")</td>
+                            <td>@user.Role</td>
+                            <td style="color: #fff;">
+                                <a class="btn btn-info" asp-controller="user" asp-action="managerole" asp-route-userId="@user.Id">Role</a>
+                                <a asp-controller="user" asp-action="edit" asp-route-id="@user.Id"
+                                   class="btn btn-warning mx-1">
+                                    Lock
+                                </a>
+                                <a onclick="Delete('/admin/user/delete/?id=@user.Id')" class="btn btn-danger mx-1">
+                                    Delete
+                                </a>
+                            </td>
                         </tr>
                     }
                 }
@@ -137,28 +149,5 @@
                 }
             })
         }
-
-        function RevertColor(url) {
-            Swal.fire({
-                title: 'Are you sure?',
-                // text: "You won't be able to revert this!",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, revert it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: url,
-                        type: 'post',
-                        success: function () {
-                            window.location.reload();
-                        }
-                    })
-                }
-            })
-        }
-
     </script>
 }
