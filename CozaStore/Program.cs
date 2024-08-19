@@ -72,6 +72,10 @@ try
     ColorSeed.Seed(context);
     CategorySeed.Seed(context);
     SizeSeed.Seed(context);
+    await UserSeed.SeedAsync(services, context);
+    await RoleSeed.SeedAsync(services);
+    await RoleClaimSeed.SeedAsync(context, services);
+    await UserRoleSeed.SeedAsync(services, context);
 
 } catch(Exception ex)
 {

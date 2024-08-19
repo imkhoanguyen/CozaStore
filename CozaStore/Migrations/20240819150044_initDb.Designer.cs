@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CozaStore.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240819074037_initDb")]
+    [Migration("20240819150044_initDb")]
     partial class initDb
     {
         /// <inheritdoc />

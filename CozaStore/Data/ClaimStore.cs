@@ -1,5 +1,6 @@
 ﻿using CozaStore.DTOs;
 using CozaStore.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
 namespace CozaStore.Data
@@ -36,6 +37,47 @@ namespace CozaStore.Data
         public const string User_Create = "User.Create";
         public const string User_Edit = "User.Edit";
         public const string User_Delete = "User.Delete";
+
+
+        public static List<IdentityRoleClaim<string>> adminClaims = new List<IdentityRoleClaim<string>>()
+        {
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Product_View},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Product_Create},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Product_Edit},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Product_Delete},
+
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Category_View},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Category_Create},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Category_Edit},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Category_Delete},
+
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Color_View},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Color_Create},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Color_Edit},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Color_Delete},
+
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Size_View},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Size_Create},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Size_Edit},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Size_Delete},
+
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Role_View},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Role_Create},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Role_Edit},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Role_Delete},
+
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=User_View},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=User_Create},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=User_Edit},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=User_Delete},
+        };
+
+
+        public static List<IdentityRoleClaim<string>> customerClaims = new List<IdentityRoleClaim<string>>()
+        {
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Product_View},
+        };
+
 
         public static List<PermissionGroupDto> AllPermissionGroups = new List<PermissionGroupDto>() {
             new PermissionGroupDto
