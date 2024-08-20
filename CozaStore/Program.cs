@@ -54,6 +54,7 @@ try
     ColorSeed.Seed(context);
     CategorySeed.Seed(context);
     SizeSeed.Seed(context);
+    ProductSeed.Seed(context);
     await UserSeed.SeedAsync(services, context);
     await RoleSeed.SeedAsync(services);
     await RoleClaimSeed.SeedAsync(context, services);
