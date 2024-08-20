@@ -2,6 +2,8 @@
 using CozaStore.Interfaces;
 using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using CozaStore.Data;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
@@ -21,7 +23,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(categories);
         }
 
-
+        [Authorize(Policy = ClaimStore.Category_Create)]
         public IActionResult Create()
         {
             return View();
