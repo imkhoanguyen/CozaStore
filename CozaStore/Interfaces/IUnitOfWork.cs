@@ -8,6 +8,7 @@
 
         IProductRepository ProductRepository { get; }
         IVariantRepository VariantRepository { get; }
+        IShoppingCartRepository ShoppingCartRepository { get; }
         Task<bool> Complete();
     }
 }

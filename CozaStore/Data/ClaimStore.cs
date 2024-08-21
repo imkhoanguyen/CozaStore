@@ -38,6 +38,8 @@ namespace CozaStore.Data
         public const string User_Edit = "User.Edit";
         public const string User_Delete = "User.Delete";
 
+        public const string Cart_Add = "Cart.Add";
+
 
         public static List<IdentityRoleClaim<string>> adminClaims = new List<IdentityRoleClaim<string>>()
         {
@@ -70,12 +72,16 @@ namespace CozaStore.Data
             new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=User_Create},
             new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=User_Edit},
             new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=User_Delete},
+
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Cart_Add},
+
         };
 
 
         public static List<IdentityRoleClaim<string>> customerClaims = new List<IdentityRoleClaim<string>>()
         {
             new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Product_View},
+            new IdentityRoleClaim<string> {ClaimType="Permission", ClaimValue=Cart_Add},
         };
 
 
@@ -149,6 +155,15 @@ namespace CozaStore.Data
                     new PermissionItemDto {Name = "Create User", ClaimValue = User_Create},
                     new PermissionItemDto {Name = "Edit User", ClaimValue = User_Edit},
                     new PermissionItemDto {Name = "Delete User", ClaimValue = User_Delete},
+                }
+            },
+
+            new PermissionGroupDto
+            {
+                GroupName = "Order Management",
+                Permissions = new List<PermissionItemDto>
+                {
+                    new PermissionItemDto {Name = "Add to cart", ClaimValue = Cart_Add},
                 }
             },
         };

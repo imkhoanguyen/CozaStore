@@ -1,6 +1,8 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using CozaStore.Interfaces
+@using Microsoft.AspNetCore.Identity
 
 @inject UserManager<AppUser> UserManager
+@inject IUnitOfWork _unitOfWork
 
 <style>
     .dropdown-toggle, .dropdown-item {
@@ -11,10 +13,13 @@
 @if (User.Identity.IsAuthenticated)
 {
     var user = await UserManager.GetUserAsync(User);
+    var shoppingCarts = await _unitOfWork.ShoppingCartRepository.GetAllAsync(user.Id);
     <ul class="navbar-nav">
         <li class="nav-item">
-            <a class="nav-link">
-                <i class="fa-solid fa-cart-shopping fa-lg"></i>
+            <a class="nav-link" asp-controller="cart" asp-action="index">
+                <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart" data-notify="@shoppingCarts.Count()">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                </div>
             </a>
         </li>
         <li class="nav-item">

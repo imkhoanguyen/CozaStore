@@ -132,6 +132,48 @@ $(document).ready(function () {
             });
         }
     });
+
+    //add to cart
+    $('.btn-add-cart').click(function () {
+        //get value
+        const sizeId = $('.size-select').val();
+        const colorId = $('.color-select').val();
+        const count = $('.num-product').val();
+
+
+        $.ajax({
+            url: '/shop/addtocart',
+            method: 'post',
+            data: {
+                productId: productIdGlb,
+                sizeId: sizeId,
+                colorId: colorId,
+                count: count,
+            },
+            success: function (response) {
+                if (response.success === true) {
+                    if (response.add === true) {
+                        const currentCount = parseInt($('.icon-header-noti').attr('data-notify')) || 0;
+                        const newCount = currentCount + 1;
+                        $('.icon-header-noti').attr('data-notify', newCount);
+                    }
+                    toastr.success(response.message);
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log("error: " + error.message);
+                if (xhr.status === 401) {
+                    toastr.error("You are not logged in. Please log in to add items to your cart.");
+                } else if (xhr.status === 403) {
+                    toastr.error("You do not have permission to add products to cart. Please contact admin for more details.");
+                } else {
+                    toastr.error("Adding product to cart error please try again later");
+                }
+            }
+        })
+    });
 });
 
 function getPrice(sizeId, colorId) {

@@ -1,8 +1,12 @@
-﻿using CozaStore.Helpers;
+﻿using CozaStore.Data;
+using CozaStore.Helpers;
 using CozaStore.Interfaces;
+using CozaStore.Models;
 using CozaStore.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace CozaStore.Controllers
 {
@@ -105,6 +109,71 @@ namespace CozaStore.Controllers
                 return Json(new { success = false, message = "You chose too fast, try again." });
            
             return Json(variant.PriceSell);
+        }
+
+        [HttpPost]
+        [Authorize(Policy = ClaimStore.Cart_Add)]
+        public async Task<IActionResult> AddToCart(int productId, int sizeId, int colorId, int count)
+        {
+            decimal price = 0;
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var product = await _unitOfWork.ProductRepository.GetProductDetailAsync(productId);
+            if(product == null)
+                return Json(new { success = false, message = "Product notfound" });
+
+            if(product.Variants.Count > 0 && sizeId ==0)
+                return Json(new { success = false, message = "You have not selected a size" });
+
+            if(product.Variants.Count > 0 &&  colorId == 0)
+                return Json(new { success = false, message = "You have not selected a color" });
+
+
+            if(product.Variants.Count > 0)
+            {
+                var variant = product.Variants.Where(x=> x.SizeId ==  sizeId && x.ColorId == colorId).FirstOrDefault();
+                if(variant == null)
+                    return Json(new { success = false, message = "Product not found.Please select another size and color" });
+
+                if(variant.Quantity < count)
+                    return Json(new { success = false, message = "Product is out of stock or not in sufficient quantity" });
+
+                price = variant.PriceSell * count;
+            } else
+            {
+                price = product.PriceSell * count;
+            }
+
+            var shoppingCart = new ShoppingCart
+            {
+                UserId = userId,
+                ProductId = productId,
+                Price = price,
+                SizeId = sizeId,
+                ColorId = colorId,
+                Count = count,
+            };
+
+            var checkShoppingCart = await _unitOfWork.ShoppingCartRepository.GetShoppingCartAsync(userId, 
+                shoppingCart.ProductId, shoppingCart.SizeId, shoppingCart.ColorId);
+
+            bool cartIncreaseUI = false;
+
+            if(checkShoppingCart == null)
+            {
+                _unitOfWork.ShoppingCartRepository.Add(shoppingCart);
+                cartIncreaseUI = true;
+            } else
+            {
+                _unitOfWork.ShoppingCartRepository.UpdatteIncrease(shoppingCart);
+            }
+
+            if(await _unitOfWork.Complete())
+            {
+                return Json(new { success = true, message = "Product added to cart successfully", add = cartIncreaseUI });
+            } else
+                return Json(new { success = false, message = "Product added to cart failed" });
         }
     }
 }

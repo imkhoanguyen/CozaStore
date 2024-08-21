@@ -77,6 +77,11 @@ namespace CozaStore.Extensions
                 options.AddPolicy(ClaimStore.User_Delete, policy =>
                     policy.RequireClaim("Permission", ClaimStore.User_Delete));
 
+                //order
+                options.AddPolicy(ClaimStore.Cart_Add, policy =>
+                    policy.RequireClaim("Permission", ClaimStore.Cart_Add));
+                
+
 
             });
 
