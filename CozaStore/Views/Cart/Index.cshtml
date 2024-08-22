@@ -52,7 +52,7 @@
                                     <td>@item.Product.Name</td>
                                     <td>@item.Size.Name</td>
                                     <td>@item.Color.Name</td>
-                                    <td>$ @(item.Price / item.Count)</td>
+                                    <td>$ @item.Price</td>
                                     <td>
                                         <div class="wrap-num-product flex-w">
                                             <a asp-controller="cart" asp-action="minus" asp-route-cartId="@item.Id" class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
@@ -66,7 +66,7 @@
                                             </a>
                                         </div>
                                     </td>
-                                    <td>$ @item.Price</td>
+                                    <td>$ @item.GetTotal()</td>
                                     <td>
                                         <a onclick="DeleteCartItem('/cart/delete/?cartId=@item.Id')" class="btn btn-danger">
                                             <i class="fa-solid fa-trash"></i>

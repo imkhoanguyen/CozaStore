@@ -29,7 +29,7 @@ namespace CozaStore.Controllers
                 cartItem.Size = await _unitOfWork.SizeRepository.GetSizeAsync(cartItem.SizeId);
                 cartItem.Color = await _unitOfWork.ColorRepository.GetColorAsync(cartItem.ColorId);
 
-                vm.Total += cartItem.Price;
+                vm.Total += cartItem.GetTotal();
             }
 
             return View(vm);

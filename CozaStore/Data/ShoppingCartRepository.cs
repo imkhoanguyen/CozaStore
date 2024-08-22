@@ -30,8 +30,8 @@ namespace CozaStore.Data
 
         public async Task<ShoppingCart?> GetShoppingCartAsync(string userId, int productId, int sizeId, int colorId)
         {
-            return await _context.ShoppingCarts.Include(x=>x.Product).Include(x=>x.Size).Include(x=>x.Color)
-				.FirstOrDefaultAsync(x => x.UserId == userId && x.ProductId == productId
+            return await _context.ShoppingCarts.Include(x=>x.Product)
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.ProductId == productId
             && x.SizeId == sizeId && x.ColorId == colorId);
         }
 

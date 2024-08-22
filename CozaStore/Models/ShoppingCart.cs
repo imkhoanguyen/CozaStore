@@ -27,5 +27,10 @@ namespace CozaStore.Models
         [NotMapped]
         [ValidateNever]
         public Color? Color { get; set; }
+
+        public decimal GetTotal()
+        {
+            return Price * Count;
+        }
     }
 }

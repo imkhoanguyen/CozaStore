@@ -73,8 +73,8 @@ namespace CozaStore.Controllers
                 PriceSell = product.PriceSell,
                 Quantity = product.Quantity,
                 Description = product.Description,
-                ColorList = product.Variants.Select(x=>x.Color),
-                SizeList = product.Variants.Select(x=>x.Size),
+                ColorList = product.Variants.Select(x=>x.Color).Distinct(),
+                SizeList = product.Variants.Select(x=>x.Size).Distinct(),
                 ImageList = product.Images.Select(x=>x.Url),
             };
 
@@ -139,10 +139,10 @@ namespace CozaStore.Controllers
                 if(variant.Quantity < count)
                     return Json(new { success = false, message = "Product is out of stock or not in sufficient quantity" });
 
-                price = variant.PriceSell * count;
+                price = variant.PriceSell;
             } else
             {
-                price = product.PriceSell * count;
+                price = product.PriceSell;
             }
 
             var shoppingCart = new ShoppingCart
