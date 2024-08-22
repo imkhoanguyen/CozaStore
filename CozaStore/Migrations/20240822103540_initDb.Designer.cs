@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CozaStore.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240822080904_initDb")]
+    [Migration("20240822103540_initDb")]
     partial class initDb
     {
         /// <inheritdoc />
@@ -24,6 +24,40 @@ namespace CozaStore.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("CozaStore.Models.Address", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpecificAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("isDefault")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Address");
+                });
 
             modelBuilder.Entity("CozaStore.Models.AppUser", b =>
                 {
@@ -498,6 +532,17 @@ namespace CozaStore.Migrations
                     b.HasDiscriminator().HasValue("AppRole");
                 });
 
+            modelBuilder.Entity("CozaStore.Models.Address", b =>
+                {
+                    b.HasOne("CozaStore.Models.AppUser", "AppUser")
+                        .WithMany("Address")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("CozaStore.Models.Image", b =>
                 {
                     b.HasOne("CozaStore.Models.Product", "Product")
@@ -621,6 +666,11 @@ namespace CozaStore.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CozaStore.Models.AppUser", b =>
+                {
+                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("CozaStore.Models.Product", b =>

@@ -1,5 +1,4 @@
-﻿using CozaStore.Helpers.Enum;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CozaStore.Models
@@ -13,5 +12,8 @@ namespace CozaStore.Models
 
         [NotMapped]
         public string? Role { get; set; }
+
+        //nav
+        public List<Address> AddressList { get; set; } = [];
     }
 }

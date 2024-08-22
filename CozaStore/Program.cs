@@ -55,6 +55,7 @@ try
     CategorySeed.Seed(context);
     SizeSeed.Seed(context);
     ProductSeed.Seed(context);
+    ShippingMethodSeed.Seed(context);
     await UserSeed.SeedAsync(services, context);
     await RoleSeed.SeedAsync(services);
     await RoleClaimSeed.SeedAsync(context, services);

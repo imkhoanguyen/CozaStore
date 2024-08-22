@@ -29,7 +29,28 @@ namespace CozaStore.Data.Seed
                     Email = "khoasgu01@gmail.com",
                     PhoneNumber = "0987654321",
                     Image = "/img/avatar.png",
-                    Gender = 1
+                    Gender = 1,
+                    AddressList = new List<Address>()
+                    {
+                        new Address
+                        {
+                            FullName = "Nguyen Anh Khoa",
+                            Phone = "0985576590",
+                            SpecificAddress = "273 An Dương Vương – Phường 3 – Quận 5",
+                        },
+                        new Address
+                        {
+                            FullName = "Nguyen Van A",
+                            Phone = "0159753852",
+                            SpecificAddress = "105 Bà Huyện Thanh Quan – Phường Võ Thị Sáu – Quận 3",
+                        },
+                        new Address
+                        {
+                            FullName = "Nguyen Van B",
+                            Phone = "0147258369",
+                            SpecificAddress = "04 Tôn Đức Thắng – Phường Bến Nghé – Quận 1",
+                        },
+                    }
                 },
             };
 
