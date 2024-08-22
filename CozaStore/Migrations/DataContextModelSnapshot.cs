@@ -220,6 +220,33 @@ namespace CozaStore.Migrations
                     b.ToTable("ProductCategory");
                 });
 
+            modelBuilder.Entity("CozaStore.Models.ShippingMethod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShippingMethods");
+                });
+
             modelBuilder.Entity("CozaStore.Models.ShoppingCart", b =>
                 {
                     b.Property<int>("Id")

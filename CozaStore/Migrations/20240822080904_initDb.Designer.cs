@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CozaStore.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240821063053_initDbb")]
-    partial class initDbb
+    [Migration("20240822080904_initDb")]
+    partial class initDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -221,6 +221,33 @@ namespace CozaStore.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("ProductCategory");
+                });
+
+            modelBuilder.Entity("CozaStore.Models.ShippingMethod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShippingMethods");
                 });
 
             modelBuilder.Entity("CozaStore.Models.ShoppingCart", b =>

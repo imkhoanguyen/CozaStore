@@ -23,6 +23,7 @@ namespace CozaStore.Extensions
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IVariantRepository, VariantRepository>();
             services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+            services.AddScoped<IShippingRepository, ShippingRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
 

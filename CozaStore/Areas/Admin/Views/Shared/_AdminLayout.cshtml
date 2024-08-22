@@ -111,38 +111,20 @@
                     </li>
 
                     <!-- Quản lý -->
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Quản lý</span></li>
-                    <!-- Bán hàng -->
-                    <li class="menu-item">
-                        <a href="cards-basic.html" class="menu-link">
-                            <i class="menu-icon fa-solid fa-store fa-lg"></i>
-                            <div>Bán hàng</div>
-                        </a>
-                    </li>
-
-                    <!-- Hóa đơn -->
-                    <li class="menu-item">
-                        <a href="cards-basic.html" class="menu-link">
-                            <i class="menu-icon fa-solid fa-money-bill fa-lg"></i>
-                            <div>Hóa đơn</div>
-                        </a>
-                    </li>
+                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Management</span></li>
 
                     <!-- Sản phẩm -->
                     <li class="menu-item">
-                        <a asp-controller="product" asp-action="index" class="menu-link">
-                            <i class="menu-icon fa-solid fa-shirt fa-lg"></i>
-                            <div>All Products</div>
-                        </a>
-                    </li>
-
-                    <!-- Thuộc tính -->
-                    <li class="menu-item">
                         <a href="javascript:void(0)" class="menu-link menu-toggle">
-                            <i class="menu-icon fa-solid fa-tags fa-lg"></i>
+                            <i class="menu-icon fa-solid fa-shirt fa-lg"></i>
                             <div>Products</div>
                         </a>
                         <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a asp-controller="product" asp-action="index" class="menu-link">
+                                    <div>All Products</div>
+                                </a>
+                            </li>
                             <li class="menu-item">
                                 <a asp-controller="category" asp-action="Index" class="menu-link">
                                     <div>Category</div>
@@ -159,6 +141,22 @@
                                 </a>
                             </li>
                         </ul>
+                    </li>
+
+                    <!-- Order -->
+                    <li class="menu-item">
+                        <a asp-controller="product" asp-action="index" class="menu-link">
+                            <i class="menu-icon fa-solid fa-bag-shopping fa-lg"></i>
+                            <div>Order</div>
+                        </a>
+                    </li>
+
+                    <!-- Shipping -->
+                    <li class="menu-item">
+                        <a asp-controller="shipping" asp-action="index" class="menu-link">
+                            <i class="menu-icon fa-solid fa-truck-fast fa-lg"></i>
+                            <div>Shipping</div>
+                        </a>
                     </li>
 
 
