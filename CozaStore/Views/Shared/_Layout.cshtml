@@ -30,7 +30,7 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow p-3">
             <div class="container-fluid">
                 <a class="navbar-brand me-5" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/img/logo-01.png" alt="IMG-LOGO">
+                    <img src="~/css/images/icons/logo-01.png" alt="IMG-LOGO">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,7 @@
 
 
     @* body *@
-    @* @await Html.PartialAsync("~/Areas/Admin/Views/Shared/_Notification.cshtml") *@
+    @await Html.PartialAsync("~/Areas/Admin/Views/Shared/_Notification.cshtml")
     @RenderBody()
     
 

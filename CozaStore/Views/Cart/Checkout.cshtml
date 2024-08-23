@@ -1,0 +1,347 @@
+﻿@model ShopingCartVM
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
+    <link rel="stylesheet" href="~/css/custom-select2.css" />
+}
+
+<style>
+    .form-check-input {
+        display: none; /* Hides the radio button */
+    }
+
+    .form-check-label {
+        display: block;
+        position: relative; /* Position relative to allow absolute positioning of the checkmark */
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 10px;
+        transition: border-color 0.3s, background-color 0.3s;
+    }
+
+    .form-check-input:checked + .form-check-label {
+        border-color: #007bff;
+    }
+
+        .form-check-input:checked + .form-check-label::after {
+            content: '\2714'; /* Unicode character for a checkmark */
+            font-size: 16px;
+            color: #fff;
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #2963C1;
+            border: 1px solid #007bff;
+            border-radius: 0 0 0 5px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+</style>
+<section class="min-vh-100 pb-4" style="background-color: #eef0f7;">
+    <!-- breadcrumb -->
+    <div class="container">
+        <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+            <a href="index.html" class="stext-109 cl8 hov-cl1 trans-04">
+                Home
+                <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+            </a>
+
+            <span class="stext-109 cl4">
+                Order
+            </span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-7">
+                @* address *@
+                <div class="card box-shadow">
+                    <div class="card-body">
+                        <div class="mb-4 mt-2">
+                            <img src="~/css/images/icons/logo-01.png" />
+                        </div>
+                        <h5 class="mb-4 fw-bold">Shipping information</h5>
+                        <select class="form-select selected-address">
+                            <option disabled selected>Choose an address</option>
+                            @foreach (var address in Model.ListAddress)
+                            {
+                                <option value="@address.Id"
+                                        data-fullname="@address.FullName"
+                                        data-specificaddress="@address.SpecificAddress"
+                                        data-phone="@address.Phone">
+                                    @address.SpecificAddress
+                                </option>
+                            }
+                        </select>
+                        @* alert *@
+                        <div class="alert alert-success address-detail mt-3" role="alert" style="display:none;">
+                            <h4 class="alert-heading address-specificAddress fw-bold"></h4>
+                            <p class="address-phone mt-2"></p>
+                            <hr>
+                            <p class="mb-0 a address-fullname"></p>
+                        </div>
+                        @* input address field *@
+                        <div class="address-container mt-3">
+                            <div class="mb-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input asp-for="Order.FullName" placeholder="Full name" class="form-control" />
+                                    </div>
+                                    <div class="col-6">
+                                        <input asp-for="Order.Phone" placeholder="Phone number" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <input asp-for="Order.SpecificAddress" placeholder="Specific Address" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                @* order desciption *@
+                <div class="card mt-4 box-shadow">
+                    <h5 class="card-header fw-bold p-3">
+                        2. Order description
+                    </h5>
+                    <div class="card-body">
+                        <textarea class="form-control" style="min-height: 120px;"
+                                  asp-for="Order.Description" placeholder="Enter note..."></textarea>
+                    </div>
+                </div>
+
+                @* shipping method *@
+                <div class="card mt-4 box-shadow">
+                    <h5 class="card-header fw-bold p-3 mb-3">
+                        3. Shipping method
+                    </h5>
+
+                    @{
+                        bool isFirst = true;
+                    }
+
+                    @foreach (var shippingMethod in Model.ListShippingMethod)
+                    {
+                        if (isFirst)
+                        {
+                            <div class="form-check mb-3 px-3">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       id="@shippingMethod.Id"
+                                       name="Order.ShippingMethodId"
+                                       value="@shippingMethod.Id" checked
+                                       data-cost="@shippingMethod.Cost" />
+                                <label class="form-check-label" for="@shippingMethod.Id">
+                                    <strong>@shippingMethod.Name</strong> <br>
+                                    <small>@(shippingMethod.Cost == 0 ? "FREE" : "+" + shippingMethod.Cost + "$") @shippingMethod.Description</small>
+                                </label>
+                            </div>
+                            isFirst = false;
+                        }
+                        else
+                        {
+                            <div class="form-check mb-3 px-3">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       id="@shippingMethod.Id"
+                                       name="Order.ShippingMethodId"
+                                       value="@shippingMethod.Id"
+                                       data-cost="@shippingMethod.Cost" />
+
+                                <label class="form-check-label" for="@shippingMethod.Id">
+                                    <strong>@shippingMethod.Name</strong> <br>
+                                    <small>@(shippingMethod.Cost == 0 ? "FREE" : "+" + shippingMethod.Cost + "$") @shippingMethod.Description</small>
+                                </label>
+                            </div>
+
+                        }
+
+                    }
+
+                </div>
+
+                @* payment method *@
+                <div class="card mt-4 box-shadow">
+                    <h5 class="card-header fw-bold p-3 mb-3">
+                        4. Payment method
+                    </h5>
+
+                    <div class="form-check mb-3 px-3">
+                        <input class="form-check-input"
+                               type="radio"
+                               id="offline"
+                               name="Order.PaymentMethod"
+                               value="0" checked />
+                        <label class="form-check-label d-flex gap-2 align-items-center p-3" for="offline">
+
+                            <i class="fa-solid fa-truck-fast fa-lg"></i>
+                            <strong>Cash on delivery</strong>
+
+                        </label>
+                    </div>
+
+
+                    <div class="form-check mb-3 px-3">
+                        <input class="form-check-input"
+                               type="radio"
+                               id="online"
+                               name="Order.PaymentMethod"
+                               value="1" checked />
+                        <label class="form-check-label d-flex gap-2 align-items-center p-3" for="online">
+                            <i class="fa-brands fa-cc-stripe fa-lg"></i>
+                            <strong>Payment with Stripe</strong>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            @* order sumary *@
+            <div class="col-5">
+                @* order items *@
+                <div class="card box-shadow">
+                    <h5 class="card-header fw-bold p-3">
+                        5. Order summary
+                    </h5>
+                    <div class="card-body">
+                        <table class="table">
+                            <tbody class="align-midle">
+                                @foreach (var item in Model.ShoppingCartList)
+                                {
+                                    <tr>
+                                        <th scope="row">
+                                            <img src="@item.Product.Images.FirstOrDefault().Url" style="height: 70px" />
+                                        </th>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <a class="fw-bold text-primary" style="text-decoration: none;">
+                                                    @item.Count x @item.Product.Name
+                                                </a>
+                                                <div class="fs-sm text-muted ">Size: @item.Size.Name, Color: @item.Color.Name</div>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">
+                                            <span class="fw-bold">$@item.Price</span>
+                                        </td>
+                                    </tr>
+                                }
+                                <tr style="font-size: 16px;">
+                                    <th scope="row" colspan="2">
+                                        <span class="fw-bold">Subtotal</span>
+                                    </th>
+                                    <td class="text-end">
+                                        <span class="fw-bold">$@Model.Order.SubTotal</span>
+                                        <input hidden placeholder="subtotal" asp-for="@Model.Order.SubTotal" />
+                                    </td>
+                                </tr>
+                                <tr style="font-size: 16px;">
+                                    <th scope="row" colspan="2">
+                                        <span class="fw-bold">Shipping fee</span>
+                                    </th>
+                                    <td class="text-end">
+                                        <span class="fw-bold shipping-fee-display"></span>
+                                    </td>
+                                </tr>
+                                <tr style="font-size: 16px;">
+                                    <th scope="row" colspan="2">
+                                        <span class="fw-bold">Total</span>
+                                    </th>
+                                    <td class="text-end">
+                                        <span class="fw-bold total-display"></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                @* btn submit *@
+                <div class="card mt-3">
+                    <button type="submit" class="btn btn-primary p-3 fw-bold">&#10004; Complete Order</button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/lib/select2/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Initialize Select2
+            $('.selected-address').select2();
+
+            //select-address
+            $('.selected-address').change(function () {
+                let selectedOption = $(this).find('option:selected');
+
+                let addressId = selectedOption.val();
+                let fullName = selectedOption.data('fullname');
+                let specificAddress = selectedOption.data('specificaddress');
+                let phone = selectedOption.data('phone');
+
+                // Update the hidden inputs
+                $('#Order_FullName').val(fullName);
+                $('#Order_Phone').val(phone);
+                $('#Order_SpecificAddress').val(specificAddress);
+
+                // Update the visible div
+                $('.address-fullname').text(fullName);
+                $('.address-specificAddress').text(specificAddress);
+                $('.address-phone').text(phone);
+
+                $('.address-detail').show();
+            });
+
+            //input address change
+            $('#Order_FullName').on('input', function () {
+                let fullName = $(this).val();
+                $('.address-fullname').text(fullName);
+            });
+
+            $('#Order_Phone').on('input', function () {
+                var phone = $(this).val();
+                $('.address-phone').text(phone);
+            });
+
+            $('#Order_SpecificAddress').on('input', function () {
+                let specificAddress = $(this).val();
+                $('.address-specificAddress').text(specificAddress);
+            });
+
+            //load shipping fee & total when load
+            let selectedShippingMethod = $('input[name="Order.ShippingMethodId"]:checked');
+
+            if (selectedShippingMethod.length > 0) {
+                let cost = parseFloat(selectedShippingMethod.data('cost'));
+                let subTotal = parseFloat($("#Order_SubTotal").val());
+                let total = cost + subTotal;
+                $('.shipping-fee-display').text('$'+cost.toFixed(2));
+                $('.total-display').text('$' + total.toFixed(2));
+            }
+                        
+                       
+
+             //event check shipping method
+            $('input[name="Order.ShippingMethodId"]').on('change', function () {
+                let cost = parseFloat($(this).data('cost')); 
+                let subTotal = parseFloat($("#Order_SubTotal").val());
+                $('.shipping-fee-display').text('$'+cost.toFixed(2));
+                let total = cost + subTotal; 
+                $('.total-display').text('$' + total.toFixed(2)); 
+              });
+
+         });
+
+    </script>
+}
