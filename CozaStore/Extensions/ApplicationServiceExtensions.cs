@@ -24,6 +24,7 @@ namespace CozaStore.Extensions
             services.AddScoped<IVariantRepository, VariantRepository>();
             services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
             services.AddScoped<IShippingRepository, ShippingRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
 

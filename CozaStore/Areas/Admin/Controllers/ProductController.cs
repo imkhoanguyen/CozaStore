@@ -3,8 +3,8 @@ using CozaStore.Helpers;
 using CozaStore.Interfaces;
 using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using CozaStore.Helpers.Enum;
 using Microsoft.CodeAnalysis;
+using CozaStore.Data.Enum;
 
 namespace CozaStore.Areas.Admin.Controllers
 {

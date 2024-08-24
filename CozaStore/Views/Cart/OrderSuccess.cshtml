@@ -1,0 +1,159 @@
+﻿@model Order
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
+    <link rel="stylesheet" href="~/css/custom-select2.css" />
+    <link rel="stylesheet" href="~/css/custom-input-check.css" />
+}
+
+<section class="min-vh-100 pb-4" style="background-color: #eef0f7;">
+    <!-- breadcrumb -->
+    <div class="container">
+        <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+            <a href="index.html" class="stext-109 cl8 hov-cl1 trans-04">
+                Home
+                <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+            </a>
+
+            <span class="stext-109 cl4">
+                Order
+            </span>
+        </div>
+    </div>
+
+    <div class="container">
+        <form method="post">
+            <div class="row">
+                <div class="col-7">
+                    @* address *@
+                    <div class="card box-shadow">
+                        <div class="card-body">
+                            <div class="mb-5 mt-2">
+                                <img src="~/css/images/icons/logo-01.png" />
+                            </div>
+
+                            <div class="d-flex gap-2 align-items-center">
+                                <i class="fa-regular fa-circle-check fa-2xl" style="color: #63E6BE; font-size: 80px;"></i>
+                                <div class="d-flex flex-column">
+                                    <h5 class="fw-bold">Your order is successfully placed</h5>
+                                    <span>Thank you for purcharsing our products!</span>
+                                </div>
+                            </div>
+
+                            <h5 class="mb-4 mt-5 fw-bold">Shipping information</h5>
+                            
+                            
+                            <table class="table table-bordered">
+                                <tbody class="align-midle">
+                                    <tr>
+                                        <th scope="row">Order Id:</th>
+                                        <td>#@Model.Id</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Full name:</th>
+                                        <td>@Model.FullName</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Phone:</th>
+                                        <td>@Model.Phone</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Address:</th>
+                                        <td>@Model.SpecificAddress</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Description:</th>
+                                        <td>@Model.Description</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Payment method:</th>
+                                        <td>@(Model.PaymentMethod == 0 ? "Cash on delivery" : "Payment with stripe")</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Shipping method:</th>
+                                        <td>@Model.ShippingMethod.Name</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Payment status:</th>
+                                        <td>@(Model.PaymentStatus == (int)PaymentStatus.Paided ? PaymentStatus.Paided
+                                                : PaymentStatus.Pending)
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                            <div class="text-end">
+                                <a asp-controller="shop" asp-action="index" class="btn btn-primary fw-bold text-uppercase p-3">
+                                    <div class="d-flex gap-2 align-items-center justify-content-center ">
+                                        <span>Continue Shopping</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @* order sumary *@
+                <div class="col-5">
+                    @* order items *@
+                    <div class="card box-shadow">
+                        <h5 class="card-header fw-bold p-3">
+                            Order summary
+                        </h5>
+                        <div class="card-body">
+                            <table class="table">
+                                <tbody class="align-midle">
+                                    @foreach (var item in Model.OrderItemList)
+                                    {
+                                        <tr>
+                                            <th scope="row">
+                                                <img src="@item.Url" style="height: 70px" />
+                                            </th>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <a class="fw-bold text-primary" style="text-decoration: none;">
+                                                        @item.Count x @item.Name
+                                                    </a>
+                                                    <div class="fs-sm text-muted ">Size: @item.Size, Color: @item.Color</div>
+                                                </div>
+                                            </td>
+                                            <td class="text-end">
+                                                <span class="fw-bold">$@item.Price</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                    <tr style="font-size: 16px;">
+                                        <th scope="row" colspan="2">
+                                            <span class="fw-bold">Subtotal</span>
+                                        </th>
+                                        <td class="text-end">
+                                            <span class="fw-bold">$@Model.SubTotal</span>
+                                            <input hidden placeholder="subtotal" asp-for="@Model.SubTotal" />
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 16px;">
+                                        <th scope="row" colspan="2">
+                                            <span class="fw-bold">Shipping fee</span>
+                                        </th>
+                                        <td class="text-end">
+                                            <span class="fw-bold shipping-fee-display">$@Model.ShippingFee</span>
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 16px;">
+                                        <th scope="row" colspan="2">
+                                            <span class="fw-bold">Total</span>
+                                        </th>
+                                        <td class="text-end">
+                                            <span class="fw-bold total-display">$@Model.GetTotal()</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

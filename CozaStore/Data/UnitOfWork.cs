@@ -12,10 +12,12 @@ namespace CozaStore.Data
         private readonly IVariantRepository _variantRepository;
         private readonly IShoppingCartRepository _shoppingCartRepository;
         private readonly IShippingRepository _shippingRepository;
+        private readonly IOrderRepository _orderRepository;
         public UnitOfWork(DataContext context, ICategoryRepository categoryRepository,
              ISizeRepository sizeRepository, IColorRepository colorRepository,
              IProductRepository productRepository, IVariantRepository variantRepository, 
-             IShoppingCartRepository shoppingCartRepository, IShippingRepository shippingRepository)
+             IShoppingCartRepository shoppingCartRepository, IShippingRepository shippingRepository,
+             IOrderRepository orderRepository)
         {
             _context = context;
             _categoryRepository = categoryRepository;
@@ -25,6 +27,7 @@ namespace CozaStore.Data
             _variantRepository = variantRepository;
             _shoppingCartRepository = shoppingCartRepository;
             _shippingRepository = shippingRepository;
+            _orderRepository = orderRepository;
         }
         public ICategoryRepository CategoryRepository => _categoryRepository;
 
@@ -39,6 +42,8 @@ namespace CozaStore.Data
         public IShoppingCartRepository ShoppingCartRepository => _shoppingCartRepository;
 
         public IShippingRepository ShippingRepository => _shippingRepository;
+
+        public IOrderRepository OrderRepository => _orderRepository;
 
         public async Task<bool> Complete()
         {

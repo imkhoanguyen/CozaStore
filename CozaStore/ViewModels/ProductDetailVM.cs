@@ -1,5 +1,4 @@
-﻿using CozaStore.Helpers.Enum;
-using CozaStore.Models;
+﻿using CozaStore.Models;
 
 namespace CozaStore.ViewModels
 {

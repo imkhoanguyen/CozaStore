@@ -1,4 +1,4 @@
-﻿namespace CozaStore.Helpers.Enum
+﻿namespace CozaStore.Data.Enum
 {
     public enum ProductStatus
     {

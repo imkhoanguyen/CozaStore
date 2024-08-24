@@ -1,7 +1,5 @@
 ﻿using CozaStore.Models;
 using CozaStore.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using CozaStore.Helpers.Enum;
 
 namespace CozaStore.Data
 {

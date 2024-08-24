@@ -1,4 +1,5 @@
-﻿using CozaStore.DTOs;
+﻿using CozaStore.Data;
+using CozaStore.DTOs;
 using CozaStore.Helpers;
 using CozaStore.Models;
 

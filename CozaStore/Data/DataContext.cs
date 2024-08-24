@@ -22,6 +22,7 @@ namespace CozaStore.Data
         public DbSet<Image> Images { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public DbSet<ShippingMethod> ShippingMethods { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

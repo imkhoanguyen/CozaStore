@@ -3,7 +3,7 @@ using CozaStore.Helpers;
 using CozaStore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
-using CozaStore.Helpers.Enum;
+using CozaStore.Data.Enum;
 
 namespace CozaStore.Data
 {

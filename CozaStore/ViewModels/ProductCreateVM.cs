@@ -1,5 +1,5 @@
-﻿using CozaStore.DTOs;
-using CozaStore.Helpers;
+﻿using CozaStore.Data;
+using CozaStore.DTOs;
 using CozaStore.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 

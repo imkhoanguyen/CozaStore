@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using CozaStore.Data.Enum;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CozaStore.Models
@@ -6,13 +7,13 @@ namespace CozaStore.Models
     public class Order
     {
         public int Id { get; set; }
-        public DateTime Created { get; set; } = DateTime.UtcNow;
         public string? Description { get; set; }
         public decimal SubTotal { get; set; }
         public int PaymentMethod { get; set; }
+        public int PaymentStatus { get; set; }
 
-        public DateTime OrderDate { get; set; }
-        public int OrderStatus { get; set; }
+        public DateTime OrderDate { get; set; } = DateTime.Now;
+        public int OrderStatus { get; set; } 
 
         //address
         public string? FullName { get; set; }
@@ -33,7 +34,7 @@ namespace CozaStore.Models
         [ValidateNever]
         public ShippingMethod? ShippingMethod { get; set; }
 
-        List<OrderItem> OrderItemList { get; set; } = [];
+        public List<OrderItem> OrderItemList { get; set; } = [];
 
         public decimal GetTotal()
         {

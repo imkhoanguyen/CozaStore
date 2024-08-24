@@ -1,7 +1,7 @@
-﻿using CozaStore.DTOs;
-using CozaStore.Helpers.Enum;
+﻿using CozaStore.Data.Enum;
+using CozaStore.DTOs;
 
-namespace CozaStore.Helpers
+namespace CozaStore.Data
 {
     public static class SD
     {

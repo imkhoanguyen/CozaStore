@@ -1,5 +1,5 @@
-﻿using CozaStore.Helpers;
-using CozaStore.Helpers.Enum;
+﻿using CozaStore.Data.Enum;
+using CozaStore.Helpers;
 using CozaStore.Models;
 using System.Security.Policy;
 

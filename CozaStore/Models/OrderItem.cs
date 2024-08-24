@@ -1,4 +1,7 @@
-﻿namespace CozaStore.Models
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CozaStore.Models
 {
     public class OrderItem
     {
@@ -14,5 +17,11 @@
         {
             return Price * Count;
         }
+
+        //nav
+        public int OrderId { get; set; }
+        [ForeignKey("OrderId")]
+        [ValidateNever]
+        public Order? Order { get; set; }
     }
 }
