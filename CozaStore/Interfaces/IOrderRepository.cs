@@ -1,4 +1,5 @@
-﻿using CozaStore.Models;
+﻿using CozaStore.Helpers;
+using CozaStore.Models;
 
 namespace CozaStore.Interfaces
 {
@@ -9,5 +10,6 @@ namespace CozaStore.Interfaces
         void UpdateStripePaymentId(int orderId, string stripeSessionId, string stripePaymentIntentId);
         void UpdateStatus(int orderId, int orderStatus);
         void UpdatePaymentStatus(int orderId, int paymentStatus);
+        Task<PagedList<Order>> GetAllAsync(string seachString, int page);
     }
 }

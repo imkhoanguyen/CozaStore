@@ -37,6 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\css\fonts\font-awesome-6-pro\" />
     <Folder Include="wwwroot\img\products\" />
   </ItemGroup>
 

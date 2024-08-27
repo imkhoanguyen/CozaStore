@@ -23,7 +23,7 @@ namespace CozaStore.Data
             return await _context.Colors.ToListAsync();
         }
 
-        public Task<PagedList<Color>> GetAllColorsAsync(string searchString, int page = 1)
+        public async Task<PagedList<Color>> GetAllColorsAsync(string searchString, int page = 1)
         {
             var query = _context.Colors.OrderByDescending(x => x.IsDelete == false).ThenByDescending(x => x.Id).AsQueryable();
             if (searchString != null)
@@ -32,7 +32,7 @@ namespace CozaStore.Data
                 || x.Id.ToString() == searchString);
             }
             if (page < 1) page = 1;
-            return PagedList<Color>.CreateAsync(query, page, 10);
+            return await PagedList<Color>.CreateAsync(query, page, 10);
         }
 
         public async Task<Color?> GetColorAsync(int id)
