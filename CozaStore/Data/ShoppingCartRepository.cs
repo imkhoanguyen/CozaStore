@@ -23,6 +23,11 @@ namespace CozaStore.Data
             _context.ShoppingCarts.Remove(shoppingCart);
         }
 
+        public void DeleteAll(List<ShoppingCart> shoppingCarts)
+        {
+            _context.ShoppingCarts.RemoveRange(shoppingCarts);
+        }
+
         public async Task<IEnumerable<ShoppingCart>> GetAllAsync(string userId)
         {
             return await _context.ShoppingCarts.ToListAsync();

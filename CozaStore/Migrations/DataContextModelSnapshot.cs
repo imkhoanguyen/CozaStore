@@ -17,7 +17,7 @@ namespace CozaStore.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -236,6 +236,12 @@ namespace CozaStore.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SpecificAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StripePaymentIntentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StripeSessionId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("SubTotal")

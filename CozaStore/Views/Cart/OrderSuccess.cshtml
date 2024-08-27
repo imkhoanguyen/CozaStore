@@ -75,8 +75,15 @@
                                     </tr>
                                     <tr>
                                         <th scope="row">Payment status:</th>
-                                        <td>@(Model.PaymentStatus == (int)PaymentStatus.Paided ? PaymentStatus.Paided
+                                        <td>@(Model.PaymentStatus == (int)PaymentStatus.Paid ? PaymentStatus.Paid
                                                 : PaymentStatus.Pending)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Order status:</th>
+                                        <td>
+                                            @(Model.OrderStatus == (int)OrderStatus.Unconfirmed ? OrderStatus.Unconfirmed
+                                                : OrderStatus.Confirmed)
                                         </td>
                                     </tr>
                                 </tbody>

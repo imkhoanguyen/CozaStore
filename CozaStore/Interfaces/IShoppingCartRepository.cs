@@ -10,5 +10,6 @@ namespace CozaStore.Interfaces
         Task<ShoppingCart?> GetShoppingCartAsync(int cartId);
         Task<IEnumerable<ShoppingCart>> GetAllAsync(string userId);
         void Delete(ShoppingCart shoppingCart);
+        void DeleteAll(List<ShoppingCart> shoppingCarts);
     }
 }

@@ -2,8 +2,8 @@ using CozaStore.Data;
 using CozaStore.Data.Seed;
 using CozaStore.Extensions;
 using CozaStore.Middleware;
-using CozaStore.Models;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +18,7 @@ builder.Services.AddPolicy();
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
-
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

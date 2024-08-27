@@ -103,7 +103,7 @@ namespace CozaStore.Controllers
             if (sizeId == 0 || colorId == 0)
                 return Json(new { success = false, message = "You have not selected size and color, please try again." });
 
-            var variant = await _unitOfWork.ProductRepository.GetPriceOfProductAsync(productId, colorId,sizeId);
+            var variant = await _unitOfWork.ProductRepository.GetVariantOfProductAsync(productId, colorId,sizeId);
 
             if(variant == null)
                 return Json(new { success = false, message = "You chose too fast, try again." });

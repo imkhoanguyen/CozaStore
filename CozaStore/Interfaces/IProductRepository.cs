@@ -18,7 +18,8 @@ namespace CozaStore.Interfaces
 
         Task<IEnumerable<Color?>> GetAvailableColorsAsync(int productId, int sizeId);
         Task<IEnumerable<Size?>> GetAvailableSizesAsync(int productId, int colorId);
-        Task<Variant?> GetPriceOfProductAsync(int productId, int colorId, int sizeId);
+        Task<Variant?> GetVariantOfProductAsync(int productId, int colorId, int sizeId);
+        void UpdateQuantity(int productId, int quantity);
 
     }
 }

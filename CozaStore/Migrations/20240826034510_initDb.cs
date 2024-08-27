@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CozaStore.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class initDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -345,10 +345,12 @@ namespace CozaStore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SubTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
-                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     OrderStatus = table.Column<int>(type: "int", nullable: false),
+                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
+                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
+                    StripeSessionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StripePaymentIntentId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SpecificAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),

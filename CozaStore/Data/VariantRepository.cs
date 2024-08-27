@@ -25,5 +25,14 @@ namespace CozaStore.Data
         {
            _context.Variants.Update(variant);
         }
+
+        public void UpdateQuantity(int variantId, int quantity)
+        {
+            var variantFromdb = _context.Variants.FirstOrDefault(x => x.Id == variantId);
+            if (variantFromdb != null)
+            {
+                variantFromdb.Quantity -= quantity;
+            }
+        }
     }
 }

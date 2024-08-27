@@ -8,5 +8,6 @@ namespace CozaStore.Interfaces
         Task<Variant?> GetVariantAsync(int id);
 
         void DeleteVariant(Variant variant);
+        void UpdateQuantity(int variantId, int quantity);
     }
 }

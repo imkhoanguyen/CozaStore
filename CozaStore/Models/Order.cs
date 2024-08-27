@@ -1,5 +1,4 @@
-﻿using CozaStore.Data.Enum;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CozaStore.Models
@@ -9,11 +8,16 @@ namespace CozaStore.Models
         public int Id { get; set; }
         public string? Description { get; set; }
         public decimal SubTotal { get; set; }
+        public DateTime OrderDate { get; set; } = DateTime.Now;
+        public int OrderStatus { get; set; }
+
+        //payment
         public int PaymentMethod { get; set; }
         public int PaymentStatus { get; set; }
+        //stripe
+        public string? StripeSessionId { get; set; }
+        public string? StripePaymentIntentId { get; set; }
 
-        public DateTime OrderDate { get; set; } = DateTime.Now;
-        public int OrderStatus { get; set; } 
 
         //address
         public string? FullName { get; set; }
@@ -38,7 +42,7 @@ namespace CozaStore.Models
 
         public decimal GetTotal()
         {
-            return SubTotal - ShippingFee;
+            return SubTotal + ShippingFee;
         }
     }
 }

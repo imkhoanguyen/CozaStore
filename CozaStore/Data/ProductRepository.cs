@@ -99,7 +99,7 @@ namespace CozaStore.Data
                     .ToListAsync() ?? [];
         }
 
-        public async Task<Variant?> GetPriceOfProductAsync(int productId, int colorId, int sizeId)
+        public async Task<Variant?> GetVariantOfProductAsync(int productId, int colorId, int sizeId)
         {
             var variant = await _context.Variants
                 .Include(x => x.Color)
@@ -157,6 +157,15 @@ namespace CozaStore.Data
                 productFromDb.IsFeatured = product.IsFeatured;
                 productFromDb.Status = product.Status;
 
+            }
+        }
+
+        public void UpdateQuantity(int productId, int quantity)
+        {
+            var productFromDb = _context.Products.FirstOrDefault(x => x.Id == productId);
+            if(productFromDb != null)
+            {
+                productFromDb.Quantity -= quantity;
             }
         }
     }

@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CozaStore.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240824070346_init")]
-    partial class init
+    [Migration("20240826034510_initDb")]
+    partial class initDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -239,6 +239,12 @@ namespace CozaStore.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SpecificAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StripePaymentIntentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StripeSessionId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("SubTotal")
