@@ -6,10 +6,10 @@ namespace CozaStore.Interfaces
     public interface IColorRepository
     {
         void AddColor(Color color);
-        void ToggleDelete(Color color);
+        void Delete(Color color);
         void UpdateColor(Color color);
         Task<Color?> GetColorAsync(int id);
-        Task<PagedList<Color>> GetAllColorsAsync(string searchString,int page);
+        Task<PagedList<Color>> GetAllColorsAsync(ColorParams colorParams);
 
         Task<IEnumerable<Color>> GetAllColorsAsync();
 

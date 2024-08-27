@@ -23,16 +23,16 @@ namespace CozaStore.Data
             return await _context.Colors.ToListAsync();
         }
 
-        public async Task<PagedList<Color>> GetAllColorsAsync(string searchString, int page = 1)
+        public async Task<PagedList<Color>> GetAllColorsAsync(ColorParams colorParams)
         {
-            var query = _context.Colors.OrderByDescending(x => x.IsDelete == false).ThenByDescending(x => x.Id).AsQueryable();
-            if (searchString != null)
+            var query = _context.Colors.Where(x=>!x.IsDelete).AsQueryable();
+            if (colorParams.SearchString != null)
             {
-                query = query.Where(x => x.Name.ToLower().Contains(searchString.ToLower())
-                || x.Id.ToString() == searchString);
+                query = query.Where(x => x.Name.ToLower().Contains(colorParams.SearchString.ToLower())
+                || x.Id.ToString() == colorParams.SearchString);
             }
-            if (page < 1) page = 1;
-            return await PagedList<Color>.CreateAsync(query, page, 10);
+           
+            return await PagedList<Color>.CreateAsync(query, colorParams.PageNumber, colorParams.PageSize);
         }
 
         public async Task<Color?> GetColorAsync(int id)
@@ -40,13 +40,12 @@ namespace CozaStore.Data
             return await _context.Colors.FindAsync(id);
         }
 
-        public void ToggleDelete(Color color)
+        public void Delete(Color color)
         {
             var colorFromDb = _context.Colors.FirstOrDefault(x => x.Id == color.Id);
             if (colorFromDb != null)
             {
-                if(colorFromDb.IsDelete) colorFromDb.IsDelete = false;
-                else colorFromDb.IsDelete = true;
+                colorFromDb.IsDelete = true;
             }
         }
 

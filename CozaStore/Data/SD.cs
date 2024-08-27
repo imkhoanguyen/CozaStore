@@ -34,5 +34,7 @@ namespace CozaStore.Data
             "$150-$200",
             "$200+"
         };
+
+        public static readonly IEnumerable<int> PageSizeList = [5, 10, 15, 25, 30, 100];
     }
 }

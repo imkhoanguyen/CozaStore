@@ -68,16 +68,13 @@
 
                             <td>$@order.GetTotal()</td>
                             <td class="text-white">
-                                
+
                                 <a href="/admin/products/edit/${row.id}" class="btn btn-sm btn-info">
-                                        <i class="fa fa-pencil-alt"></i>
-                                    </a>
-                                    <button type="button" data-id="${row.id}" class="btn btn-sm btn-danger">
+                                    <i class="fa fa-pencil-alt"></i>
+                                </a>
+                                <button type="button" data-id="${row.id}" class="btn btn-sm btn-danger">
                                     <i class="fa-solid fa-trash-can"></i>
-                                    </button>
-                                
-
-
+                                </button>
                             </td>
                         </tr>
                     }
@@ -98,7 +95,7 @@
 
         <div class="row mt-3">
             <ul class="pagination justify-content-center">
-                <li class="mx-1 page-item @firstDisabled" >
+                <li class="mx-1 page-item @firstDisabled">
                     <a class="rounded page-link"
                        asp-route-searchString="@ViewData["searchString"]"
                        asp-route-page="1">
@@ -143,24 +140,10 @@
 
 @section Scripts {
     <script src="~/sweetalert2/sweetalert2.min.js"></script>
-        
+
 
     <script>
-        $(document).ready(function () {
-            // Get the current page from the URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const currentPage = urlParams.get('page') || 1;
-
-            // Remove 'active' class from all page items
-            $('.pagination .page-item').removeClass('active');
-
-            // Find the page item with the matching data-page attribute and add the 'active' class
-            $('.pagination .page-link').each(function () {
-                if ($(this).data('page') == currentPage) {
-                    $(this).closest('.page-item').addClass('active');
-                }
-            });
-        });
+        
 
         function DeleteColor(url) {
             Swal.fire({

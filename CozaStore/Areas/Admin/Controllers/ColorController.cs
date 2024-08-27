@@ -1,6 +1,7 @@
 ﻿using CozaStore.Models;
 using CozaStore.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using CozaStore.Helpers;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
@@ -12,10 +13,11 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<IActionResult> Index(string searchString, int page)
+        public async Task<IActionResult> Index(ColorParams colorParams)
         {
-            ViewData["searchString"] = searchString;
-            var colors = await _unitOfWork.ColorRepository.GetAllColorsAsync(searchString, page);
+            ViewData["searchString"] = colorParams.SearchString;
+            ViewData["pageSize"] = (int)colorParams.PageSize;
+            var colors = await _unitOfWork.ColorRepository.GetAllColorsAsync(colorParams);
             return View(colors);
         }
 
@@ -69,22 +71,12 @@ namespace CozaStore.Areas.Admin.Controllers
             var color = await _unitOfWork.ColorRepository.GetColorAsync(id);
             if (color != null)
             {
-                bool isDelte = color.IsDelete;
-                _unitOfWork.ColorRepository.ToggleDelete(color);
+                _unitOfWork.ColorRepository.Delete(color);
 
                 if (await _unitOfWork.Complete())
                 {
-                    if (isDelte)
-                    {
-                        TempData["success"] = "The color has been reverted successfully.";
-                        return Json(new { message = "success" });
-                    }
-                    else
-                    {
-                        TempData["success"] = "The color has been deleted successfully.";
-                        return NoContent();
-                    }
-
+                    TempData["success"] = "The color has been deleted successfully.";
+                    return NoContent();
                 }
             }
             TempData["error"] = "Color not found!!!";
