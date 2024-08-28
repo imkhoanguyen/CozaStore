@@ -19,6 +19,11 @@
                                     <input asp-for="Name" class="form-control" />
                                     <span asp-validation-for="Name" class="text-danger"></span>
                                 </div>
+                                <div class="mb-3">
+                                    <label asp-for="Code" class="form-label"></label>
+                                    <input type="color" asp-for="Code" class="form-control" />
+                                    <span asp-validation-for="Code" class="text-danger"></span>
+                                </div>
                                 <div class="d-flex justify-content-end gap-2">
                                     <a asp-controller="color" asp-action="Index" class="btn btn-secondary">Cancel</a>
                                     <button type="submit" class="btn btn-primary">Save</button>

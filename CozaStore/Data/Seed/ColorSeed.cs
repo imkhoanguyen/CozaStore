@@ -9,19 +9,19 @@ namespace CozaStore.Data.Seed
             if (context.Colors.Any()) return;
             var colors = new List<Color>
             {
-                new Color { Name = "Black" },
-                new Color { Name = "White" },
-                new Color { Name = "Gray" },
-                new Color { Name = "Blue" },
-                new Color { Name = "Green" },
-                new Color { Name = "Pink" },
-                new Color { Name = "Orange" },
-                new Color { Name = "Brown" },
-                new Color { Name = "Yellow" },
-                new Color { Name = "Purple" },
-                new Color { Name = "Red" },
-                new Color {Name = "Navy"},
-                new Color {Name= "Ivory"},
+                new Color { Name = "Black", Code = "Black" },
+                new Color { Name = "White", Code = "White"},
+                new Color { Name = "Gray", Code = "Gray"},
+                new Color { Name = "Blue", Code = "Blue"},
+                new Color { Name = "Green", Code = "Green"},
+                new Color { Name = "Pink", Code = "Pink"},
+                new Color { Name = "Orange", Code = "Orange"},
+                new Color { Name = "Brown", Code = "Brown"},
+                new Color { Name = "Yellow", Code = "Yellow"},
+                new Color { Name = "Purple", Code = "Purple"},
+                new Color { Name = "Red", Code ="Red" },
+                new Color {Name = "Navy", Code ="Navy"},
+                new Color {Name= "Ivory", Code = "Ivory"},
 
             };
             context.Colors.AddRange(colors);

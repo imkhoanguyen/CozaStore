@@ -44,6 +44,7 @@
                                     <tr class="fw-bold">
                                         <td style="width: 10%;">ID</td>
                                         <td>Name</td>
+                                        <td style ="width: 10%;">Code</td>
                                         <td style="width: 10%;">Actions</td>
                                     </tr>
                                 </thead>
@@ -56,11 +57,11 @@
                                                 <td>@color.Id</td>
                                                 <td>
                                                     <div class="d-flex gap-2">
-                                                        <div class="color-baged" style="background-color: @color.Name;"></div>
+                                                        <div class="color-baged" style="background-color: @color.Code;"></div>
                                                         <div>@color.Name</div>
                                                     </div>
                                                 </td>
-
+                                                <td>@color.Code</td>
                                                 <td>
                                                     <a asp-controller="color" asp-action="edit" asp-route-id="@color.Id" class="btn btn-sm btn-primary mx-1">
                                                         <i class="fa fa-pencil-alt"></i>
