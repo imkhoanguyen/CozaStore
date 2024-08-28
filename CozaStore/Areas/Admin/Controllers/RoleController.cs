@@ -22,17 +22,17 @@ namespace CozaStore.Areas.Admin.Controllers
             _context = context;
             _roleManager = roleManager;
         }
-        public async Task<IActionResult> Index(string searchString, int page)
+        public async Task<IActionResult> Index(RoleParams roleParams)
         {
-            if (page < 1) page = 1;
-
+            ViewData["searchString"] = roleParams.SearchString;
+            ViewData["pageSize"] = (int)roleParams.PageSize;
             var query = _context.AppRole.AsQueryable();
-            if (!string.IsNullOrEmpty(searchString))
+            if (!roleParams.SearchString.IsNullOrEmpty())
             {
-                query = query.Where(x => x.Name!.ToLower().Contains(searchString.ToLower()));
+                query = query.Where(x => x.Name.ToLower().Contains(roleParams.SearchString.ToLower()));
             }
 
-            var role = await PagedList<AppRole>.CreateAsync(query, page, 10);
+            var role = await PagedList<AppRole>.CreateAsync(query, roleParams.PageNumber, roleParams.PageSize);
             return View(role);
         }
 
@@ -118,14 +118,18 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             var role = _context.AppRole.Find(id);
             if (role == null)
-                return RedirectToAction("GeNotFound", "Buggy", new { area = "", message = "Role not found!!!" });
+                return Json(new { success = false, message = "Role not found!" });
+
+            var usersWithRole = await _context.UserRoles
+                .Where(ur => ur.RoleId == role.Id)
+                .ToListAsync();
+
+            if (usersWithRole.Any())
+                return Json(new { success = false, message = "Cannot delete the role as there are users associated with it." });
 
             var result = await _roleManager.DeleteAsync(role);
             if (result.Succeeded)
-            {
-                TempData["success"] = "Role deleted successfully!";
-                return NoContent();
-            }
+                return Json(new { success = true, message = "Role deleted successfully!" });
             else
             {
                 string errorStr = "";
@@ -133,8 +137,7 @@ namespace CozaStore.Areas.Admin.Controllers
                 {
                     errorStr += error;
                 }
-                TempData["error"] = errorStr;
-                return NoContent();
+                return Json(new { success = false, message = "errorStr" });
             }
         }
 
@@ -166,6 +169,11 @@ namespace CozaStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> ManagePermission(RolePermissionVM vm)
         {
+            if(vm.AppRole.Name == "Admin")
+            {
+                TempData["error"] = "Cant not edit permission admin role";
+                return RedirectToAction(nameof(Index));
+            }
             var roleClaimList = await _context.RoleClaims.Where(rc => rc.RoleId == vm.AppRole.Id).ToListAsync();
             var selectedClaimValueList = vm.SelectedClaimValueList;
 
@@ -179,7 +187,7 @@ namespace CozaStore.Areas.Admin.Controllers
                 ClaimValue = claimValue
             }).ToList();
 
-            if(listClaimToAdd.Any())
+            if (listClaimToAdd.Any())
                 await _context.RoleClaims.AddRangeAsync(listClaimToAdd);
 
             // cái này là tạo mới nên nó sẽ tạo ra một instance mới của identityRoleClaim nó có id hoặc giá trị tạm thời (id mới) => ko tìm được id để xóa => lỗi
@@ -197,7 +205,7 @@ namespace CozaStore.Areas.Admin.Controllers
             if (listClaimToDelete.Any())
                 _context.RoleClaims.RemoveRange(listClaimToDelete);
 
-            if(await _context.SaveChangesAsync() > 0)
+            if (await _context.SaveChangesAsync() > 0)
             {
                 TempData["success"] = "Update premission success";
                 return RedirectToAction(nameof(Index));
