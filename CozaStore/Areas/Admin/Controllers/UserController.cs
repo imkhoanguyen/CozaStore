@@ -20,15 +20,17 @@ namespace CozaStore.Areas.Admin.Controllers
             _context = context;
             _userManager = userManager;
         }
-        public async Task<IActionResult> Index(string searchString, int page)
+        public async Task<IActionResult> Index(UserParams userParams)
         {
-            if (page < 1) page = 1;
+            ViewData["searchString"] = userParams.SearchString;
+            ViewData["pageSize"] = (int)userParams.PageSize;
 
             var query = _context.AppUser.AsQueryable();
 
-            if(!searchString.IsNullOrEmpty())
+            if(!userParams.SearchString.IsNullOrEmpty())
             {
-                query = query.Where(x=>x.FullName.ToLower().Contains(searchString.ToLower()) || x.PhoneNumber.Contains(searchString));
+                query = query.Where(x=>x.FullName.ToLower().Contains(userParams.SearchString.ToLower()) 
+                || x.PhoneNumber.Contains(userParams.SearchString));
             }
 
             var userRole = await _context.UserRoles.ToListAsync();
@@ -41,7 +43,7 @@ namespace CozaStore.Areas.Admin.Controllers
                 else user.Role = roles.FirstOrDefault(u=>u.Id == user_role.RoleId).Name;
             }
 
-            var users = await PagedList<AppUser>.CreateAsync(query, page, 10);
+            var users = await PagedList<AppUser>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
             return View(users);
         }
 
