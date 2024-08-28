@@ -9,7 +9,7 @@ namespace CozaStore.Interfaces
         void UpdateCategory(Category category);
         void DeleteCategory(Category category);
         Task<Category?> GetCategoryAsync(int id);
-        Task<PagedList<Category>> GetAllCategoriesAsync(string searchString, int pageNumber);
+        Task<PagedList<Category>> GetAllCategoriesAsync(CategoryParams categoryParams);
         Task<IEnumerable<Category>> GetAllCategoriesAsync();
     }
 }

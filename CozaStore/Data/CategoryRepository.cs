@@ -22,24 +22,20 @@ namespace CozaStore.Data
             var categoryFromDb = _context.Categories.FirstOrDefault(c => c.Id == category.Id);
             if(categoryFromDb != null)
             {
-                if (categoryFromDb.IsDelete) categoryFromDb.IsDelete = false;
-                else categoryFromDb.IsDelete = true;
+                categoryFromDb.IsDelete = true;
             }
         }
 
-        public async Task<PagedList<Category>> GetAllCategoriesAsync(string searchString, int pageNumber = 1)
+        public async Task<PagedList<Category>> GetAllCategoriesAsync(CategoryParams categoryParams)
         {
-            var query = _context.Categories.AsQueryable();
+            var query = _context.Categories.Where(x=>!x.IsDelete).OrderByDescending(x=>x.Id).AsQueryable();
 
-            if (searchString != null)
+            if (categoryParams.SearchString != null)
             {
-                query = query.Where(x => x.Name.ToLower().Contains(searchString.ToLower())
-                        || x.Id.ToString() == searchString);
+                query = query.Where(x => x.Name.ToLower().Contains(categoryParams.SearchString.ToLower())
+                        || x.Id.ToString() == categoryParams.SearchString);
             }
-
-            if (pageNumber < 1) pageNumber = 1;
-
-            return await PagedList<Category>.CreateAsync(query.AsNoTracking(), pageNumber, 10);
+            return await PagedList<Category>.CreateAsync(query, categoryParams.PageNumber, categoryParams.PageSize);
         }
 
 
@@ -55,7 +51,7 @@ namespace CozaStore.Data
 
         public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
         {
-           return await _context.Categories.ToListAsync();
+           return await _context.Categories.Where(x=>!x.IsDelete).ToListAsync();
         }
     }
 }

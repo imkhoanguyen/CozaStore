@@ -4,6 +4,7 @@ using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using CozaStore.Data;
+using CozaStore.Helpers;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
@@ -16,14 +17,15 @@ namespace CozaStore.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IActionResult> Index(string searchString, int page)
+        public async Task<IActionResult> Index(CategoryParams categoryParams)
         {
-            ViewData["SearchString"] = searchString;
-            var categories = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync(searchString, page);
+            ViewData["searchString"] = categoryParams.SearchString;
+            ViewData["pageSize"] = (int)categoryParams.PageSize;
+            var categories = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync(categoryParams);
             return View(categories);
         }
 
-        [Authorize(Policy = ClaimStore.Category_Create)]
+        //[Authorize(Policy = ClaimStore.Category_Create)]
         public IActionResult Create()
         {
             return View();
@@ -69,33 +71,19 @@ namespace CozaStore.Areas.Admin.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpDelete]
         public async Task<IActionResult> Delete(int categoryId)
         {
             var category = await _unitOfWork.CategoryRepository.GetCategoryAsync(categoryId);
             if (category != null)
             {
-                bool isDeleted = category.IsDelete;
-
                 _unitOfWork.CategoryRepository.DeleteCategory(category);
 
                 if (await _unitOfWork.Complete())
                 {
-                    if (isDeleted)
-                    {
-                        TempData["success"] = "The category has been reverted successfully.";
-                        return NoContent();
-                    } else
-                    {
-                        TempData["success"] = "The category has been deleted successfully.";
-                        return NoContent();
-                    }
-                        
+                    TempData["success"] = "The category has been deleted successfully.";
+                    return NoContent();
                 }
-
-                TempData["error"] = "Problem delete category!!!";
-                return NoContent();
-
             }
             TempData["error"] = "Category not found!!!";
             return NoContent();

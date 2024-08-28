@@ -25,8 +25,11 @@
         @* nav *@
         <partial name="_NavPartial"></partial>
          <div class="main">
+             @* header *@
             <partial name="_HeaderPartial"></partial>
+            @* main-content *@
             @RenderBody();
+            @* footer *@
             <partial name="_FooterPartial"></partial>
          </div>   
     </div>
