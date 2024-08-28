@@ -2,6 +2,7 @@
 using CozaStore.Helpers;
 using CozaStore.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CozaStore.Data
 {
@@ -17,21 +18,26 @@ namespace CozaStore.Data
             _context.Sizes.Add(size);
         }
 
-        public void ToggleDelete(Size size)
+        public void Delete(Size size)
         {
             var sizeFromDb = _context.Sizes.FirstOrDefault(x => x.Id == size.Id);
             if (sizeFromDb != null)
             {
-                if(sizeFromDb.IsDelete) size.IsDelete = false;
-                else size.IsDelete = true;
+                sizeFromDb.IsDelete = true;
             }
         }
 
-        public async Task<PagedList<Size>> GetAllSizesAsync(int pageNumber = 1)
+        public async Task<PagedList<Size>> GetAllSizesAsync(SizeParams sizeParams)
         {
-            var query =  _context.Sizes.OrderByDescending(x => x.IsDelete == false).ThenByDescending(x => x.Id).AsQueryable();
-            if (pageNumber < 1) pageNumber = 1;
-            return await PagedList<Size>.CreateAsync(query, pageNumber, 10);
+            var query = _context.Sizes.Where(x => !x.IsDelete).AsQueryable();
+
+            if (!sizeParams.SearchString.IsNullOrEmpty())
+            {
+                query = query.Where(x => x.Id == int.Parse(sizeParams.SearchString) ||
+                x.Name.ToLower().Contains(sizeParams.SearchString.ToLower()));
+            }
+
+            return await PagedList<Size>.CreateAsync(query, sizeParams.PageNumber, sizeParams.PageSize);
         }
 
         public async Task<Size?> GetSizeAsync(int id)
@@ -50,7 +56,7 @@ namespace CozaStore.Data
 
         public async Task<IEnumerable<Size>> GetAllSizesAsync()
         {
-            return await _context.Sizes.ToListAsync();
+            return await _context.Sizes.Where(x=>!x.IsDelete).ToListAsync();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CozaStore.Models;
 using CozaStore.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using CozaStore.Helpers;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
@@ -12,9 +13,11 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<IActionResult> Index(int page)
+        public async Task<IActionResult> Index(SizeParams sizeParams)
         {
-            var sizes = await _unitOfWork.SizeRepository.GetAllSizesAsync(page);
+            ViewData["searchString"] = sizeParams.SearchString;
+            ViewData["pageSize"] = (int)sizeParams.PageSize;
+            var sizes = await _unitOfWork.SizeRepository.GetAllSizesAsync(sizeParams);
             return View(sizes);
         }
 
@@ -69,21 +72,12 @@ namespace CozaStore.Areas.Admin.Controllers
             var size = await _unitOfWork.SizeRepository.GetSizeAsync(id);
             if (size != null)
             {
-                bool isDelte = size.IsDelete;
-                _unitOfWork.SizeRepository.ToggleDelete(size);
+                _unitOfWork.SizeRepository.Delete(size);
 
                 if (await _unitOfWork.Complete())
                 {
-                    if (isDelte)
-                    {
-                        TempData["success"] = "The size has been reverted successfully.";
-                        return NoContent();
-                    }
-                    else
-                    {
-                        TempData["success"] = "The size has been deleted successfully.";
-                        return NoContent();
-                    }
+                    TempData["success"] = "The size has been deleted successfully.";
+                    return NoContent();
                 }
             }
             TempData["error"] = "Size not found!!!";
