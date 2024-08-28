@@ -2,140 +2,154 @@
 @section Styles {
     <link rel="stylesheet" href="~/sweetalert2/sweetalert2.min.css" />
 }
-<content>
-    <h3 class="mb-3 text-primary">List Order</h3>
-    <div class="row">
-        <div class="col-6">
-            <a class="btn btn-light text-white" style="background-color: #157347">
-                <i class="fa-sharp fa-solid fa-file-export"></i> Excel
-            </a>
-        </div>
-        <div class="col-6 text-end">
-            <form method="get" asp-controller="order" asp-action="Index">
-                <div class="d-flex gap-2">
-                    <input type="text" name="searchString" class="form-control"
-                           placeholder="Enter name, phone, id of order"
-                           value="@ViewData["searchString"]" />
-                    <button type="submit" style="width: 48px;" class="rounded btn btn-outline-dark p-0">
-                        <i class="fa-regular fa-magnifying-glass"></i>
-                    </button>
-                    <a asp-controller="order" asp-action="Index" style="width: 48px;" class="rounded btn btn-info px-0">
-                        <i class="fa-sharp fa-regular fa-arrow-rotate-right"></i>
-                    </a>
-                </div>
+<main class="content">
+    <div class="container-fluid p-0">
 
-            </form>
-        </div>
-    </div>
+        <h1 class="h3 mb-3">List Order Page</h1>
 
-    <div class="table-responsive text-nowrap mt-3">
-        <table class="table">
-            <thead>
-                <tr class="fw-bold">
-                    <td style="width: 5%;">ID</td>
-                    <td>Name</td>
-                    <td>Shipping method</td>
-                    <td>Payment</td>
-                    <td>Status</td>
-                    <td>Total</td>
-                    <td>Actions</td>
-                </tr>
-            </thead>
-            <tbody class="align-middle table-border-bottom-0">
-                @if (Model != null)
-                {
-                    @foreach (var order in Model)
-                    {
-                        <tr>
-                            <td>@order.Id</td>
-                            <td>@order.FullName</td>
-                            <td>@order.ShippingMethod.Name</td>
-                            <td>
-                                <span class="
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header text-end">
+                        <a class="btn  btn-success">
+                            <i class="fa-sharp fa-solid fa-file-export"></i> Excel
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <form method="get" asp-controller="order" asp-action="index" class="row">
+                            <div class="col-6">
+                                <input name="PageSize" class="form-control" style="max-width: 10%;" value="@ViewData["pageSize"]" />
+                            </div>
+                            <div class="col-6 text-end">
+                                <div class="d-flex gap-2">
+                                    <input type="text" name="SearchString" class="form-control"
+                                           placeholder="Enter name, id of Category"
+                                           value="@ViewData["searchString"]" />
+                                    <button type="submit" style="width: 48px;" class="rounded btn btn-outline-dark p-0">
+                                        <i class="fa-regular fa-magnifying-glass"></i>
+                                    </button>
+                                    <a asp-controller="order" asp-action="index" style="width: 48px;" class="rounded btn btn-outline-dark px-0">
+                                        <i class="fa-sharp fa-regular fa-arrow-rotate-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="table-responsive mt-3">
+                            <table class="table">
+                                <thead>
+                                    <tr class="fw-bold">
+                                        <td style="width: 10%;">ID</td>
+                                        <td>Name</td>
+                                        <td>Shipping method</td>
+                                        <td>Payment</td>
+                                        <td>Status</td>
+                                        <td>Total</td>
+                                        <td>Actions</td>
+                                    </tr>
+                                </thead>
+                                <tbody class="align-middle table-border-bottom-0">
+                                    @if (Model != null)
+                                    {
+                                        @foreach (var order in Model)
+                                        {
+                                            <tr>
+                                                <td>@order.Id</td>
+                                                <td>@order.FullName</td>
+                                                <td>@order.ShippingMethod.Name</td>
+                                                <td>
+                                                    <span class="
                                      @(order.PaymentStatus == (int)PaymentStatus.Paid ? "text-info" : "text-secondary")">
-                                    @(order.PaymentStatus == (int)PaymentStatus.Paid ? Html.Raw("<i class='fa-regular fa-check'></i>") : Html.Raw("<i class='fa-sharp fa-regular fa-clock-three'></i>"))
-                                </span>
-                            </td>
+                                                        @(order.PaymentStatus == (int)PaymentStatus.Paid ? Html.Raw("<i class='fa-regular fa-check'></i>") : Html.Raw("<i class='fa-sharp fa-regular fa-clock-three'></i>"))
+                                                    </span>
+                                                </td>
 
-                            <td>
-                                <span class="badge
+                                                <td>
+                                                    <span class="badge
                                     @(order.OrderStatus == (int)OrderStatus.Unconfirmed ? "bg-warning" :
                                       order.OrderStatus == (int)OrderStatus.Confirmed ? "bg-success" : "bg-danger")">
-                                    @(order.OrderStatus == (int)OrderStatus.Unconfirmed ? OrderStatus.Unconfirmed :
-                                        order.OrderStatus == (int)OrderStatus.Confirmed ? OrderStatus.Confirmed : OrderStatus.Canceled)
-                                </span>
-                            </td>
+                                                        @(order.OrderStatus == (int)OrderStatus.Unconfirmed ? OrderStatus.Unconfirmed :
+                                                            order.OrderStatus == (int)OrderStatus.Confirmed ? OrderStatus.Confirmed : OrderStatus.Canceled)
+                                                    </span>
+                                                </td>
 
-                            <td>$@order.GetTotal()</td>
-                            <td class="text-white">
+                                                <td>$@order.GetTotal()</td>
+                                                <td class="text-white">
 
-                                <a href="/admin/products/edit/${row.id}" class="btn btn-sm btn-info">
-                                    <i class="fa fa-pencil-alt"></i>
-                                </a>
-                                <button type="button" data-id="${row.id}" class="btn btn-sm btn-danger">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    }
-                }
+                                                    <a href="/admin/products/edit/${row.id}" class="btn btn-sm btn-info">
+                                                        <i class="fa fa-pencil-alt"></i>
+                                                    </a>
+                                                    <button type="button" data-id="${row.id}" class="btn btn-sm btn-danger">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
 
-            </tbody>
-        </table>
-    </div>
-    @if (Model != null)
-    {
-        @* paging *@
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (Model != null)
+                        {
+                            @* paging *@
 
-        var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-        var nextDisabled = !Model.HasNextPage ? "disabled" : "";
-        var firstDisabled = Model.PageIndex <= 1 ? "disabled" : "";
-        var lastDisabled = Model.PageIndex == Model.TotalPages ? "disabled" : "";
+                            var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                            var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                            var firstDisabled = Model.PageIndex <= 1 ? "disabled" : "";
+                            var lastDisabled = Model.PageIndex == Model.TotalPages ? "disabled" : "";
 
 
-        <div class="row mt-3">
-            <ul class="pagination justify-content-center">
-                <li class="mx-1 page-item @firstDisabled">
-                    <a class="rounded page-link"
-                       asp-route-searchString="@ViewData["searchString"]"
-                       asp-route-page="1">
-                        <span>First</span>
-                    </a>
-                </li>
-                <li class="mx-1 page-item @prevDisabled">
-                    <a class="rounded page-link"
-                       asp-route-searchString="@ViewData["searchString"]"
-                       asp-route-page="@(Model.PageIndex - 1)">
-                        <i class="fa-regular fa-chevron-left"></i>
-                    </a>
-                </li>
-                @for (int i = 1; i <= Model.TotalPages; i++)
-                {
-                    <li class="mx-1 page-item">
-                        <a class="rounded page-link @(Model.PageIndex == i ? "active" : "")"
-                           asp-route-searchString="@ViewData["searchString"]"
-                           asp-route-page="@(i)"
-                           data-page="@(i)"> @i</a>
-                    </li>
-                }
-                <li class="mx-1 page-item @nextDisabled">
-                    <a class="rounded page-link"
-                       asp-route-searchString="@ViewData["searchString"]"
-                       asp-route-page="@(Model.PageIndex + 1)">
-                        <i class="fa-regular fa-chevron-right"></i>
-                    </a>
-                </li>
-                <li class="mx-1 page-item @lastDisabled">
-                    <a class="rounded page-link"
-                       asp-route-searchString="@ViewData["searchString"]"
-                       asp-route-page="@(Model.TotalPages)">
-                        <span>Last</span>
-                    </a>
-                </li>
-            </ul>
+                            <div class="row mt-3">
+                                <ul class="pagination justify-content-center">
+                                    <li class="mx-1 page-item @firstDisabled">
+                                        <a class="rounded page-link"
+                                           asp-route-searchString="@ViewData["searchString"]"
+                                           asp-route-page="1">
+                                            <span>First</span>
+                                        </a>
+                                    </li>
+                                    <li class="mx-1 page-item @prevDisabled">
+                                        <a class="rounded page-link"
+                                           asp-route-searchString="@ViewData["searchString"]"
+                                           asp-route-page="@(Model.PageIndex - 1)">
+                                            <i class="fa-regular fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                    @for (int i = 1; i <= Model.TotalPages; i++)
+                                    {
+                                        <li class="mx-1 page-item">
+                                            <a class="rounded page-link @(Model.PageIndex == i ? "active" : "")"
+                                               asp-route-searchString="@ViewData["searchString"]"
+                                               asp-route-page="@(i)"
+                                               data-page="@(i)"> @i</a>
+                                        </li>
+                                    }
+                                    <li class="mx-1 page-item @nextDisabled">
+                                        <a class="rounded page-link"
+                                           asp-route-searchString="@ViewData["searchString"]"
+                                           asp-route-page="@(Model.PageIndex + 1)">
+                                            <i class="fa-regular fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                    <li class="mx-1 page-item @lastDisabled">
+                                        <a class="rounded page-link"
+                                           asp-route-searchString="@ViewData["searchString"]"
+                                           asp-route-page="@(Model.TotalPages)">
+                                            <span>Last</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
-    }
-</content>
+
+    </div>
+</main>
+
 
 
 @section Scripts {
@@ -143,7 +157,7 @@
 
 
     <script>
-        
+
 
         function DeleteColor(url) {
             Swal.fire({

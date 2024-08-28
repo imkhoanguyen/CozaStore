@@ -5,7 +5,7 @@ namespace CozaStore.Interfaces
 {
     public interface IShippingRepository
     {
-        Task<PagedList<ShippingMethod>> GetAllShippingMethodsAsync(string searchString, int page);
+        Task<PagedList<ShippingMethod>> GetAllShippingMethodsAsync(ShippingParams shippingParams);
         void Add(ShippingMethod shippingMethod);
         void Update(ShippingMethod shippingMethod);
         void Delete(ShippingMethod shippingMethod);

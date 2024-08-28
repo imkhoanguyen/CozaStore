@@ -1,4 +1,5 @@
-﻿using CozaStore.Interfaces;
+﻿using CozaStore.Helpers;
+using CozaStore.Interfaces;
 using CozaStore.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +14,11 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<IActionResult> Index(string searchString, int page)
+        public async Task<IActionResult> Index(ShippingParams shippingParams)
         {
-            var shippingMethods = await _unitOfWork.ShippingRepository.GetAllShippingMethodsAsync(searchString, page);
+            ViewData["searchString"] = shippingParams.SearchString;
+            ViewData["pageSize"] = (int)shippingParams.PageSize;
+            var shippingMethods = await _unitOfWork.ShippingRepository.GetAllShippingMethodsAsync(shippingParams);
 
             return View(shippingMethods);
         }
@@ -31,7 +34,7 @@ namespace CozaStore.Areas.Admin.Controllers
             if (!ModelState.IsValid) return View();
 
             _unitOfWork.ShippingRepository.Add(shippingMethod);
-            if(await _unitOfWork.Complete())
+            if (await _unitOfWork.Complete())
             {
                 TempData["success"] = "Shipping method has been created successfully";
                 return RedirectToAction(nameof(Index));
@@ -42,7 +45,7 @@ namespace CozaStore.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var shippingMethod = await _unitOfWork.ShippingRepository.GetAsync(id);
-            if(shippingMethod == null)
+            if (shippingMethod == null)
                 return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Shipping method not found" });
 
             return View(shippingMethod);
@@ -65,21 +68,15 @@ namespace CozaStore.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var shippingMethod = await _unitOfWork.ShippingRepository.GetAsync(id);
-            if(shippingMethod == null)
-            {
-                TempData["error"] = "Shipping method not found";
-                return NoContent();
-            }
+            if (shippingMethod == null)
+                return Json(new { success = false, message = "Shipping method not found!!!" });
 
             _unitOfWork.ShippingRepository.Delete(shippingMethod);
 
             if (await _unitOfWork.Complete())
-            {
-                TempData["success"] = "Delete shipping method successfully";
-                return NoContent();
-            }
-            TempData["error"] = "Problem delete shipping method";
-            return NoContent();
+                return Json(new { success = true, message = "Delete shipping method successfully" });
+
+            return Json(new { success = false, message = "Problem delete shipping method" });
         }
     }
 }

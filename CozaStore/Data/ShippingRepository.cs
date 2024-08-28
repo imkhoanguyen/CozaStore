@@ -30,18 +30,16 @@ namespace CozaStore.Data
             return await _context.ShippingMethods.Where(x => !x.IsDelete).ToListAsync();
         }
 
-        public async Task<PagedList<ShippingMethod>> GetAllShippingMethodsAsync(string searchString, int page)
+        public async Task<PagedList<ShippingMethod>> GetAllShippingMethodsAsync(ShippingParams shippingParams)
         {
             var query = _context.ShippingMethods.Where(x=>!x.IsDelete).AsQueryable();
 
-            if(!searchString.IsNullOrEmpty())
+            if(!shippingParams.SearchString.IsNullOrEmpty())
             {
-                query = query.Where(x=>x.Name.ToLower().Contains(searchString.ToLower()));
+                query = query.Where(x=>x.Name.ToLower().Contains(shippingParams.SearchString.ToLower()));
             }
 
-            if (page < 1) page = 1;
-
-            return await PagedList<ShippingMethod>.CreateAsync(query, page, 10);
+            return await PagedList<ShippingMethod>.CreateAsync(query, shippingParams.PageNumber, shippingParams.PageSize);
 
         }
 

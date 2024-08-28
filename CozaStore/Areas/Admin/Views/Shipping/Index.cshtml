@@ -3,124 +3,152 @@
     <link rel="stylesheet" href="~/sweetalert2/sweetalert2.min.css" />
 }
 
-<content>
-    <h3 class="mb-3 text-primary">List Shipping method</h3>
-    <div class="row">
-        <div class="col-6">
-            <a asp-controller="shipping" asp-action="create" class="btn btn-primary">Create</a>
-        </div>
-        <div class="col-6 text-end">
-            <form method="get" asp-controller="shipping" asp-action="Index">
-                <div class="d-flex gap-2">
-                    <input type="text" name="searchString" class="form-control"
-                           placeholder="Enter name of shipping"
-                           value="@ViewData["SearchString"]" />
-                    <button type="submit" style="width: 48px;" class="rounded btn btn-outline-dark p-0">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
-                    <a asp-controller="shipping" asp-action="Index" style="width: 48px;" class="rounded btn btn-info px-0">
-                        <i class="fa-solid fa-arrows-rotate"></i>
-                    </a>
+<main class="content">
+    <div class="container-fluid p-0">
+
+        <h1 class="h3 mb-3">Shipping method Page</h1>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header text-end">
+                        <a asp-controller="shipping" asp-action="create" class="btn btn-primary">
+                            <i class="fa-sharp fa-light fa-plus"></i> Add Shipping
+                        </a>
+                    </div>
+                    <div class="card-body">
+
+                        <form method="get" asp-controller="shipping" asp-action="index" class="row">
+                            <div class="col-6">
+                                <input name="PageSize" class="form-control" style="max-width: 10%;" value="@ViewData["pageSize"]" />
+                            </div>
+                            <div class="col-6 text-end">
+                                <div class="d-flex gap-2">
+                                    <input type="text" name="SearchString" class="form-control"
+                                           placeholder="Enter name, id of Shipping method"
+                                           value="@ViewData["searchString"]" />
+                                    <button type="submit" style="width: 48px;" class="rounded btn btn-outline-dark p-0">
+                                        <i class="fa-regular fa-magnifying-glass"></i>
+                                    </button>
+                                    <a asp-controller="shipping" asp-action="index" style="width: 48px;" class="rounded btn btn-outline-dark px-0">
+                                        <i class="fa-sharp fa-regular fa-arrow-rotate-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="table-responsive mt-3">
+                            <table class="table">
+                                <thead>
+                                    <tr class="fw-bold">
+                                        <td style="width: 10%;">ID</td>
+                                        <td style="width: 35%;">Name</td>
+                                        <td style="width: 10%;">Cost</td>
+                                        <td style="width: 35%;">Description</td>
+                                        <td style="width: 10%;">Actions</td>
+                                    </tr>
+                                </thead>
+                                <tbody class="align-middle table-border-bottom-0">
+                                    @if (Model != null)
+                                    {
+                                        @foreach (var shippingMethod in Model)
+                                        {
+                                            <tr>
+                                                <td>@shippingMethod.Id</td>
+                                                <td>@shippingMethod.Name</td>
+                                                <td>$@shippingMethod.Cost</td>
+                                                <td>@Html.Raw(shippingMethod.Description)</td>
+                                                <td>
+                                                    <div class="d-flex gap-2">
+                                                        <a asp-controller="shipping" asp-action="edit" asp-route-id="@shippingMethod.Id" class="btn btn-sm btn-primary">
+                                                            <i class="fa fa-pencil-alt"></i>
+                                                        </a>
+                                                        <a onclick="Delete(this,'/admin/shipping/delete/?id=@shippingMethod.Id')"
+                                                           class="btn btn-sm btn-danger">
+                                                            <i class="fa-solid fa-trash-can"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (Model != null)
+                        {
+                            @* paging *@
+
+                            var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                            var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                            var firstDisabled = Model.PageIndex <= 1 ? "disabled" : "";
+                            var lastDisabled = Model.PageIndex == Model.TotalPages ? "disabled" : "";
+
+
+                            <div class="row mt-3">
+                                <ul class="pagination justify-content-center">
+                                    <li class="mx-1 page-item @firstDisabled">
+                                        <a class="rounded page-link"
+                                           asp-route-SearchString="@ViewData["searchString"]"
+                                           asp-route-PageNumber="1"
+                                           asp-route-PageSize="@ViewData["pageSize"]">
+                                            <span>First</span>
+                                        </a>
+                                    </li>
+                                    <li class="mx-1 page-item @prevDisabled">
+                                        <a class="rounded page-link"
+                                           asp-route-SearchString="@ViewData["searchString"]"
+                                           asp-route-PageNumber="@(Model.PageIndex - 1)"
+                                           asp-route-PageSize="@ViewData["pageSize"]">
+                                            <i class="fa-regular fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                    @for (int i = 1; i <= Model.TotalPages; i++)
+                                    {
+                                        <li class="mx-1 page-item">
+                                            <a class="rounded page-link @(Model.PageIndex == i ? "active" : "")"
+                                               asp-route-SearchString="@ViewData["searchString"]"
+                                               asp-route-PageNumber="@(i)"
+                                               asp-route-PageSize="@ViewData["pageSize"]"
+                                               data-page="@(i)">@i</a>
+                                        </li>
+                                    }
+                                    <li class="mx-1 page-item @nextDisabled">
+                                        <a class="rounded page-link"
+                                           asp-route-SearchString="@ViewData["searchString"]"
+                                           asp-route-PageNumber="@(Model.PageIndex + 1)"
+                                           asp-route-PageSize="@ViewData["pageSize"]">
+                                            <i class="fa-regular fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                    <li class="mx-1 page-item @lastDisabled">
+                                        <a class="rounded page-link"
+                                           asp-route-SearchString="@ViewData["searchString"]"
+                                           asp-route-PageNumber="@(Model.TotalPages)"
+                                           asp-route-PageSize="@ViewData["pageSize"]">
+                                            <span>Last</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                    </div>
                 </div>
-
-            </form>
+            </div>
         </div>
+
     </div>
-
-    <div class="table-responsive text-nowrap mt-3">
-        <table class="table">
-            <thead>
-                <tr class="fw-bold">
-                    <td style="width: 10%;">ID</td>
-                    <td >Name</td>
-                    <td>Cost</td>
-                    <td>Description</td>
-                    <td>Actions</td>
-                </tr>
-            </thead>
-            <tbody class="align-middle table-border-bottom-0">
-                @if (Model != null)
-                {
-                    @foreach (var shippingMethod in Model)
-                    {
-                        <tr>
-                            <td>@shippingMethod.Id</td>
-                            <td>@shippingMethod.Name</td>
-                            <td>$@shippingMethod.Cost</td>
-                            <td>@Html.Raw(shippingMethod.Description)</td>
-                            <td style="color: #fff">
-                                <a asp-controller="shipping" asp-action="edit" asp-route-id="@shippingMethod.Id" class="btn btn-warning mx-1">Edit</a>
-                                <a onclick="Delete('/admin/shipping/delete/?id=@shippingMethod.Id')"
-                                   class="btn btn-danger mx-1">
-                                    Delete
-                                </a>
-                            </td>
-
-                        </tr>
-                    }
-                }
-
-            </tbody>
-        </table>
-    </div>
-    @if (Model != null)
-    {
-        @* paging *@
-
-        var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-        var nextDisabled = !Model.HasNextPage ? "disabled" : "";
-        var firstDisabled = Model.PageIndex <= 1 ? "disabled" : "";
-        var lastDisabled = Model.PageIndex == Model.TotalPages ? "disabled" : "";
+</main>
 
 
-        <div class="row mt-3">
-            <ul class="pagination justify-content-center">
-                <li class="mx-1 page-item @firstDisabled">
-                    <a class="rounded page-link"
-                       asp-route-page="1"
-                       asp-route-searchString="@ViewData["SearchString"]">
-                        <span>First</span>
-                    </a>
-                </li>
-                <li class="mx-1 page-item @prevDisabled">
-                    <a class="rounded page-link" asp-route-page="@(Model.PageIndex - 1)">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </a>
-                </li>
-                @for (int i = 1; i <= Model.TotalPages; i++)
-                {
-                    <li class="mx-1 page-item">
-                        <a class="rounded page-link @(Model.PageIndex == i ? "active" : "")"
-                           asp-route-page="@(i)"
-                           asp-route-searchString="@ViewData["SearchString"]"> @i</a>
-                    </li>
-                }
-                <li class="mx-1 page-item @nextDisabled">
-                    <a class="rounded page-link"
-                       asp-route-page="@(Model.PageIndex + 1)"
-                       asp-route-searchString="@ViewData["SearchString"]">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </a>
-                </li>
-                <li class="mx-1 page-item @lastDisabled">
-                    <a class="rounded page-link"
-                       asp-route-page="@(Model.TotalPages)"
-                       asp-route-searchString="@ViewData["SearchString"]">
-                        <span>Last</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    }
-
-
-</content>
 
 
 @section Scripts {
     <script src="~/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/js/paging.js"></script>
     <script>
-        function Delete(url) {
+        function Delete(element, url) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -133,13 +161,22 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         url: url,
-                        type: 'delete',
-                        success: function () {
-                            window.location.reload();
+                        type: 'DELETE',
+                        success: function (response) {
+                            if (response.success === false) {
+                                toastr.error(response.message);
+                            } else {
+                                // Use closest('tr') to find and remove the table row containing the delete button
+                                $(element).closest('tr').remove();
+                                toastr.success(response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            toastr.error('An error occurred: ' + xhr.statusText);
                         }
-                    })
+                    });
                 }
-            })
+            });
         }
     </script>
 }
