@@ -25,7 +25,7 @@ namespace CozaStore.Data
 
         public async Task<PagedList<Color>> GetAllColorsAsync(ColorParams colorParams)
         {
-            var query = _context.Colors.Where(x=>!x.IsDelete).AsQueryable();
+            var query = _context.Colors.Where(x=>!x.IsDelete).OrderByDescending(x=>x.Id).AsQueryable();
             if (colorParams.SearchString != null)
             {
                 query = query.Where(x => x.Name.ToLower().Contains(colorParams.SearchString.ToLower())

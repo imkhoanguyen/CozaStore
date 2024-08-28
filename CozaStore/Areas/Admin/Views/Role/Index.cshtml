@@ -62,10 +62,10 @@
                                                            class="btn btn-sm btn-primary">
                                                             <i class="fa fa-pencil-alt"></i>
                                                         </a>
-                                                        <a class="btn btn-sm btn-success" asp-controller="role" asp-action="managepermission" asp-route-roleId="@role.Id">
+                                                        <a class="btn btn-sm btn-secondary" asp-controller="role" asp-action="managepermission" asp-route-roleId="@role.Id">
                                                             <i class="fa-sharp fa-solid fa-eye"></i>
                                                         </a>
-                                                        <a onclick="Delete('/admin/role/delete/?id=@role.Id')" class="btn btn-sm btn-danger">
+                                                        <a onclick="Delete(this,'/admin/role/delete/?id=@role.Id')" class="btn btn-sm btn-danger">
                                                             <i class="fa-solid fa-trash-can"></i>
                                                         </a>
                                                     </div>
@@ -149,8 +149,7 @@
     <script src="~/sweetalert2/sweetalert2.min.js"></script>
     <script src="~/js/paging.js"></script>
     <script>
-        function Delete(url) {
-            console.log(url);
+        function Delete(element, url) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -163,21 +162,22 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         url: url,
-                        type: 'delete',
+                        type: 'DELETE',
                         success: function (response) {
-                            if(response.success === false) {
+                            if (response.success === false) {
                                 toastr.error(response.message);
                             } else {
-                                window.location.reload();
+                                // Use closest('tr') to find and remove the table row containing the delete button
+                                $(element).closest('tr').remove();
                                 toastr.success(response.message);
                             }
                         },
                         error: function (xhr, status, error) {
                             toastr.error('An error occurred: ' + xhr.statusText);
                         }
-                    })
+                    });
                 }
-            })
+            });
         }
     </script>
 }

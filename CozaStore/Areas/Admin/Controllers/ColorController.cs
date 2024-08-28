@@ -65,7 +65,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
             var color = await _unitOfWork.ColorRepository.GetColorAsync(id);
@@ -74,13 +74,9 @@ namespace CozaStore.Areas.Admin.Controllers
                 _unitOfWork.ColorRepository.Delete(color);
 
                 if (await _unitOfWork.Complete())
-                {
-                    TempData["success"] = "The color has been deleted successfully.";
-                    return NoContent();
-                }
+                    return Json(new { success = true, message = "The color has been deleted successfully." });
             }
-            TempData["error"] = "Color not found!!!";
-            return NoContent();
+            return Json(new { success = false, message = "Color not found!!!" });
         }
     }
 }

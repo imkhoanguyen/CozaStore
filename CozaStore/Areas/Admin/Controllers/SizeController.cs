@@ -66,7 +66,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
             var size = await _unitOfWork.SizeRepository.GetSizeAsync(id);
@@ -75,13 +75,9 @@ namespace CozaStore.Areas.Admin.Controllers
                 _unitOfWork.SizeRepository.Delete(size);
 
                 if (await _unitOfWork.Complete())
-                {
-                    TempData["success"] = "The size has been deleted successfully.";
-                    return NoContent();
-                }
+                    return Json(new { success = true, message = "The size has been deleted successfully." });
             }
-            TempData["error"] = "Size not found!!!";
-            return NoContent();
+            return Json(new { success = false, message = "Size not found!!!" });
         }
     }
 }
