@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CozaStore.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240828023754_initDb")]
+    [Migration("20240828113358_initDb")]
     partial class initDb
     {
         /// <inheritdoc />
@@ -318,6 +318,9 @@ namespace CozaStore.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsFeatured")
                         .HasColumnType("bit");
 
@@ -449,6 +452,9 @@ namespace CozaStore.Migrations
 
                     b.Property<int>("ColorId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");

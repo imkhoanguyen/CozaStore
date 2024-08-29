@@ -18,7 +18,11 @@ namespace CozaStore.Data
 
         public void DeleteVariant(Variant variant)
         {
-           _context.Variants.Remove(variant);
+            var variantFromdb = _context.Variants.FirstOrDefault(x => x.Id == variant.Id);
+            if (variantFromdb != null)
+            {
+                variantFromdb.IsDelete = true;
+            }
         }
 
         public void UpdateVariant(Variant variant)

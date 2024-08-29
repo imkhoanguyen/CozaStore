@@ -5,82 +5,100 @@
     <link rel="stylesheet" href="~/css/custom-select2.css" />
 }
 
-<content>
-    <form method="post" class="px-3 mt-3 container-fluid" enctype="multipart/form-data">
-        <input asp-for="Product.Id" hidden />
-        <div class="row d-flex justify-content-between">
-            <h3 class="col-6 text-primary">Create product</h3>
-            <div class="col-6 d-flex justify-content-end">
-                <div class="form-check form-switch mb-2">
-                    <label class="form-check-label fw-bold" asp-for="Product.IsFeatured">Is Feature?</label>
-                    <input class="form-check-input" type="checkbox" asp-for="Product.IsFeatured">
+<main class="content">
+    <div class="container-fluid p-0">
+
+        <h1 class="h3 mb-3">Blank Page</h1>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Create product</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" class="px-3 mt-3 container-fluid" enctype="multipart/form-data">
+                            <input asp-for="Product.Id" hidden />
+                            <div class="row d-flex justify-content-between">
+                                <h3 class="col-6 text-primary"></h3>
+                                <div class="col-6 d-flex justify-content-end">
+                                    <div class="form-check form-switch mb-2">
+                                        <label class="form-check-label fw-bold" asp-for="Product.IsFeatured">Is Feature?</label>
+                                        <input class="form-check-input" type="checkbox" asp-for="Product.IsFeatured">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label asp-for="Product.Name" class="form-label"></label>
+                                    <input asp-for="Product.Name" class="form-control" />
+                                    <span asp-validation-for="Product.Name" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3 g-2">
+                                <div class="col-12 col-md-4">
+                                    <label asp-for="Product.Price" class="form-label"></label>
+                                    <input asp-for="Product.Price" class="form-control" />
+                                    <span asp-validation-for="Product.Price" class="text-danger"></span>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label asp-for="Product.PriceSell" class="form-label"></label>
+                                    <input asp-for="Product.PriceSell" class="form-control" />
+                                    <span asp-validation-for="Product.PriceSell" class="text-danger"></span>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label asp-for="Product.Quantity" class="form-label"></label>
+                                    <input asp-for="Product.Quantity" class="form-control" />
+                                    <span asp-validation-for="Product.Quantity" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3 g-2">
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="SelectedCategory" class="form-label">Categories</label>
+                                    <select asp-for="SelectedCategory" class="form-select" multiple="multiple" style="max-width: 100%;">
+                                        @foreach (var category in Model.CategoryList)
+                                        {
+                                            <option value="@category.Id">@category.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="Product.Status" class="form-label">Status</label>
+                                    <select asp-for="Product.Status" class="form-select" style="max-width: 100%;">
+                                        @foreach (var status in Model.StatusList)
+                                        {
+                                            <option value="@status.Id" data-style="@status.Name">@status.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label asp-for="Product.Description" class="form-label"></label>
+                                    <textarea asp-for="Product.Description" class="form-control"></textarea>
+                                    <span asp-validation-for="Product.Description" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2">
+                                <a asp-controller="product" asp-action="Index" class="btn btn-secondary">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="row mb-3">
-            <div class="col-12">
-                <label asp-for="Product.Name" class="form-label"></label>
-                <input asp-for="Product.Name" class="form-control" />
-                <span asp-validation-for="Product.Name" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="row mb-3 g-2">
-            <div class="col-12 col-md-4">
-                <label asp-for="Product.Price" class="form-label"></label>
-                <input asp-for="Product.Price" class="form-control" />
-                <span asp-validation-for="Product.Price" class="text-danger"></span>
-            </div>
-            <div class="col-12 col-md-4">
-                <label asp-for="Product.PriceSell" class="form-label"></label>
-                <input asp-for="Product.PriceSell" class="form-control" />
-                <span asp-validation-for="Product.PriceSell" class="text-danger"></span>
-            </div>
-            <div class="col-12 col-md-4">
-                <label asp-for="Product.Quantity" class="form-label"></label>
-                <input asp-for="Product.Quantity" class="form-control" />
-                <span asp-validation-for="Product.Quantity" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="row mb-3 g-2">
-            <div class="col-12 col-md-6">
-                <label asp-for="SelectedCategory" class="form-label">Categories</label>
-                <select asp-for="SelectedCategory" class="form-select" multiple="multiple" style="max-width: 100%;">
-                    <option disabled selected>Choose Category</option>
-                    @foreach (var category in Model.CategoryList)
-                    {
-                        <option value="@category.Id">@category.Name</option>
-                    }
-                </select>
-            </div>
-            <div class="col-12 col-md-6">
-                <label asp-for="Product.Status" class="form-label">Status</label>
-                <select asp-for="Product.Status" class="form-select" style="max-width: 100%;">
-                    @foreach (var status in Model.StatusList)
-                    {
-                        <option value="@status.Id" data-style="@status.Name">@status.Name</option>
-                    }
-                </select>
-            </div>
-        </div>
+    </div>
+</main>
 
 
-        <div class="row mb-3">
-            <div class="col-12">
-                <label asp-for="Product.Description" class="form-label"></label>
-                <textarea asp-for="Product.Description" class="form-control"></textarea>
-                <span asp-validation-for="Product.Description" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="d-flex justify-content-end gap-2">
-            <a asp-controller="product" asp-action="Index" class="btn btn-secondary">Cancel</a>
-            <button type="submit" class="btn btn-primary">Save</button>
-        </div>
-    </form>
-</content>
 
 @section Scripts {
     @{
@@ -97,7 +115,7 @@
             // Initialize Select2
             $('#SelectedCategory').select2();
 
-            // Initialize Select2 
+            // Initialize Select2
             $('#Product_Status').select2({
                 templateResult: formatState1,
                 templateSelection: formatState1

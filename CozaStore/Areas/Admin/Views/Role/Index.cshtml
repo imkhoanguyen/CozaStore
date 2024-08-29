@@ -164,6 +164,7 @@
                         url: url,
                         type: 'DELETE',
                         success: function (response) {
+                            
                             if (response.success === false) {
                                 toastr.error(response.message);
                             } else {

@@ -22,8 +22,8 @@ namespace CozaStore.Data
 
         public async Task<PagedList<Product>> GetAllProductsAsync(ProductParams productParams)
         {
-            var query = _context.Products
-                    .Include(x => x.Variants)
+            var query = _context.Products.Where(p=>!p.IsDelete)
+                    .Include(x => x.Variants.Where(v=>!v.IsDelete))
                     .Include(x => x.Images)
                     .AsQueryable();
 
@@ -40,8 +40,8 @@ namespace CozaStore.Data
 
             if (productParams.SelectedCategory != null && productParams.SelectedCategory.Count > 0)
             {
-                query = query.Where(x => x.ProductCategories
-                              .Any(pc => productParams.SelectedCategory.Contains(pc.CategoryId)));
+                query = query.Where(x => productParams.SelectedCategory.All(selectedCategory =>
+                               x.ProductCategories.Any(pc => pc.CategoryId == selectedCategory)));
             }
 
             if (!string.IsNullOrEmpty(productParams.SelectedPriceRange))
@@ -71,14 +71,13 @@ namespace CozaStore.Data
                 "id" => query.OrderBy(x => x.Id),
                 "price_desc" => query.OrderBy(x => x.Price),
                 "price" => query.OrderByDescending(x => x.Price),
-                "status_desc" => query.OrderByDescending(x => x.Status == (int)ProductStatus.Public).ThenBy(x => x.Status == (int)ProductStatus.Private),
-                "status" => query.OrderBy(x => x.Status == (int)ProductStatus.Public).ThenBy(x => x.Status == (int)ProductStatus.Private),
+                "status_desc" => query.OrderByDescending(x => x.Status == (int)ProductStatus.Public),
+                "status" => query.OrderBy(x => x.Status == (int)ProductStatus.Public),
                 _ => query.OrderByDescending(x => x.Id)
             };
 
-            if (productParams.Page < 1) productParams.Page = 1;
 
-            return await PagedList<Product>.CreateAsync(query, productParams.Page, productParams.PageNumber);
+            return await PagedList<Product>.CreateAsync(query, productParams.PageNumber, productParams.PageSize);
         }
 
         public async Task<IEnumerable<Color?>> GetAvailableColorsAsync(int productId, int sizeId)
@@ -125,22 +124,19 @@ namespace CozaStore.Data
                 .Include(x => x.Images)
                 .Include(x => x.Variants)
                     .ThenInclude(v => v.Color)
-                .Include(x => x.Variants)
+                .Include(x => x.Variants.Where(v => !v.IsDelete))
                     .ThenInclude(v => v.Size)
                 .Include(x => x.ProductCategories)
                     .ThenInclude(pc => pc.Category)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public void ToggleProductStatus(Product product)
+        public void Delete(Product product)
         {
             var productFromDb = _context.Products.FirstOrDefault(x => x.Id == product.Id);
             if (productFromDb != null)
             {
-                if (productFromDb.Status == (int)ProductStatus.Deleted)
-                    productFromDb.Status = (int)ProductStatus.Private;
-                else
-                    productFromDb.Status = (int)ProductStatus.Deleted;
+                productFromDb.IsDelete = true;
             }
         }
 

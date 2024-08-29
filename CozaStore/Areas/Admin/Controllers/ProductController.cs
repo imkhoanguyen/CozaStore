@@ -24,6 +24,7 @@ namespace CozaStore.Areas.Admin.Controllers
             var colors = await _unitOfWork.ColorRepository.GetAllColorsAsync();
             var sizes = await _unitOfWork.SizeRepository.GetAllSizesAsync();
 
+            // get category list from url
             if (!string.IsNullOrEmpty(productParams.SelectedCategoryString))
             {
                 productParams.SelectedCategory = productParams.SelectedCategoryString
@@ -32,23 +33,16 @@ namespace CozaStore.Areas.Admin.Controllers
                     .ToList();
             }
 
-            ViewData["CurrentSort"] = productParams.SortOrder;
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(productParams.SortOrder) ? "name_desc" : "";
-            ViewData["IdSortParm"] = productParams.SortOrder == "id" ? "id_desc" : "id";
-            ViewData["PriceSortParm"] = productParams.SortOrder == "price" ? "price_desc" : "price";
-            ViewData["StatusSortParm"] = productParams.SortOrder == "status" ? "status_desc" : "status";
-            ViewData["CurrentFilter"] = productParams.SearchString;
-
             var products = await _unitOfWork.ProductRepository.GetAllProductsAsync(productParams);
 
             var vm = new ProductVM
             {
                 Products = products,
                 CurrentSort = productParams.SortOrder,
-                NameSortParm = ViewData["NameSortParm"].ToString(),
-                IdSortParm = ViewData["IdSortParm"].ToString(),
-                PriceSortParm = ViewData["PriceSortParm"].ToString(),
-                StatusSortParm = ViewData["StatusSortParm"].ToString(),
+                NameSortParm = String.IsNullOrEmpty(productParams.SortOrder) ? "name_desc" : "",
+                IdSortParm = productParams.SortOrder == "id" ? "id_desc" : "id",
+                PriceSortParm = productParams.SortOrder == "price" ? "price_desc" : "price",
+                StatusSortParm = productParams.SortOrder == "status" ? "status_desc" : "status",
                 CurrentFilter = productParams.SearchString,
                 SelectedColor = productParams.SelectedColor,
                 SelectedSize = productParams.SelectedSize,
@@ -185,29 +179,18 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(vm);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ToggleProductStatus(int productId)
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int productId)
         {
             var product = await _unitOfWork.ProductRepository.GetProductAsync(productId);
             if (product == null)
-                return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Product not found!!!" });
-            int status = product.Status;
-            _unitOfWork.ProductRepository.ToggleProductStatus(product);
+                return Json(new { success = false, message = "Product not found" });
+
+            _unitOfWork.ProductRepository.Delete(product);
             if (await _unitOfWork.Complete())
-            {
-                if (status == (int)ProductStatus.Deleted)
-                {
-                    TempData["success"] = "The product has been recoverd successfully.";
-                    return NoContent();
-                }
-                else
-                {
-                    TempData["success"] = "The product has been deleted successfully.";
-                    return NoContent();
-                }
-            }
-            TempData["error"] = "Problem delete/revert product";
-            return NoContent();
+                return Json(new { success = true, message = "The product has been deleted successfully." });
+
+            return Json(new { success = true, message = "Problem delete product" });
         }
 
         public async Task<IActionResult> Detail(int id)
@@ -302,19 +285,14 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             var variant = await _unitOfWork.VariantRepository.GetVariantAsync(variantId);
             if (variant == null)
-            {
-                TempData["error"] = "Variant not found!!!";
-                return NoContent();
-            }
+                return Json(new {success = false, message = "Variant not found!!!" });
+           
 
             _unitOfWork.VariantRepository.DeleteVariant(variant);
             if (await _unitOfWork.Complete())
-            {
-                TempData["success"] = "The variant has been deleted successfully.";
-                return NoContent();
-            }
-            TempData["error"] = "Problem delete variant!!!";
-            return NoContent();
+                return Json(new { success = true, message = "The variant has been deleted successfully." });
+
+            return Json(new { success = false, message = "Problem delete variant!!!" });
         }
 
 
@@ -354,38 +332,27 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             var product = await _unitOfWork.ProductRepository.GetProductAsync(productId);
             if (product == null)
-            {
-                TempData["error"] = "Product not found!!!";
-                return NoContent();
-            }
+                return Json(new { success = false, message = "Product not found!!!" });
+
 
             var img = product.Images.FirstOrDefault(x => x.Id == imgId);
             var listImg = product.Images.ToList();
             if (img == null || img.IsMain || listImg.Count == 1)
-            {
-                TempData["error"] = "This image cannot be delete!!!";
-                return NoContent();
-            }
+                return Json(new { success = false, message = "This image cannot be delete!!!" });
 
-            if (img.ProductId != null)
+            if (img.PublicId != null) // xoa tren cloud
             {
                 var result = await _imageService.DeleteImageAsync(img.PublicId);
                 if (result.Error != null)
-                {
-                    TempData["error"] = result.Error.Message;
-                    return NoContent();
-                }
+                    return Json(new { success = false, message = result.Error.Message });
             }
 
             product.Images.Remove(img);
 
             if (await _unitOfWork.Complete())
-            {
-                TempData["success"] = "The img has been deleted successfully.";
-                return NoContent();
-            }
-            TempData["error"] = "Problem deleting image";
-            return NoContent();
+                return Json(new { success = true, message = "The img has been deleted successfully." });
+           
+            return Json(new { success = false, message = "Problem deleting image" });
         }
 
         public IActionResult AddImages(int productId)

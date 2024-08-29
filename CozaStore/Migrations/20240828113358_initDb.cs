@@ -98,7 +98,8 @@ namespace CozaStore.Migrations
                     Status = table.Column<int>(type: "int", nullable: false),
                     IsFeatured = table.Column<bool>(type: "bit", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -385,6 +386,7 @@ namespace CozaStore.Migrations
                     PriceSell = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false),
                     SizeId = table.Column<int>(type: "int", nullable: false),
                     ColorId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false)

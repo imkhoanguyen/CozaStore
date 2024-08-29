@@ -2,348 +2,332 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/sweetalert2/sweetalert2.min.css" />
-    <link rel="stylesheet" href="~/css/accordion-settings.css" />
+    <link rel="stylesheet" href="~/css/color-baged.css" />
 }
-<!-- Content wrapper -->
-<div class="content-wrapper">
-    <!-- Content -->
-    <div class="container-xxl flex-grow-1 container-p-y">
 
-        @* back to list *@
-        <div class="card mb-4">
-            <div class="card-body">
-                <a asp-controller="product" asp-action="index">
-                    <i class="fa-solid fa-arrow-left fa-lg"></i>
-                </a>
-            </div>
-        </div>
 
+<main class="content">
+    <div class="container-fluid p-0">
         @* product detail *@
-        <div class="card mb-4">
-            <div class="card-header">
-                <h2 class="fw-bold text-primary position-relative ">
-                    Product Detail
-                    
-                </h2>
-
-                @if (Model.Status == (int)ProductStatus.Public)
-                {
-                    <span class="position-absolute top-0 end-0 mt-3 mx-2 badge bg-primary">@ProductStatus.Public</span>
-                }
-                else if (Model.Status == (int)ProductStatus.Private)
-                {
-                    <span class="position-absolute top-0 end-0 mt-3 mx-2 badge bg-warning">@ProductStatus.Private</span>
-                }
-                else
-                {
-                    <span class="position-absolute top-0 end-0 mt-3 mx-2 badge bg-danger">@ProductStatus.Deleted</span>
-                }
-                
-                
-            </div>
-
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 col-sm-12 mb-4">
-                        <div class="table-responsive text-nowrap">
-                            <table class="table">
-                                <tbody>
-                                    <tr style="border-top: 1px solid #ccc;">
-                                        <th style="width: 10%;" scope="row">
-                                            <i class="fa-regular fa-id-card fa-lg"></i>
-                                        </th>
-                                        <td>
-                                            <strong>ID</strong>
-                                        </td>
-                                        <td>
-                                            @Model.Id
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <i class="fa-solid fa-shirt fa-lg"></i>
-                                        </th>
-                                        <td>
-                                            <strong>Name</strong>
-                                        </td>
-                                        <td>
-                                            @Model.Name
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <i class="fa-solid fa-tag fa-lg"></i>
-                                        </th>
-                                        <td>
-                                            <strong>Category</strong>
-                                        </td>
-                                        <td>
-                                            @string.Join(", ", Model.ProductCategories.Where(pc => pc.Category != null).Select(pc => pc.Category.Name))
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <i class="fa-solid fa-medal fa-lg"></i>
-                                        </th>
-                                        <td>
-                                            <strong>Featured</strong>
-                                        </td>
-                                        <td>
-                                           @Model.IsFeatured 
-                                        </td>
-                                    </tr>
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-                        
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex">
+                        <h5 class="card-title mb-0"> Product Detail</h5>
+                        @if (Model.Status == (int)ProductStatus.Public)
+                        {
+                            <span class="badge bg-success ms-auto">@ProductStatus.Public</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary ms-auto">@ProductStatus.Draft</span>
+                        }
                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12 mb-4">
+                                <div class="table-responsive text-nowrap">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr style="border-top: 1px solid #ccc;">
+                                                <th style="width: 10%;" scope="row">
+                                                    <i class="fa-sharp fa-solid fa-address-card fa-lg"></i>
+                                                </th>
+                                                <td>
+                                                    <strong>ID</strong>
+                                                </td>
+                                                <td>
+                                                    @Model.Id
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">
+                                                    <i class="fa-sharp fa-solid fa-shirt fa-lg"></i>
+                                                </th>
+                                                <td>
+                                                    <strong>Name</strong>
+                                                </td>
+                                                <td>
+                                                    @Model.Name
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">
+                                                    <i class="fa-solid fa-tag fa-lg"></i>
+                                                </th>
+                                                <td>
+                                                    <strong>Category</strong>
+                                                </td>
+                                                <td>
+                                                    @string.Join(", ", Model.ProductCategories.Where(pc => pc.Category != null).Select(pc => pc.Category.Name))
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">
+                                                    <i class="fa-solid fa-medal fa-lg"></i>
+                                                </th>
+                                                <td>
+                                                    <strong>Featured</strong>
+                                                </td>
+                                                <td>
+                                                    @Model.IsFeatured
+                                                </td>
+                                            </tr>
 
-                    <div class="col-md-6 col-sm-12 mb-4">
-                        <div class="table-responsive text-nowrap">
-                            <table class="table">
-                                <tbody>
-                                    <tr style="border-top: 1px solid #ccc;">
-                                        <th style="width: 10%; scope="row">
-                                            <i class="fa-solid fa-money-bill fa-lg"></i>
-                                        </th>
-                                        <td>
-                                            <strong>Price</strong>
-                                        </td>
-                                        <td>
-                                            @Model.Price
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <i class="fa-solid fa-hand-holding-dollar fa-lg"></i>
-                                        </th>
-                                        <td>
-                                            <strong>Price Sell</strong>
-                                        </td>
-                                        <td>
-                                            @Model.PriceSell
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <i class="fa-solid fa-cube fa-lg"></i>
-                                        </th>
-                                        <td>
-                                            <strong>Quantity</strong>
-                                        </td>
-                                        <td>
-                                            @Model.Quantity
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <i class="fa-solid fa-calendar-days fa-lg"></i>
-                                        </th>
-                                        <td>
-                                            <strong>Created</strong>
-                                        </td>
-                                        <td>
-                                            @Model.Created
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                @* description *@
-                <div class="card accordion-item">
-                    <h2 class="accordion-header" id="headingOne">
-                        <button type="button" style="font-size: 20px;" class="accordion-button fw-bold" data-bs-toggle="collapse" data-bs-target="#accordionOne" aria-expanded="true" aria-controls="accordionOne">
-                            Description
-                        </button>
-                    </h2>
+                                        </tbody>
+                                    </table>
+                                </div>
 
-                    <div id="accordionOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-                            @Html.Raw(Model.Description)
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        @* product images *@
-        <div class="card mb-4">
-            <h2 class="card-header fw-bold text-primary">Product Images</h2>
-            <div class="card-body">
-                <div class="card-body accordion-item p-0 ">
-                    <h2 class="accordion-header" id="headingTwo">
-                        <button type="button" style="font-size: 20px;" class="accordion-button fw-bold collapsed" data-bs-toggle="collapse" data-bs-target="#accordionTwo" aria-expanded="false" aria-controls="accordionTwo">
-                            List Product Images
-                        </button>
-                    </h2>
-
-                    <div id="accordionTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample" style="">
-                        <div class="row mb-3 mx-2">
-                            <div class="col-12">
-                                <a asp-asp-controller="product" asp-action="addimages"
-                                   asp-route-productId="@Model.Id"
-                                   class="btn btn-primary">
-                                    Add Image
-                                </a>
                             </div>
 
-                        </div>
-                        <div class="row mx-2">
-                            <div class="col-12">
-                                <div class="alert alert-warning alert-dismissible" role="alert">
-                                    If you do not set the main image, the product will display the first image.
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <div class="col-md-6 col-sm-12 mb-4">
+                                <div class="table-responsive text-nowrap">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr style="border-top: 1px solid #ccc;">
+                                                <th style="width: 10%; scope="row">
+                                                    <i class="fa-solid fa-money-bill fa-lg"></i>
+                                                </th>
+                                                <td>
+                                                    <strong>Price</strong>
+                                                </td>
+                                                <td>
+                                                    $@Model.Price
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">
+                                                    <i class="fa-solid fa-hand-holding-dollar fa-lg"></i>
+                                                </th>
+                                                <td>
+                                                    <strong>Price Sell</strong>
+                                                </td>
+                                                <td>
+                                                    $@Model.PriceSell
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">
+                                                    <i class="fa-solid fa-cube fa-lg"></i>
+                                                </th>
+                                                <td>
+                                                    <strong>Quantity</strong>
+                                                </td>
+                                                <td>
+                                                    @Model.Quantity
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">
+                                                    <i class="fa-solid fa-calendar-days fa-lg"></i>
+                                                </th>
+                                                <td>
+                                                    <strong>Created</strong>
+                                                </td>
+                                                <td>
+                                                    @Model.Created
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-
                         </div>
-                        <div class="accordion-body">
-                            <div class="container my-3">
-                                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-4">
-                                    @{
-                                        var count = Model.Images.Count();
-                                    }
-                                    @foreach (var img in Model.Images.OrderByDescending(x => x.Id))
-                                    {
-                                        <div class="col">
-                                            <div class="card">
-                                                <img src="@img.Url" alt="@Model.Name" class="card-img-top" style="max-height: 300px; object-fit: cover;" />
-                                                <div class="card-body d-flex flex-column align-items-center">
-                                                    <div class="d-flex gap-2 justify-content-center mb-2 text-white">
-                                                        <a onclick="SetMainImg('/admin/product/setmainimage/?productId=@Model.Id&imgId=@img.Id')"
-                                                           class="btn btn-info @(img.IsMain ? "disabled" : "")">Main</a>
+                        @* description *@
+                        <div class="accordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button id="btn-description" class="accordion-button fw-bold collapsed" type="button" onclick="toggleAccordion('collapseDescription', 'btn-description')">
+                                        Description
+                                    </button>
+                                </h2>
+                                <div id="collapseDescription" class="accordion-collapse collapse ">
+                                    <div class="accordion-body">
+                                        @Html.Raw(Model.Description)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                                                        <a onclick="DeleteImage('/admin/product/deleteimage/?productId=@Model.Id&imgId=@img.Id')"
-                                                           class="btn btn-danger @(img.IsMain ? "disabled" : "") @(count==1 ? " disabled" : "") ">Delete</a>
+
+
+        @* image list *@
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Product Images</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="accordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button id="btn-open-img" class="accordion-button fw-bold collapsed" type="button" onclick="toggleAccordion('collapseImage', 'btn-open-img')">
+                                        Images
+                                    </button>
+                                </h2>
+                                <div id="collapseImage" class="accordion-collapse collapse ">
+                                    <div class="accordion-body">
+                                        <div class="text-end mb-3">
+                                            <a asp-asp-controller="product" asp-action="addimages"
+                                               asp-route-productId="@Model.Id"
+                                               class="btn btn-primary">
+                                                <i class="fa-sharp fa-light fa-plus"></i> Add Image
+                                            </a>
+                                        </div>
+
+                                        <div class="alert alert-warning alert-dismissible" role="alert">
+                                            If you do not set the main image, the product will display the first image.
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-4">
+                                            @{
+                                                var count = Model.Images.Count();
+                                            }
+                                            @foreach (var img in Model.Images.OrderByDescending(x => x.Id))
+                                            {
+                                                <div class="col">
+                                                    <div class="card">
+                                                        <img src="@img.Url" alt="@Model.Name" class="card-img-top" style="max-height: 300px; object-fit: cover;" />
+                                                        <div class="card-body d-flex flex-column align-items-center">
+                                                            <div class="d-flex gap-2 justify-content-center mb-2 ">
+                                                                <a onclick="SetMainImg('/admin/product/setmainimage/?productId=@Model.Id&imgId=@img.Id')"
+                                                                   class="btn btn-info text-white @(img.IsMain ? "disabled" : "")">Main</a>
+
+                                                                <a onclick="DeleteImage(this,'/admin/product/deleteimage/?productId=@Model.Id&imgId=@img.Id')"
+                                                                   class="btn btn-danger @(img.IsMain ? "disabled" : "") @(count==1 ? " disabled" : "") ">Delete</a>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            }
                                         </div>
-                                    }
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
 
 
 
         @* product vanriants *@
-        <div class="card mb-4">
-            <h2 class="card-header fw-bold text-primary">Product Variants</h2>
-            <div class="card-body">
-                <div class="card accordion-item">
-                    <h2 class="accordion-header" id="headingThree">
-                        <button type="button" style="font-size: 20px;" class="accordion-button collapsed fw-bold" data-bs-toggle="collapse" data-bs-target="#accordionThree" aria-expanded="false" aria-controls="accordionThree">
-                            List Variants
-                        </button>
-                    </h2>
-                    <div id="accordionThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample" style="">
-                        <div class="accordion-body">
-                            <div class="row">
-                                <div class="col-6">
-                                    <a asp-controller="product" asp-action="createvariant"
-                                       asp-route-productId="@Model.Id"
-                                       class="btn btn-primary text-white">Create</a>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Product Variants</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="accordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button id="btn-open-variant" class="accordion-button fw-bold collapsed" type="button" onclick="toggleAccordion('collapseVariant', 'btn-open-variant')">
+                                        Variants
+                                    </button>
+                                </h2>
+                                <div id="collapseVariant" class="accordion-collapse collapse ">
+                                    <div class="accordion-body">
+                                        <div class="text-end">
+                                            <a asp-controller="product" asp-action="createvariant"
+                                               asp-route-productId="@Model.Id"
+                                               class="btn btn-primary text-white">
+                                                <i class="fa-sharp fa-light fa-plus"></i> Add Variant
+                                            </a>
+                                        </div>
+
+                                        <div class="table-responsive text-nowrap mt-2">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr class="fw-bold">
+                                                        <td style="width: 10%;">ID</td>
+                                                        <td style="width: 20%;">Color</td>
+                                                        <td>Size</td>
+                                                        <td>Price</td>
+                                                        <td>Price Sell</td>
+                                                        <td style="width: 10%;">Quantity</td>
+                                                        <td style="width: 10%;">Status</td>
+                                                        <td style="width: 10%;">Actions</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="align-middle table-border-bottom-0">
+                                                    @if (Model.Variants != null)
+                                                    {
+                                                        @foreach (var variant in Model.Variants)
+                                                        {
+                                                            <tr>
+                                                                <td>@variant.Id</td>
+                                                                <td>
+                                                                    <div class="d-flex gap-2">
+                                                                        <div class="color-baged" style="background-color: @variant.Color?.Code"></div>
+                                                                        <div>@variant.Color?.Name</div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>@variant.Size?.Name</td>
+                                                                <td>$@variant.Price</td>
+                                                                <td>$@variant.PriceSell</td>
+                                                                <td>@variant.Quantity</td>
+                                                                <td>
+                                                                    @if (variant.Status == (int)VariantStatus.Public)
+                                                                    {
+                                                                        <span class="badge bg-success">@VariantStatus.Public</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="badge bg-secondary">@VariantStatus.Draft</span>
+                                                                    }
+                                                                </td>
+
+                                                                <td>
+                                                                    <a asp-controller="product" asp-action="editvariant" asp-route-productId="@Model.Id"
+                                                                       asp-route-variantId="@variant.Id"
+                                                                       class="btn btn-sm btn-primary mx-1">
+                                                                        <i class="fa fa-pencil-alt"></i>
+                                                                    </a>
+                                                                    <a onclick="DeleteVariant(this,'/admin/product/deletevariant?variantId=@variant.Id')" class="btn btn-sm btn-danger mx-1">
+                                                                        <i class="fa-solid fa-trash-can"></i>
+                                                                    </a>
+                                                                </td>
+
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="table-responsive text-nowrap mt-2">
-                                <table class="table">
-                                    <thead>
-                                        <tr class="fw-bold">
-                                            <td>ID</td>
-                                            <td style="width: 20%;">Color</td>
-                                            <td style="width: 10%;">Size</td>
-                                            <td>Price Import</td>
-                                            <td>Price Sell</td>
-                                            <td>Quantity</td>
-                                            <td>Status</td>
-                                            <td>Actions</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="align-middle table-border-bottom-0">
-                                        @if (Model.Variants != null)
-                                        {
-                                            @foreach (var variant in Model.Variants)
-                                            {
-                                                <tr>
-                                                    <td>@variant.Id</td>
-                                                    <td>
-                                                        <div class="d-flex gap-2">
-                                                            <div style="width: 20px; height: 20px; background-color: @variant.Color?.Name; display: inline-block"></div>
-                                                            <div>@variant.Color?.Name</div>
-                                                        </div>
-                                                    </td>
-                                                    <td>@variant.Size?.Name</td>
-                                                    <td>@variant.Price</td>
-                                                    <td>@variant.PriceSell</td>
-                                                    <td>@variant.Quantity</td>
-                                                    @if (variant.Status == (int)VariantStatus.Public)
-                                                    {
-                                                        <td>
-                                                            <span class="badge bg-label-primary me-1">@VariantStatus.Public</span>
-                                                        </td>
-
-                                                        <td style="color: #fff">
-                                                            <a asp-controller="product" asp-action="editvariant" asp-route-productId="@Model.Id"
-                                                               asp-route-variantId="@variant.Id"
-                                                               class="btn btn-warning mx-1">
-                                                                Edit
-                                                            </a>
-                                                            <a onclick="DeleteVariant('/admin/product/deletevariant?variantId=@variant.Id')" class="btn btn-danger mx-1">
-                                                                Delete
-                                                            </a>
-                                                        </td>
-                                                    }
-                                                    else 
-                                                    {
-                                                        <td>
-                                                            <span class="badge bg-label-warning me-1">@VariantStatus.Private</span>
-                                                        </td>
-
-                                                        <td style="color: #fff">
-                                                            <a asp-controller="product" asp-action="editvariant" asp-route-productId="@Model.Id"
-                                                               asp-route-variantId="@variant.Id"
-                                                               class="btn btn-warning mx-1">
-                                                                Edit
-                                                            </a>
-                                                            <a onclick="DeleteVariant('/admin/product/deletevariant?variantId=@variant.Id')" class="btn btn-danger mx-1">
-                                                                Delete
-                                                            </a>
-                                                        </td>
-                                                    }
-                                                </tr>
-                                            }
-                                        }
-                                    </tbody>
-                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
     </div>
-</div>
-
+</main>
 
 @section Scripts {
     <script src="~/sweetalert2/sweetalert2.min.js"></script>
     <script>
+        function toggleAccordion(collapseId, btnId) {
+            var collapseElement = document.getElementById(`${collapseId}`);
+            var button = document.getElementById(`${btnId}`);
+            if (collapseElement.classList.contains('show')) {
+                collapseElement.classList.remove('show');
+                button.classList.add('collapsed');
+            } else {
+                collapseElement.classList.add('show');
+                button.classList.remove('collapsed');
+            }
+        }
 
-
-        function DeleteImage(url) {
+        function DeleteImage(element, url) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -356,13 +340,22 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         url: url,
-                        type: 'delete',
-                        success: function () {
-                            window.location.reload();
+                        type: 'DELETE',
+                        success: function (response) {
+                            console.log(response);
+                            if (response.success === false) {
+                                toastr.error(response.message);
+                            } else {
+                                $(element).closest('.col').remove();
+                                toastr.success(response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            toastr.error('An error occurred: ' + xhr.statusText);
                         }
-                    })
+                    });
                 }
-            })
+            });
         }
 
         function SetMainImg(url) {
@@ -380,13 +373,16 @@
                         type: 'post',
                         success: function () {
                             window.location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            toastr.error('An error occurred: ' + xhr.statusText);
                         }
                     })
                 }
             })
         }
 
-        function DeleteVariant(url) {
+        function DeleteVariant(element, url) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -399,13 +395,23 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         url: url,
-                        type: 'delete',
-                        success: function () {
-                            window.location.reload();
+                        type: 'DELETE',
+                        success: function (response) {
+
+                            if (response.success === false) {
+                                toastr.error(response.message);
+                            } else {
+                                // Use closest('tr') to find and remove the table row containing the delete button
+                                $(element).closest('tr').remove();
+                                toastr.success(response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            toastr.error('An error occurred: ' + xhr.statusText);
                         }
-                    })
+                    });
                 }
-            })
+            });
         }
     </script>
 }

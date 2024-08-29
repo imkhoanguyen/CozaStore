@@ -11,10 +11,11 @@ namespace CozaStore.Models
         public decimal Price { get; set; }
         public decimal PriceSell { get; set; }
         public int Quantity { get; set; }
-        public int Status { get; set; } = (int)ProductStatus.Private;
+        public int Status { get; set; } = (int)ProductStatus.Draft;
         public bool IsFeatured { get; set; } = false;
-        public DateTime Created { get; set; } = DateTime.UtcNow;
+        public DateTime Created { get; set; } = DateTime.Now;
         public string? Description { get; set; }
+        public bool IsDelete { get; set; } = false;
 
 
 

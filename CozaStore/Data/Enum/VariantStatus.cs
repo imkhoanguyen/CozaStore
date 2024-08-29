@@ -2,7 +2,7 @@
 {
     public enum VariantStatus
     {
-        Private = 0,
+        Draft = 0,
         Public = 1,
     }
 

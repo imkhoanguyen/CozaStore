@@ -315,6 +315,9 @@ namespace CozaStore.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsFeatured")
                         .HasColumnType("bit");
 
@@ -446,6 +449,9 @@ namespace CozaStore.Migrations
 
                     b.Property<int>("ColorId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");

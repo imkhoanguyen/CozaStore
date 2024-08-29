@@ -12,7 +12,7 @@ namespace CozaStore.Interfaces
 
         void UpdateProduct(Product product);
 
-        void ToggleProductStatus(Product product);
+        void Delete(Product product);
 
         Task<Product?> GetProductDetailAsync(int id);
 

@@ -10,7 +10,8 @@ namespace CozaStore.Models
         public decimal Price { get; set; }
         public decimal PriceSell { get; set; }
         public int Quantity { get; set; }
-        public int Status { get; set; } = (int)VariantStatus.Private;
+        public int Status { get; set; } = (int)VariantStatus.Draft;
+        public bool IsDelete { get; set; }
 
         //navigation property
         //size
