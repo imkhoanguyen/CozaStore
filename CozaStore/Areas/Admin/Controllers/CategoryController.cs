@@ -1,9 +1,6 @@
 ﻿using CozaStore.Models;
 using CozaStore.Interfaces;
-using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using CozaStore.Data;
 using CozaStore.Helpers;
 
 namespace CozaStore.Areas.Admin.Controllers
