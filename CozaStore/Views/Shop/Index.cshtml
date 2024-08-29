@@ -5,14 +5,22 @@
     <link rel="stylesheet" type="text/css" href="~/css/product-details.css">
     <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
     <link rel="stylesheet" href="~/css/custom-select2.css" />
+    <link rel="stylesheet" href="~/css/color-baged.css" />
+
 }
 <div class="bg0 m-t-23 p-b-140">
     <div class="container">
-        <div class="flex-w flex-sb-m p-b-52">
+        <form class="flex-w flex-sb-m p-b-52" method="get" asp-controller="shop" asp-action="index">
             <div class="flex-w flex-l-m filter-tope-group m-tb-10">
             </div>
 
             <div class="flex-w flex-c-m m-tb-10">
+                <a asp-controller="shop" asp-action="index" style="text-decoration: none;"
+                class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4">
+                    <i class="fa-light fa-arrow-rotate-right cl2 m-r-6 fs-15 fa-2xs"></i>
+                    Refresh
+                </a>
+
                 <div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
                     <i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
                     <i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
@@ -33,7 +41,9 @@
                         <i class="zmdi zmdi-search"></i>
                     </button>
 
-                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
+                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" placeholder="Search"
+                           name="SearchString"
+                           value="@Model.CurrentFilter">
                 </div>
             </div>
 
@@ -41,25 +51,27 @@
             <div class="dis-none panel-filter w-full p-t-10">
                 <div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
                     <div class="filter-col1 p-r-15 p-b-27">
-                        <div class="mtext-102 cl2 p-b-15">
+                        <label class="mtext-102 cl2 p-b-15" for="sortOrder">
                             Sort By
-                        </div>
+                        </label>
 
-                        <select class="form-select">
-                            <option value="" selected>New</option>
-                            <option value="">Name (A-Z)</option>
-                            <option value="">Name (Z-A)</option>
-                            <option value="">Price Low to High</option>
-                            <option value="">Price High to Low</option>
+                        <select class="form-select" id="sortOrder" name="sortOrder" onchange="this.form.submit()">
+                            <option value="id_desc" selected>Choose an option</option>
+                            <option value="id_desc">New</option>
+                            <option value="id">Old</option>
+                            <option value="name">Name (A-Z)</option>
+                            <option value="name_desc">Name (Z-A)</option>
+                            <option value="price">Price Low to High</option>
+                            <option value="price_desc">Price High to Low</option>
                         </select>
                     </div>
 
                     <div class="filter-col2 p-r-15 p-b-27">
-                        <div class="mtext-102 cl2 p-b-15">
+                        <label class="mtext-102 cl2 p-b-15" asp-for="SelectedPriceRange">
                             Price
-                        </div>
+                        </label>
 
-                        <select class="form-select">
+                        <select class="form-select" asp-for="SelectedPriceRange" onchange="this.form.submit()">
                             <option disabled selected>Choose an option</option>
                             @foreach (var price in Model.PriceRangeList)
                             {
@@ -69,25 +81,25 @@
                     </div>
 
                     <div class="filter-col3 p-r-15 p-b-27">
-                        <div class="mtext-102 cl2 p-b-15">
+                        <label class="mtext-102 cl2 p-b-15" asp-for="SelectedColor">
                             Color
-                        </div>
+                        </label>
 
-                        <select asp-for="SelectedColor" class="form-select" style="width: 100%;">
+                        <select asp-for="SelectedColor" class="form-select" style="width: 100%;" onchange="this.form.submit()">
                             <option value="" disabled selected>Choose an option</option>
                             @foreach (var color in Model.ColorList)
                             {
-                                <option value="@color.Id" data-color="@color.Name">@color.Name</option>
+                                <option value="@color.Id" data-color="@color.Code">@color.Name</option>
                             }
                         </select>
                     </div>
 
                     <div class="filter-col4 p-b-27">
-                        <div class="mtext-102 cl2 p-b-15">
+                        <label class="mtext-102 cl2 p-b-15" asp-for="SelectedSize">
                             Size
-                        </div>
+                        </label>
 
-                        <select asp-for="SelectedSize" class="form-select">
+                        <select asp-for="SelectedSize" class="form-select" onchange="this.form.submit()">
                             <option value="" disabled selected>Choose an option</option>
                             @foreach (var size in Model.SizeList)
                             {
@@ -96,42 +108,34 @@
                         </select>
                     </div>
 
-                    <div class="filter-col1 p-r-15 p-b-27" style="width: 100%">
+                    <div class="filter-col1 p-b-27" style="width: 100%">
                         <div class="d-flex gap-2 align-items-end">
                             <div style="width: 100%;">
-                                <div class="mtext-102 cl2 p-b-15">
+                                <label class="mtext-102 cl2 p-b-15" asp-for="SelectedCategory">
                                     Category
-                                </div>
+                                </label>
 
-                                <select asp-for="SelectedCategory" class="form-select" style="width: 100%;">
+                                <select asp-for="SelectedCategory" class="form-select" style="width: 100%;" onchange="this.form.submit()">
                                     @foreach (var category in Model.CategoryList)
                                     {
                                         <option value="@category.Id">@category.Name</option>
                                     }
                                 </select>
                             </div>
-
-
-
-                            <button class="size-105 pointer trans-04 m-tb-4 m-0 btn btn-primary text-white">
-                                Apply Filter
-                            </button>
-
-
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
 
         <div class="row isotope-grid">
             @foreach (var product in Model.Products)
             {
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">
                     <!-- Block product -->
 
                     <div class="block2">
-                        <div class="block2-pic hov-img0">
+                        <div class="block2-pic hov-img0" style="height: 400px;">
                             <img src="@product.Images.First().Url" alt="IMG-PRODUCT">
 
                             <a onclick="GetProductDetail(@product.Id)" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
@@ -183,7 +187,8 @@
                            asp-route-selectedColor="@Model.SelectedColor"
                            asp-route-selectedSize="@Model.SelectedSize"
                            asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)"
-                           asp-route-page="1">
+                           asp-route-PageNumber="1"
+                           asp-route-PageSize="@Model.Products.PageSize">
                             <span>First</span>
                         </a>
                     </li>
@@ -194,7 +199,8 @@
                            asp-route-selectedColor="@Model.SelectedColor"
                            asp-route-selectedSize="@Model.SelectedSize"
                            asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)"
-                           asp-route-page="@(Model.Products.PageIndex - 1)">
+                           asp-route-PageNumber="@(Model.Products.PageIndex - 1)"
+                           asp-route-PageSize="@Model.Products.PageSize">
                             <i class="fa-solid fa-chevron-left"></i>
                         </a>
                     </li>
@@ -207,7 +213,9 @@
                                asp-route-selectedColor="@Model.SelectedColor"
                                asp-route-selectedSize="@Model.SelectedSize"
                                asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)"
-                               asp-route-page="@(i)"> @i</a>
+                               asp-route-PageNumber="@(i)"
+                               asp-route-PageSize="@Model.Products.PageSize"
+                               data-page="@(i)"> @i</a>
                         </li>
                     }
                     <li class="mx-1 page-item @nextDisabled">
@@ -217,7 +225,8 @@
                            asp-route-selectedColor="@Model.SelectedColor"
                            asp-route-selectedSize="@Model.SelectedSize"
                            asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)"
-                           asp-route-page="@(Model.Products.PageIndex + 1)">
+                           asp-route-PageNumber="@(Model.Products.PageIndex + 1)"
+                           asp-route-PageSize="@Model.Products.PageSize">
                             <i class="fa-solid fa-chevron-right"></i>
                         </a>
                     </li>
@@ -228,7 +237,8 @@
                            asp-route-selectedColor="@Model.SelectedColor"
                            asp-route-selectedSize="@Model.SelectedSize"
                            asp-route-SelectedCategoryString="@string.Join(",", Model.SelectedCategory)"
-                           asp-route-page="@(Model.Products.TotalPages)">
+                           asp-route-PageNumber="@(Model.Products.TotalPages)"
+                           asp-route-PageSize="@Model.Products.PageSize">
                             <span>Last</span>
                         </a>
                     </li>
@@ -244,6 +254,7 @@
 @section Scripts {
     <script src="~/lib/select2/js/select2.min.js"></script>
     <script src="~/js/product.js"></script>
+    <script src="~/js/paging.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -259,7 +270,7 @@
                     return state.text;
                 }
                 var $state = $(
-                    '<span class="d-flex gap-2 align-items-center"><div class="color-box" style="width:20px; height: 20px; display: inline-block; background-color: ' + $(state.element).data('color') + ';"></div>' + state.text + '</span>'
+                    '<span class="d-flex gap-2 align-items-center"><div class="color-baged" style="background-color: ' + $(state.element).data('color') + ';"></div>' + state.text + '</span>'
                 );
                 return $state;
             }

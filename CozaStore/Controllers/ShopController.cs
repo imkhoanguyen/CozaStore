@@ -13,17 +13,20 @@ namespace CozaStore.Controllers
     public class ShopController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        private const int _pageNumber = 16;
+        private const int _pageSize = 8;
         public ShopController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
         public async Task<IActionResult> Index(ProductParams productParams)
         {
+            productParams.PageSize = _pageSize;
+            productParams.Shop = true;
             var categories = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
             var colors = await _unitOfWork.ColorRepository.GetAllColorsAsync();
             var sizes = await _unitOfWork.SizeRepository.GetAllSizesAsync();
 
+            // get category list from url
             if (!string.IsNullOrEmpty(productParams.SelectedCategoryString))
             {
                 productParams.SelectedCategory = productParams.SelectedCategoryString
@@ -32,23 +35,16 @@ namespace CozaStore.Controllers
                     .ToList();
             }
 
-            ViewData["CurrentSort"] = productParams.SortOrder;
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(productParams.SortOrder) ? "name_desc" : "";
-            ViewData["IdSortParm"] = productParams.SortOrder == "id" ? "id_desc" : "id";
-            ViewData["PriceSortParm"] = productParams.SortOrder == "price" ? "price_desc" : "price";
-            ViewData["StatusSortParm"] = productParams.SortOrder == "status" ? "status_desc" : "status";
-            ViewData["CurrentFilter"] = productParams.SearchString;
-
             var products = await _unitOfWork.ProductRepository.GetAllProductsAsync(productParams);
 
             var vm = new ProductVM
             {
                 Products = products,
                 CurrentSort = productParams.SortOrder,
-                NameSortParm = ViewData["NameSortParm"].ToString(),
-                IdSortParm = ViewData["IdSortParm"].ToString(),
-                PriceSortParm = ViewData["PriceSortParm"].ToString(),
-                StatusSortParm = ViewData["StatusSortParm"].ToString(),
+                NameSortParm = String.IsNullOrEmpty(productParams.SortOrder) ? "name_desc" : "",
+                IdSortParm = productParams.SortOrder == "id" ? "id_desc" : "id",
+                PriceSortParm = productParams.SortOrder == "price" ? "price_desc" : "price",
+                StatusSortParm = productParams.SortOrder == "status" ? "status_desc" : "status",
                 CurrentFilter = productParams.SearchString,
                 SelectedColor = productParams.SelectedColor,
                 SelectedSize = productParams.SelectedSize,

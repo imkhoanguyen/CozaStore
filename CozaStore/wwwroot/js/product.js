@@ -46,6 +46,10 @@ function GetProductDetail(productId) {
                     </div>`;
                 $('.slick3').append(imgHtml);
             });
+
+            // refesh
+            refeshCount();
+            refeshSelect();
         },
         error: function () {
             alert('Failed to load product details');
@@ -222,3 +226,6 @@ function refeshSelect() {
     $('.color-select').html(colorOptions);
 }
 
+function refeshCount() {
+    $('.num-product').val(1);
+}

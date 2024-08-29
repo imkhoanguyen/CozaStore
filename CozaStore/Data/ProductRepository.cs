@@ -61,21 +61,23 @@ namespace CozaStore.Data
                 };
             }
 
-
-
             query = productParams.SortOrder switch
             {
                 "name_desc" => query.OrderByDescending(x => x.Name),
                 "name" => query.OrderBy(x => x.Name),
                 "id_desc" => query.OrderByDescending(x => x.Id),
                 "id" => query.OrderBy(x => x.Id),
-                "price_desc" => query.OrderBy(x => x.Price),
-                "price" => query.OrderByDescending(x => x.Price),
+                "price_desc" => query.OrderByDescending(x => x.Price),
+                "price" => query.OrderBy(x => x.Price),
                 "status_desc" => query.OrderByDescending(x => x.Status == (int)ProductStatus.Public),
                 "status" => query.OrderBy(x => x.Status == (int)ProductStatus.Public),
                 _ => query.OrderByDescending(x => x.Id)
             };
 
+            if (productParams.Shop) // only show public product on shop
+            {
+                query = query.Where(x => x.Status == (int)ProductStatus.Public);
+            }
 
             return await PagedList<Product>.CreateAsync(query, productParams.PageNumber, productParams.PageSize);
         }

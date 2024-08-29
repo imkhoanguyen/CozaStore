@@ -5,73 +5,65 @@
         </a>
 
         <ul class="sidebar-nav">
-            <li class="sidebar-header">
-                Overviews
-            </li>
+            <li class="sidebar-header">Overviews</li>
 
-            <li class="sidebar-item">
+            <li class="sidebar-item @(ViewContext.RouteData.Values["controller"].ToString() == "Dashboard" ? "active" : "")">
                 <a class="sidebar-link" asp-controller="dashboard" asp-action="index">
                     <i class="fa-light fa-chart-line align-middle"></i> <span class="align-middle">Dashboard</span>
                 </a>
             </li>
 
-            <li class="sidebar-header">
-                Managements
-            </li>
+            <li class="sidebar-header">Managements</li>
 
-            <li class="sidebar-item">
+            <li class="sidebar-item @(ViewContext.RouteData.Values["controller"].ToString() == "Color" ? "active" : "")">
                 <a class="sidebar-link" asp-controller="color" asp-action="index">
                     <i class="fa-sharp fa-light fa-palette align-middle"></i> <span class="align-middle">Color</span>
                 </a>
             </li>
 
-            <li class="sidebar-item">
+            <li class="sidebar-item @(ViewContext.RouteData.Values["controller"].ToString() == "Size" ? "active" : "")">
                 <a class="sidebar-link" asp-controller="size" asp-action="index">
                     <i class="fa-sharp fa-light fa-ruler align-middle"></i> <span class="align-middle">Size</span>
                 </a>
             </li>
 
-            <li class="sidebar-item">
+            <li class="sidebar-item @(ViewContext.RouteData.Values["controller"].ToString() == "Category" ? "active" : "")">
                 <a class="sidebar-link" asp-controller="category" asp-action="index">
                     <i class="fa-sharp fa-light fa-layer-group align-middle"></i> <span class="align-middle">Category</span>
                 </a>
             </li>
 
-            <li class="sidebar-item">
+            <li class="sidebar-item @(ViewContext.RouteData.Values["controller"].ToString() == "Product" ? "active" : "")">
                 <a class="sidebar-link" asp-controller="product" asp-action="index">
                     <i class="fa-sharp fa-light fa-shirt align-middle"></i> <span class="align-middle">Product</span>
                 </a>
             </li>
 
-            <li class="sidebar-item">
+            <li class="sidebar-item @(ViewContext.RouteData.Values["controller"].ToString() == "Order" ? "active" : "")">
                 <a class="sidebar-link" asp-controller="order" asp-action="index">
                     <i class="fa-sharp fa-light fa-bag-shopping align-middle"></i> <span class="align-middle">Order</span>
                 </a>
             </li>
 
-            <li class="sidebar-item">
+            <li class="sidebar-item @(ViewContext.RouteData.Values["controller"].ToString() == "Shipping" ? "active" : "")">
                 <a class="sidebar-link" asp-controller="shipping" asp-action="index">
                     <i class="fa-sharp fa-light fa-truck-fast align-middle"></i> <span class="align-middle">Shipping</span>
                 </a>
             </li>
 
+            <li class="sidebar-header">Systems</li>
 
-            <li class="sidebar-header">
-                Systems
-            </li>
-
-            <li class="sidebar-item">
+            <li class="sidebar-item @(ViewContext.RouteData.Values["controller"].ToString() == "User" ? "active" : "")">
                 <a class="sidebar-link" asp-controller="user" asp-action="index">
                     <i class="fa-sharp fa-light fa-user align-middle"></i> <span class="align-middle">User</span>
                 </a>
             </li>
 
-            <li class="sidebar-item">
+            <li class="sidebar-item @(ViewContext.RouteData.Values["controller"].ToString() == "Role" ? "active" : "")">
                 <a class="sidebar-link" asp-controller="role" asp-action="index">
                     <i class="fa-sharp fa-light fa-address-card align-middle"></i> <span class="align-middle">Role</span>
                 </a>
             </li>
         </ul>
-
     </div>
 </nav>
