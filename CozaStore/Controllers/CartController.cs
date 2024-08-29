@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Stripe.Checkout;
+using Stripe.Climate;
 using System.Security.Claims;
 
 namespace CozaStore.Controllers
@@ -30,7 +31,7 @@ namespace CozaStore.Controllers
 
             ShopingCartVM vm = new ShopingCartVM();
             vm.ShoppingCartList = shoppingCartList.ToList();
-            vm.Order = new Order();
+            vm.Order = new Models.Order();
             foreach (var cartItem in vm.ShoppingCartList)
             {
                 cartItem.Product = await _unitOfWork.ProductRepository.GetProductDetailAsync(cartItem.ProductId);
@@ -98,6 +99,34 @@ namespace CozaStore.Controllers
 
             var shoppingCartList = await _unitOfWork.ShoppingCartRepository.GetAllAsync(userId);
 
+            // check delete & qty
+            foreach (var cartItem in shoppingCartList)
+            {
+                if(cartItem.Product.IsDelete)
+                {
+                    TempData["error"] = cartItem.Product.Name + " has been deleted";
+                    return RedirectToAction(nameof(Index));
+                }
+                
+                if(cartItem.Product.Variants != null)
+                {
+                    foreach(var variant in cartItem.Product.Variants)
+                    {
+                        if(variant.SizeId == cartItem.SizeId && variant.ColorId == cartItem.ColorId && variant.IsDelete)
+                        {
+                            TempData["error"] = "Product or variant: " + cartItem.Product.Name + " has been deleted";
+                            return RedirectToAction(nameof(Index));
+                        }
+
+                        if(variant.SizeId == cartItem.SizeId && variant.ColorId == cartItem.ColorId && variant.Quantity < cartItem.Count)
+                        {
+                            TempData["error"] = "Insufficient quantity of products: " + cartItem.Product.Name;
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+                }
+            }
+
             var user = await _context.AppUser
                          .Include(x => x.AddressList)
                          .FirstOrDefaultAsync(x => x.Id == userId);
@@ -105,7 +134,7 @@ namespace CozaStore.Controllers
 
             var vm = new ShopingCartVM();
             vm.ShoppingCartList = shoppingCartList.ToList();
-            vm.Order = new Order();
+            vm.Order = new Models.Order();
             foreach (var cartItem in vm.ShoppingCartList)
             {
                 cartItem.Product = await _unitOfWork.ProductRepository.GetProductDetailAsync(cartItem.ProductId);
@@ -129,7 +158,7 @@ namespace CozaStore.Controllers
             var shoppingCartList = await _unitOfWork.ShoppingCartRepository.GetAllAsync(userId);
             var shippingMethod = await _unitOfWork.ShippingRepository.GetAsync(vm.Order.ShippingMethodId);
 
-            var order = new Order
+            var order = new Models.Order
             {
                 Description = vm.Order.Description,
                 FullName = vm.Order.FullName,

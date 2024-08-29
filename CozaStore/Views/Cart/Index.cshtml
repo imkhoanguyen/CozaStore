@@ -4,22 +4,6 @@
     <link rel="stylesheet" href="~/sweetalert2/sweetalert2.min.css" />
 }
 
-
-<!-- breadcrumb -->
-<div class="container">
-    <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-        <a href="index.html" class="stext-109 cl8 hov-cl1 trans-04">
-            Home
-            <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
-        </a>
-
-        <span class="stext-109 cl4">
-            Shoping Cart
-        </span>
-    </div>
-</div>
-
-
 <!-- Shoping Cart -->
 <div class="bg0 p-t-75 p-b-85">
     <div class="container">
@@ -69,7 +53,7 @@
                                     <td>$ @item.GetTotal()</td>
                                     <td>
                                         <a onclick="DeleteCartItem('/cart/delete/?cartId=@item.Id')" class="btn btn-danger">
-                                            <i class="fa-solid fa-trash"></i>
+                                            <i class="fa-sharp fa-solid fa-trash"></i>
                                         </a>
                                     </td>
                                 </tr>
@@ -92,7 +76,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-2 offset-md-5">
-                            <a asp-controller="cart" asp-action="checkout" class="btn btn-primary border-0 bg-gradient w-100 py-2">Checkout</a>
+                            <a asp-controller="cart" asp-action="checkout" class="btn btn-primary border-0 bg-gradient w-100 py-2 text-uppercase fw-bold">Checkout</a>
                         </div>
                     </div>
                 </div>

@@ -85,7 +85,7 @@ namespace CozaStore.Data
         public async Task<IEnumerable<Color?>> GetAvailableColorsAsync(int productId, int sizeId)
         {
             return await _context.Variants.Include(x=>x.Color).Include(x=>x.Size)
-                    .Where(v => v.ProductId == productId && v.Size.Id == sizeId)
+                    .Where(v => v.ProductId == productId && v.Size.Id == sizeId && !v.IsDelete)
                     .Select(v => v.Color)
                     .Distinct()
                     .ToListAsync() ?? [];
@@ -94,7 +94,7 @@ namespace CozaStore.Data
         public async Task<IEnumerable<Size?>> GetAvailableSizesAsync(int productId, int colorId)
         {
             return await _context.Variants.Include(x => x.Color).Include(x => x.Size)
-                    .Where(v => v.ProductId == productId && v.Color.Id == colorId)
+                    .Where(v => v.ProductId == productId && v.Color.Id == colorId && !v.IsDelete)
                     .Select(v => v.Size)
                     .Distinct()
                     .ToListAsync() ?? [];

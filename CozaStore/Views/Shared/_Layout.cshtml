@@ -12,20 +12,20 @@
     <link rel="stylesheet" href="~/lib/toastr.js/toastr.css" />
     @* Icon *@
     <link rel="stylesheet" href="~/css/fonts/font-awesome-6-pro/css/all.css" />
-	<!--===============================================================================================-->
+    <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="~/css/fonts/linearicons-v1.0.0/icon-font.min.css">
     <link rel="stylesheet" type="text/css" href="~/css/fonts/iconic/css/material-design-iconic-font.min.css">
     <link rel="stylesheet" type="text/css" href="~/css/fonts/linearicons-v1.0.0/icon-font.min.css">
-	<link rel="stylesheet" type="text/css" href="~/css/user/animate.css">
-	<link rel="stylesheet" type="text/css" href="~/css/user/animsition.min.css">
+    <link rel="stylesheet" type="text/css" href="~/css/user/animate.css">
+    <link rel="stylesheet" type="text/css" href="~/css/user/animsition.min.css">
     <link rel="stylesheet" type="text/css" href="~/css/user/slick.css" />
     <link rel="stylesheet" type="text/css" href="~/css/user/magnific-popup.css">
-	<link rel="stylesheet" type="text/css" href="~/css/user/util.css">
+    <link rel="stylesheet" type="text/css" href="~/css/user/util.css">
     <link rel="stylesheet" type="text/css" href="~/css/user/main.css">
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="animsition">
-	<!-- Header -->
+    <!-- Header -->
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow p-3">
             <div class="container-fluid">
@@ -38,11 +38,11 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <li class="nav-item ">
+                            <a class="nav-link text-dark @(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "fw-bold" : "")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="shop" asp-action="index">Shop</a>
+                        <li class="nav-item ">
+                            <a class="nav-link text-dark @(ViewContext.RouteData.Values["controller"].ToString() == "Shop" ? "fw-bold" : "")" asp-area="" asp-controller="shop" asp-action="index">Shop</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Blog</a>
@@ -62,25 +62,26 @@
 
 
     @* body *@
-    @await Html.PartialAsync("~/Areas/Admin/Views/Shared/_Notification.cshtml")
+
     @RenderBody()
-    
 
 
-	<!-- Back to top -->
-	<div class="btn-back-to-top" id="myBtn">
-		<span class="symbol-btn-back-to-top">
-			<i class="zmdi zmdi-chevron-up"></i>
-		</span>
-	</div>
+
+    <!-- Back to top -->
+    <div class="btn-back-to-top" id="myBtn">
+        <span class="symbol-btn-back-to-top">
+            <i class="zmdi zmdi-chevron-up"></i>
+        </span>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-   @*  <script src="~/js/user/jquery-3.2.1.min.js"></script> *@
+    @*  <script src="~/js/user/jquery-3.2.1.min.js"></script> *@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/toastr.js/toastr.min.js"></script>
-	<script src="~/js/user/animsition.min.js"></script>
+    <script src="~/js/toastrSettings.js"></script>
+    <script src="~/js/user/animsition.min.js"></script>
     <script src="~/js/user/jquery.magnific-popup.min.js"></script>
     <script>
         $('.gallery-lb').each(function () { // the containers for all your galleries
@@ -101,7 +102,7 @@
     <script src="~/js/user/popper.js"></script>
     <script src="~/js/user/main.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
-    
-    
+    @await Html.PartialAsync("~/Areas/Admin/Views/Shared/_Notification.cshtml")
+
 </body>
 </html>

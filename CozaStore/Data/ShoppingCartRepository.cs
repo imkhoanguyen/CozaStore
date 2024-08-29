@@ -30,7 +30,7 @@ namespace CozaStore.Data
 
         public async Task<IEnumerable<ShoppingCart>> GetAllAsync(string userId)
         {
-            return await _context.ShoppingCarts.ToListAsync();
+            return await _context.ShoppingCarts.Include(x=>x.Product).ThenInclude(x=>x.Variants).ToListAsync();
         }
 
         public async Task<ShoppingCart?> GetShoppingCartAsync(string userId, int productId, int sizeId, int colorId)
