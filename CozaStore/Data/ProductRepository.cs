@@ -105,7 +105,7 @@ namespace CozaStore.Data
             var variant = await _context.Variants
                 .Include(x => x.Color)
                 .Include(x => x.Size)
-                .FirstOrDefaultAsync(v => v.ProductId == productId && v.SizeId == sizeId && v.ColorId == colorId) ?? null;
+                .FirstOrDefaultAsync(v => v.ProductId == productId && v.SizeId == sizeId && v.ColorId == colorId && !v.IsDelete) ?? null;
 
             return variant;
 
@@ -123,8 +123,8 @@ namespace CozaStore.Data
         public async Task<Product?> GetProductDetailAsync(int id)
         {
             return await _context.Products
-                .Include(x => x.Images)
-                .Include(x => x.Variants)
+                .Include(x => x.Images.OrderByDescending(x => x.IsMain))
+                .Include(x => x.Variants.Where(v => !v.IsDelete))
                     .ThenInclude(v => v.Color)
                 .Include(x => x.Variants.Where(v => !v.IsDelete))
                     .ThenInclude(v => v.Size)

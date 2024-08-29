@@ -43,15 +43,18 @@
                                     <div class="row">
                                         <div class="col-6">
                                             <input asp-for="Order.FullName" placeholder="Full name" class="form-control" />
+                                            <span asp-validation-for="Order.FullName" class="text-danger"></span>
                                         </div>
                                         <div class="col-6">
                                             <input asp-for="Order.Phone" placeholder="Phone number" class="form-control" />
+                                            <span asp-validation-for="Order.Phone" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
                                         <input asp-for="Order.SpecificAddress" placeholder="Specific Address" class="form-control" />
+                                        <span asp-validation-for="Order.SpecificAddress" class="text-danger"></span>
                                     </div>
                                 </div>
                             </div>
@@ -169,14 +172,15 @@
                                     {
                                         <tr>
                                             <th scope="row">
-                                                <img src="@item.Product.Images.FirstOrDefault().Url" style="height: 70px" />
+                                                <img src="@(item.Product.Images.FirstOrDefault(x => x.ProductId == item.Product.Id && x.IsMain)?.Url ?? item.Product.Images.FirstOrDefault(x => x.ProductId == item.Product.Id)?.Url)"
+                                                     style="height: 80px; width: 80px; object-fit: cover;" />
                                             </th>
                                             <td>
                                                 <div class="d-flex flex-column">
                                                     <a class="fw-bold text-primary" style="text-decoration: none;">
                                                         @item.Count x @item.Product.Name
                                                     </a>
-                                                    <div class="fs-sm text-muted ">Size: @item.Size.Name, Color: @item.Color.Name</div>
+                                                    <div class="fs-sm text-muted ">Size: @(item.Size?.Name ?? "no"), Color: @(item.Color?.Name ?? "no")</div>
                                                 </div>
                                             </td>
                                             <td class="text-end">
@@ -226,8 +230,11 @@
 </section>
 
 @section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
     <script src="~/lib/select2/js/select2.min.js"></script>
-
+    
     <script>
         $(document).ready(function () {
             // Initialize Select2

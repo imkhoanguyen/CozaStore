@@ -6,21 +6,7 @@
     <link rel="stylesheet" href="~/css/custom-input-check.css" />
 }
 
-<section class="min-vh-100 pb-4" style="background-color: #eef0f7;">
-    <!-- breadcrumb -->
-    <div class="container">
-        <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-            <a href="index.html" class="stext-109 cl8 hov-cl1 trans-04">
-                Home
-                <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
-            </a>
-
-            <span class="stext-109 cl4">
-                Order
-            </span>
-        </div>
-    </div>
-
+<section class="min-vh-100 pb-4 pt-5" style="background-color: #eef0f7;">
     <div class="container">
         <form method="post">
             <div class="row">
@@ -115,14 +101,14 @@
                                     {
                                         <tr>
                                             <th scope="row">
-                                                <img src="@item.Url" style="height: 70px" />
+                                                <img src="@item.Url" style="height: 80px; width: 80px; object-fit: cover;" />
                                             </th>
                                             <td>
                                                 <div class="d-flex flex-column">
                                                     <a class="fw-bold text-primary" style="text-decoration: none;">
                                                         @item.Count x @item.Name
                                                     </a>
-                                                    <div class="fs-sm text-muted ">Size: @item.Size, Color: @item.Color</div>
+                                                    <div class="fs-sm text-muted ">Size: @(item.Size ?? "no"), Color: @(item.Color ?? "no")</div>
                                                 </div>
                                             </td>
                                             <td class="text-end">

@@ -31,12 +31,13 @@
                                 <tr>
 
                                     <td>
-                                        <img src="@item.Product.Images.FirstOrDefault().Url" alt="IMG" style="width: 120px; height: auto; object-fit: cover;">
+                                        <img src=" @(item.Product.Images.FirstOrDefault(x => x.ProductId == item.Product.Id && x.IsMain)?.Url ?? item.Product.Images.FirstOrDefault(x => x.ProductId == item.Product.Id)?.Url)"
+                                             alt="IMG" style="width: 120px; height: 120px; object-fit: cover;">
                                     </td>
                                     <td>@item.Product.Name</td>
-                                    <td>@item.Size.Name</td>
-                                    <td>@item.Color.Name</td>
-                                    <td>$ @item.Price</td>
+                                    <td>@(item.Size?.Name ?? "no")</td>
+                                    <td>@(item.Color?.Name ?? "no")</td>
+                                    <td>$@item.Price</td>
                                     <td>
                                         <div class="wrap-num-product flex-w">
                                             <a asp-controller="cart" asp-action="minus" asp-route-cartId="@item.Id" class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
@@ -106,7 +107,7 @@
                         url: url,
                         type: 'delete',
                         success: function (response) {
-                            if(response.success === true) {
+                            if (response.success === true) {
                                 window.location.reload();
                                 toastr.success(response.message);
                             } else {

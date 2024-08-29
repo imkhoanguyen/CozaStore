@@ -146,7 +146,9 @@
                                                 <td>@product.Id</td>
                                                 <td>
                                                     <div class="d-flex gap-2 align-items-center">
-                                                        <img src="@product.Images.Where(x=> x.ProductId == product.Id).OrderByDescending(x => x.IsMain).FirstOrDefault()?.Url" style="width: 80px; height: 80px; object-fit: cover;" />
+                                                        <img src="@(product.Images.FirstOrDefault(x => x.ProductId == product.Id && x.IsMain)?.Url ?? product.Images.FirstOrDefault(x => x.ProductId == product.Id)?.Url)"
+                                                             style="width: 80px; height: 80px; object-fit: cover;" />
+
                                                         <div>@product.Name</div>
                                                     </div>
                                                 </td>
