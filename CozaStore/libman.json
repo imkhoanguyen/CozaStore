@@ -3,55 +3,25 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
+      "library": "toastr.js@2.1.4",
+      "destination": "wwwroot/lib/toastr.js/"
+    },
+    {
+      "library": "tinymce@7.2.1",
+      "destination": "wwwroot/lib/tinymce/"
+    },
+    {
+      "library": "select2@4.0.13",
+      "destination": "wwwroot/lib/select2/"
+    },
+    {
+      "library": "sweetalert2@11.12.4",
+      "destination": "wwwroot/sweetalert2/"
+    },
+    {
       "provider": "cdnjs",
       "library": "OwlCarousel2@2.3.4",
       "destination": "wwwroot/lib/OwlCarousel2/"
-    },
-    {
-      "provider": "cdnjs",
-      "library": "bootstrap-datepicker@1.10.0",
-      "destination": "wwwroot/lib/bootstrap-datepicker/",
-      "files": [
-        "js/bootstrap-datepicker.min.js",
-        "css/bootstrap-datepicker.min.css"
-      ]
-    },
-    {
-      "provider": "cdnjs",
-      "library": "toastr.js@2.1.4",
-      "destination": "wwwroot/lib/toastr.js/",
-      "files": [
-        "toastr.min.js",
-        "toastr.css"
-      ]
-    },
-    {
-      "provider": "cdnjs",
-      "library": "tinymce@7.3.0",
-      "destination": "wwwroot/lib/tinymce/",
-      "files": [
-        "tinymce.min.js"
-      ]
     }
-  ,
-{
-  "provider": "cdnjs",
-  "library": "select2@4.0.13",
-  "destination": "wwwroot/lib/select2/",
-  "files": [
-    "js/select2.min.js",
-    "css/select2.min.css"
   ]
-}
-,
-{
-  "provider": "cdnjs",
-  "library": "sweetalert2@11.12.4",
-  "destination": "wwwroot/lib/sweetalert2/",
-  "files": [
-    "sweetalert2.min.js",
-    "sweetalert2.min.css"
-  ]
-}
-]
 }
