@@ -41,7 +41,7 @@ namespace CozaStore.Controllers
             {
                 Products = products,
                 CurrentSort = productParams.SortOrder,
-                NameSortParm = String.IsNullOrEmpty(productParams.SortOrder) ? "name_desc" : "",
+                NameSortParm = productParams.SortOrder == "name" ? "name_desc" : "name",
                 IdSortParm = productParams.SortOrder == "id" ? "id_desc" : "id",
                 PriceSortParm = productParams.SortOrder == "price" ? "price_desc" : "price",
                 StatusSortParm = productParams.SortOrder == "status" ? "status_desc" : "status",
