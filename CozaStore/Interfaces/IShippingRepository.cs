@@ -10,6 +10,7 @@ namespace CozaStore.Interfaces
         void Update(ShippingMethod shippingMethod);
         void Delete(ShippingMethod shippingMethod);
         Task<ShippingMethod?> GetAsync(int id);
-        Task<IEnumerable<ShippingMethod>> GetAllAsync();
+        Task<IEnumerable<ShippingMethod>> GetAllAsync(); // without delete
+        Task<IEnumerable<ShippingMethod>> GetAllContainDeleteAsync();
     }
 }

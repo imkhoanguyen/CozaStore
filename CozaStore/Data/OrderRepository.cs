@@ -18,23 +18,52 @@ namespace CozaStore.Data
             _context.Orders.Add(order);
         }
 
-        public async Task<PagedList<Order>> GetAllAsync(string seachString, int page)
+        public async Task<PagedList<Order>> GetAllAsync(OrderParams orderParams)
         {
-            var query = _context.Orders.Include(x=>x.ShippingMethod).AsQueryable();
-            if(!seachString.IsNullOrEmpty())
+            var query = _context.Orders.Include(x => x.ShippingMethod).AsQueryable();
+            if (!orderParams.SearchString.IsNullOrEmpty())
             {
-                query = query.Where(x=>x.FullName.ToLower().Contains(seachString.ToLower())
-                || x.Id == int.Parse(seachString) || x.Phone.Contains(seachString));
+                query = query.Where(x => x.FullName.ToLower().Contains(orderParams.SearchString.ToLower())
+                || x.Id.ToString() == orderParams.SearchString || x.Phone.Contains(orderParams.SearchString)
+                || x.SpecificAddress.ToString().Contains(orderParams.SearchString.ToLower())
+                );
             }
 
-            if (page < 1) page = 1;
-            return await PagedList<Order>.CreateAsync(query, page, 10);
+            if(orderParams.SelectedShipping > 0)
+            {
+                query = query.Where(x => x.ShippingMethodId == orderParams.SelectedShipping);
+            }
+
+            if(orderParams.SelectedPayment != -1)
+            {
+                query = query.Where(x=>x.PaymentStatus == orderParams.SelectedPayment);
+            }
+
+            if(orderParams.SelectedStatus != -1)
+            {
+                query = query.Where(x => x.OrderStatus == orderParams.SelectedStatus);
+            }
+
+            if (orderParams.DateStart.HasValue && orderParams.DateEnd.HasValue)
+            {
+                query = query.Where(x => x.OrderDate >= orderParams.DateStart && x.OrderDate <= orderParams.DateEnd);
+            }
+
+            if (orderParams.PriceMin > 0 && orderParams.PriceMax > 0)
+            {
+                query = query.Where(x => (x.SubTotal + x.ShippingFee) >= orderParams.PriceMin && (x.SubTotal + x.ShippingFee) <= orderParams.PriceMax);
+            }
+
+
+
+
+            return await PagedList<Order>.CreateAsync(query, orderParams.PageNumber, orderParams.PageSize);
         }
 
         public async Task<Order?> GetAsync(int id)
         {
-            return await _context.Orders.Include(x=>x.OrderItemList)
-                .Include(x=>x.ShippingMethod).FirstOrDefaultAsync(x=>x.Id == id);
+            return await _context.Orders.Include(x => x.OrderItemList)
+                .Include(x => x.ShippingMethod).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public void UpdatePaymentStatus(int orderId, int paymentStatus)
@@ -57,7 +86,7 @@ namespace CozaStore.Data
 
         public void UpdateStripePaymentId(int orderId, string stripeSessionId, string stripePaymentIntentId)
         {
-            var orderFromDb = _context.Orders.FirstOrDefault(x=>x.Id==orderId);
+            var orderFromDb = _context.Orders.FirstOrDefault(x => x.Id == orderId);
             if (orderFromDb != null)
             {
                 orderFromDb.StripePaymentIntentId = stripePaymentIntentId;

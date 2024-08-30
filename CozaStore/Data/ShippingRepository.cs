@@ -30,6 +30,11 @@ namespace CozaStore.Data
             return await _context.ShippingMethods.Where(x => !x.IsDelete).ToListAsync();
         }
 
+        public async Task<IEnumerable<ShippingMethod>> GetAllContainDeleteAsync()
+        {
+            return await _context.ShippingMethods.ToListAsync();
+        }
+
         public async Task<PagedList<ShippingMethod>> GetAllShippingMethodsAsync(ShippingParams shippingParams)
         {
             var query = _context.ShippingMethods.Where(x=>!x.IsDelete).AsQueryable();

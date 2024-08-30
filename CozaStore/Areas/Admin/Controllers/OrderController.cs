@@ -1,4 +1,6 @@
-﻿using CozaStore.Interfaces;
+﻿using CozaStore.Helpers;
+using CozaStore.Interfaces;
+using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CozaStore.Areas.Admin.Controllers
@@ -12,10 +14,28 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<IActionResult> Index(string searchString, int page)
+        public async Task<IActionResult> Index(OrderParams orderParams)
         {
-            var order = await _unitOfWork.OrderRepository.GetAllAsync(searchString, page);
-            return View(order);
+            var orders = await _unitOfWork.OrderRepository.GetAllAsync(orderParams);
+
+            var vm = new OrderVM
+            {
+                OrderList = orders,
+                CurrentFilter = orderParams.SearchString, // search query
+                SelectedShipping = orderParams.SelectedShipping,
+                SelectedPayment = orderParams.SelectedPayment,
+                SelectedStatus = orderParams.SelectedStatus,
+                DateStart = orderParams.DateStart,
+                DateEnd = orderParams.DateEnd,
+                PriceMin = orderParams.PriceMin,
+                PriceMax = orderParams.PriceMax,
+                //combobox
+                ShippingList = await _unitOfWork.ShippingRepository.GetAllContainDeleteAsync()
+            };
+
+            
+
+            return View(vm);
         }
     }
 }

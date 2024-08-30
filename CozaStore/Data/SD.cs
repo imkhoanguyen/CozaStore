@@ -29,6 +29,28 @@ namespace CozaStore.Data
                        });
         }
 
+        public static IEnumerable<StatusDto> GetOrderStatusList()
+        {
+            return OrderStatus.GetValues(typeof(OrderStatus))
+                       .Cast<OrderStatus>()
+                       .Select(status => new StatusDto
+                       {
+                           Id = (int)status,
+                           Name = status.ToString()
+                       });
+        }
+
+        public static IEnumerable<StatusDto> GetPaymentStatusList()
+        {
+            return PaymentStatus.GetValues(typeof(PaymentStatus))
+                       .Cast<PaymentStatus>()
+                       .Select(status => new StatusDto
+                       {
+                           Id = (int)status,
+                           Name = status.ToString()
+                       });
+        }
+
 
         public static readonly IEnumerable<string> PriceRangeList = new List<string>
         {
@@ -39,6 +61,5 @@ namespace CozaStore.Data
             "$200+"
         };
 
-        public static readonly IEnumerable<int> PageSizeList = [5, 10, 15, 25, 30, 100];
     }
 }
