@@ -51,7 +51,6 @@ namespace CozaStore.Controllers
             decimal singalPrice = cartFromDb.Price / cartFromDb.Count;
 
             cartFromDb.Count += 1;
-            cartFromDb.Price += singalPrice;
 
             if (await _unitOfWork.Complete())
                 return RedirectToAction(nameof(Index));
@@ -69,7 +68,6 @@ namespace CozaStore.Controllers
             {
                 decimal singalPrice = cartFromDb.Price / cartFromDb.Count;
                 cartFromDb.Count -= 1;
-                cartFromDb.Price -= singalPrice;
             }
 
             if (await _unitOfWork.Complete())
@@ -222,21 +220,36 @@ namespace CozaStore.Controllers
 
             foreach (var item in shoppingCartList.ToList())
             {
-                item.Size = await _unitOfWork.SizeRepository.GetSizeAsync(item.SizeId);
-                item.Color = await _unitOfWork.ColorRepository.GetColorAsync(item.ColorId);
+               
+                string sizeName = "";
+                string colorName = "";
+
+                if (item.SizeId > 0)
+                {
+                    item.Size = await _unitOfWork.SizeRepository.GetSizeAsync(item.SizeId);
+                    sizeName = item.Size?.Name ?? ""; 
+                }
+
+                if (item.ColorId > 0)
+                {
+                    item.Color = await _unitOfWork.ColorRepository.GetColorAsync(item.ColorId);
+                    colorName = item.Color?.Name ?? "";
+                }
 
                 var orderItem = new OrderItem
                 {
                     Name = item.Product.Name,
-                    Url = item.Product.Images.FirstOrDefault(x => x.IsMain).Url ?? item.Product.Images.FirstOrDefault().Url,
-                    Size = item.Size?.Name,
-                    Color = item.Color?.Name,
+                    Url = item.Product.Images.FirstOrDefault(x => x.IsMain)?.Url ?? item.Product.Images.FirstOrDefault()?.Url,
+                    Size = sizeName,
+                    Color = colorName,
                     Price = item.Price,
                     Count = item.Count,
                 };
+
                 order.OrderItemList.Add(orderItem);
                 order.SubTotal += item.GetTotal();
             }
+
             _unitOfWork.OrderRepository.Add(order);
             await _unitOfWork.Complete();
             if (order.PaymentMethod == 0) // payment without stripe

@@ -18,6 +18,11 @@ namespace CozaStore.Data
             _context.Orders.Add(order);
         }
 
+        public void Delete(Order order)
+        {
+            _context.Orders.Remove(order);
+        }
+
         public async Task<PagedList<Order>> GetAllAsync(OrderParams orderParams)
         {
             var query = _context.Orders.Include(x => x.ShippingMethod).AsQueryable();
@@ -54,7 +59,14 @@ namespace CozaStore.Data
                 query = query.Where(x => (x.SubTotal + x.ShippingFee) >= orderParams.PriceMin && (x.SubTotal + x.ShippingFee) <= orderParams.PriceMax);
             }
 
-
+            query = orderParams.SortOrder switch
+            {
+                "id" => query.OrderBy(x => x.Id),
+                "id_desc" => query.OrderByDescending(x => x.Id),
+                "total" => query.OrderBy(x => x.SubTotal + x.ShippingFee),
+                "total_desc" => query.OrderByDescending(x => x.SubTotal + x.ShippingFee),
+                _ => query.OrderByDescending(x => x.Id)
+            };
 
 
             return await PagedList<Order>.CreateAsync(query, orderParams.PageNumber, orderParams.PageSize);
@@ -62,7 +74,9 @@ namespace CozaStore.Data
 
         public async Task<Order?> GetAsync(int id)
         {
-            return await _context.Orders.Include(x => x.OrderItemList)
+            return await _context.Orders
+                .Include(x=>x.AppUser)
+                .Include(x => x.OrderItemList)
                 .Include(x => x.ShippingMethod).FirstOrDefaultAsync(x => x.Id == id);
         }
 

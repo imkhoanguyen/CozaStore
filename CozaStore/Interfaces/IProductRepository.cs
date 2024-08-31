@@ -21,5 +21,8 @@ namespace CozaStore.Interfaces
         Task<Variant?> GetVariantOfProductAsync(int productId, int colorId, int sizeId);
         void UpdateQuantity(int productId, int quantity);
 
+        Task<Product?> GetProductAsync(string name, string size, string color);
+        Task<Product?> GetProductAsync(string name);
+
     }
 }

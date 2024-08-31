@@ -166,5 +166,27 @@ namespace CozaStore.Data
                 productFromDb.Quantity -= quantity;
             }
         }
+
+        public async Task<Product?> GetProductAsync(string name, string size, string color)
+        {
+            return await _context.Products
+                .Where(p => p.Name == name)
+                .Select(p => new Product
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Variants = p.Variants
+                        .Where(v => v.Size.Name == size && v.Color.Name == color)
+                        .ToList()
+                })
+                .FirstOrDefaultAsync(p => p.Variants.Any());
+        }
+
+
+
+        public async Task<Product?> GetProductAsync(string name)
+        {
+            return await _context.Products.FirstAsync(x => x.Name == name);
+        }
     }
 }

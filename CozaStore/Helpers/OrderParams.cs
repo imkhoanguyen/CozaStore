@@ -3,6 +3,7 @@
     public class OrderParams : PaginationParams
     {
         public string? SearchString { get; set; }
+        public string? SortOrder { get; set; }
         public int SelectedShipping { get; set; }
         public int SelectedPayment { get; set; } = -1;
         public int SelectedStatus { get; set; } = -1;

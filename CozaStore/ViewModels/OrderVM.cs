@@ -10,6 +10,11 @@ namespace CozaStore.ViewModels
     {
         [ValidateNever]
         public required PagedList<Order> OrderList { get; set; }
+        // sort params
+        public string? CurrentSort { get; set; }
+        public string? IdSortParm { get; set; }
+        public string? TotalSortParm { get; set; }
+
         //params
         [ValidateNever]
         public int SelectedShipping { get; set; }

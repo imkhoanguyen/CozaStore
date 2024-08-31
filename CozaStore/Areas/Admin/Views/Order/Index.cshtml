@@ -24,9 +24,6 @@
                                     <a class="btn btn-primary" onclick="toggleFillterContainer()">
                                         <i class="fa-sharp fa-solid fa-filter"></i> Filter
                                     </a>
-                                    <a class="btn  btn-success">
-                                        <i class="fa-sharp fa-solid fa-file"></i> Excel
-                                    </a>
                                 </div>
                             </div>
                             <div class="col-6 text-end">
@@ -115,13 +112,35 @@
                             <table class="table">
                                 <thead>
                                     <tr class="fw-bold">
-                                        <td style="width: 5%;">ID</td>
+                                        <td style="width: 5%;">
+                                            <a asp-action="Index" asp-route-sortOrder="@Model.IdSortParm"
+                                               asp-route-SearchString="@Model.CurrentFilter"
+                                               asp-route-SelectedShipping="@Model.SelectedShipping"
+                                               asp-route-SelectedPayment="@Model.SelectedPayment"
+                                               asp-route-SelectedStatus="@Model.SelectedStatus"
+                                               asp-route-DateStart="@Model.DateStart"
+                                               asp-route-DateEnd="@Model.DateEnd"
+                                               asp-route-PriceMin="@Model.PriceMin"
+                                               asp-route-PriceMax="@Model.PriceMax"
+                                               asp-route-PageSize="@Model.OrderList.PageSize">ID</a>
+                                        </td>
                                         <td>Name</td>
                                         <td>Shipping</td>
                                         <td>Payment</td>
                                         <td>Time</td>
                                         <td>Status</td>
-                                        <td>Total</td>
+                                        <td>
+                                            <a asp-action="Index" asp-route-sortOrder="@Model.TotalSortParm"
+                                               asp-route-SearchString="@Model.CurrentFilter"
+                                               asp-route-SelectedShipping="@Model.SelectedShipping"
+                                               asp-route-SelectedPayment="@Model.SelectedPayment"
+                                               asp-route-SelectedStatus="@Model.SelectedStatus"
+                                               asp-route-DateStart="@Model.DateStart"
+                                               asp-route-DateEnd="@Model.DateEnd"
+                                               asp-route-PriceMin="@Model.PriceMin"
+                                               asp-route-PriceMax="@Model.PriceMax"
+                                               asp-route-PageSize="@Model.OrderList.PageSize">Total</a>
+                                        </td>
                                         <td style="width: 10%;">Actions</td>
                                     </tr>
                                 </thead>
@@ -153,10 +172,10 @@
                                                 <td class="fw-bold">$@order.GetTotal()</td>
                                                 <td>
                                                     <div class="d-flex gap-2">
-                                                        <a href="/admin/products/edit/${row.id}" class="btn btn-sm btn-primary">
+                                                        <a asp-controller="order" asp-action="detail" asp-route-orderId="@order.Id" class="btn btn-sm btn-primary">
                                                             <i class="fa-sharp fa-solid fa-eye"></i>
                                                         </a>
-                                                        <button type="button" data-id="${row.id}" class="btn btn-sm btn-danger">
+                                                        <button type="button" onclick="Delete(this,'/admin/order/delete/?orderId=@order.Id');" class="btn btn-sm btn-danger">
                                                             <i class="fa-solid fa-trash-can"></i>
                                                         </button>
                                                     </div>
@@ -371,7 +390,37 @@
             return $state;
         }
 
+        function Delete(element, url) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        success: function (response) {
 
+                            if (response.success === false) {
+                                toastr.error(response.message);
+                            } else {
+                                // Use closest('tr') to find and remove the table row containing the delete button
+                                $(element).closest('tr').remove();
+                                toastr.success(response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            toastr.error('An error occurred: ' + xhr.statusText);
+                        }
+                    });
+                }
+            });
+        }
 
         // registerDateRange();
     </script>
