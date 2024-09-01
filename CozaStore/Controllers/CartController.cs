@@ -1,9 +1,13 @@
 ﻿using CozaStore.Data;
 using CozaStore.Data.Enum;
+using CozaStore.DTOs;
+using CozaStore.Hubs;
 using CozaStore.Interfaces;
 using CozaStore.Models;
 using CozaStore.ViewModels;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Stripe;
@@ -17,11 +21,13 @@ namespace CozaStore.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly DataContext _context;
+        private readonly IHubContext<OrderHub> _orderHub;
 
-        public CartController(IUnitOfWork unitOfWork, DataContext context)
+        public CartController(IUnitOfWork unitOfWork, DataContext context, IHubContext<OrderHub> orderHub)
         {
             _unitOfWork = unitOfWork;
             _context = context;
+            _orderHub = orderHub;
         }
         public async Task<IActionResult> Index()
         {
@@ -252,11 +258,27 @@ namespace CozaStore.Controllers
 
             _unitOfWork.OrderRepository.Add(order);
             await _unitOfWork.Complete();
+
+            //signal
+            OrderDto dto = new OrderDto
+            {
+                Id = order.Id,
+                Name = order.FullName,
+                Shipping = order.ShippingMethod.Name,
+                PaymentStatus = order.PaymentStatus,
+                OrderDate = order.OrderDate.ToString("dd/MM/yyyy hh:mm:ss tt"),
+                OrderStatus = order.OrderStatus,
+                OrderTotal = order.GetTotal(),
+            };
+            await _orderHub.Clients.All.SendAsync("AddOrder", dto);
+
             if (order.PaymentMethod == 0) // payment without stripe
             {
                 //delete shopping cart
                 _unitOfWork.ShoppingCartRepository.DeleteAll(shoppingCartList.ToList());
                 await _unitOfWork.Complete();
+                
+
                 return RedirectToAction(nameof(OrderSuccess), new { orderId = order.Id });
             }
             else // paymet with stripe
@@ -337,7 +359,10 @@ namespace CozaStore.Controllers
                 {
                     _unitOfWork.OrderRepository.UpdateStripePaymentId(order.Id, session.Id, session.PaymentIntentId);
                     _unitOfWork.OrderRepository.UpdatePaymentStatus(orderId, (int)PaymentStatus.Paid);
-                    
+
+                    //signal
+                    await _orderHub.Clients.All.SendAsync("PaymentSuccess", orderId);
+
                     //delete shopping cart & update quantity product 
                     var shoppingCartList = await _unitOfWork.ShoppingCartRepository.GetAllAsync(order.UserId);
                     foreach(var cartItem in shoppingCartList.ToList())

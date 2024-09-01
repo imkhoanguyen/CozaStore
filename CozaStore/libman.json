@@ -19,9 +19,13 @@
       "destination": "wwwroot/sweetalert2/"
     },
     {
-      "provider": "cdnjs",
       "library": "OwlCarousel2@2.3.4",
       "destination": "wwwroot/lib/OwlCarousel2/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "@microsoft/signalr@latest",
+      "destination": "wwwroot/lib/microsoft/signalr/"
     }
-]
+  ]
 }

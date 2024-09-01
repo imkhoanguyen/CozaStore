@@ -113,7 +113,7 @@
                                 <thead>
                                     <tr class="fw-bold">
                                         <td style="width: 5%;">
-                                            <a asp-action="Index" asp-route-sortOrder="@Model.IdSortParm"
+                                            <a style="text-decoration: none;" asp-action="Index" asp-route-sortOrder="@Model.IdSortParm"
                                                asp-route-SearchString="@Model.CurrentFilter"
                                                asp-route-SelectedShipping="@Model.SelectedShipping"
                                                asp-route-SelectedPayment="@Model.SelectedPayment"
@@ -130,7 +130,7 @@
                                         <td>Time</td>
                                         <td>Status</td>
                                         <td>
-                                            <a asp-action="Index" asp-route-sortOrder="@Model.TotalSortParm"
+                                            <a style="text-decoration: none;" asp-action="Index" asp-route-sortOrder="@Model.TotalSortParm"
                                                asp-route-SearchString="@Model.CurrentFilter"
                                                asp-route-SelectedShipping="@Model.SelectedShipping"
                                                asp-route-SelectedPayment="@Model.SelectedPayment"
@@ -149,7 +149,7 @@
                                     {
                                         @foreach (var order in Model.OrderList)
                                         {
-                                            <tr>
+                                            <tr data-order-id="@order.Id">
                                                 <td>@order.Id</td>
                                                 <td>@order.FullName</td>
                                                 <td>@order.ShippingMethod.Name</td>
@@ -295,6 +295,8 @@
     <script src="~/sweetalert2/sweetalert2.min.js"></script>
     <script src="~/js/paging.js"></script>
     <script src="~/lib/select2/js/select2.min.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/order.js"></script>
     @{
         <partial name="_ValidationScriptsPartial" />
     }

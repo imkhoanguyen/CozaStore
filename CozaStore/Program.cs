@@ -1,6 +1,7 @@
 using CozaStore.Data;
 using CozaStore.Data.Seed;
 using CozaStore.Extensions;
+using CozaStore.Hubs;
 using CozaStore.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
@@ -11,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationService(builder.Configuration);
 builder.Services.AddIdentityService(builder.Configuration);
 builder.Services.AddPolicy();
-
+builder.Services.AddSignalR();
 
 
 
@@ -43,6 +44,8 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHub<OrderHub>("/hubs/order");
 
 
 using var scope = app.Services.CreateScope();
