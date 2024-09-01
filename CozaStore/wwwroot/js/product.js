@@ -157,9 +157,9 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success === true) {
                     if (response.add === true) {
-                        const currentCount = parseInt($('.icon-header-noti').attr('data-notify')) || 0;
+                        const currentCount = parseInt($('.icon-shopping-cart.icon-header-noti').attr('data-notify')) || 0;
                         const newCount = currentCount + 1;
-                        $('.icon-header-noti').attr('data-notify', newCount);
+                        $('.icon-shopping-cart.icon-header-noti').attr('data-notify', newCount);
                     }
                     toastr.success(response.message);
                 } else {
