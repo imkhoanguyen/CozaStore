@@ -25,10 +25,13 @@ namespace CozaStore.Extensions
             services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
             services.AddScoped<IShippingRepository, ShippingRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
 
-            return services;
+			services.AddSignalR();
+
+			return services;
         }
     }
 }

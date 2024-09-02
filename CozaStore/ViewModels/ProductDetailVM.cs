@@ -12,5 +12,6 @@ namespace CozaStore.ViewModels
         public IEnumerable<Color> ColorList { get; set; } = [];
         public IEnumerable<Size> SizeList { get; set; } = [];
         public IEnumerable<string> ImageList { get; set; } = [];
+        public List<Review> ReviewList { get; set; } = [];
     }
 }

@@ -357,6 +357,65 @@ namespace CozaStore.Migrations
                     b.ToTable("ProductCategory");
                 });
 
+            modelBuilder.Entity("CozaStore.Models.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("CozaStore.Models.ReviewFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("PublicId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReviewId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReviewId");
+
+                    b.ToTable("ReviewFiles");
+                });
+
             modelBuilder.Entity("CozaStore.Models.ShippingMethod", b =>
                 {
                     b.Property<int>("Id")
@@ -702,6 +761,36 @@ namespace CozaStore.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("CozaStore.Models.Review", b =>
+                {
+                    b.HasOne("CozaStore.Models.Product", "Product")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CozaStore.Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("CozaStore.Models.ReviewFile", b =>
+                {
+                    b.HasOne("CozaStore.Models.Review", "Review")
+                        .WithMany("ReviewFiles")
+                        .HasForeignKey("ReviewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Review");
+                });
+
             modelBuilder.Entity("CozaStore.Models.ShoppingCart", b =>
                 {
                     b.HasOne("CozaStore.Models.Product", "Product")
@@ -813,7 +902,14 @@ namespace CozaStore.Migrations
 
                     b.Navigation("ProductCategories");
 
+                    b.Navigation("Reviews");
+
                     b.Navigation("Variants");
+                });
+
+            modelBuilder.Entity("CozaStore.Models.Review", b =>
+                {
+                    b.Navigation("ReviewFiles");
                 });
 #pragma warning restore 612, 618
         }

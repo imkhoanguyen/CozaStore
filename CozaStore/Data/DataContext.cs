@@ -23,11 +23,14 @@ namespace CozaStore.Data
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public DbSet<ShippingMethod> ShippingMethods { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<ReviewFile> ReviewFiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             builder.Entity<ProductCategory>().HasKey(x => new { x.ProductId, x.CategoryId });
+            
         }
     }
 }

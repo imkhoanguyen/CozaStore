@@ -175,7 +175,7 @@ namespace CozaStore.Controllers
                 return Json(new { success = false, message = "Product added to cart failed" });
         }
 
-        public async Task<IActionResult> Product(int productId)
+        public async Task<IActionResult> Product(int productId, PaginationParams paginationParams)
         {
             var product = await _unitOfWork.ProductRepository.GetProductDetailAsync(productId);
             var vm = new ProductDetailVM
@@ -188,6 +188,7 @@ namespace CozaStore.Controllers
                 ColorList = product.Variants.Select(x => x.Color).Distinct(),
                 SizeList = product.Variants.Select(x => x.Size).Distinct(),
                 ImageList = product.Images.Select(x => x.Url),
+                ReviewList = await _unitOfWork.ReviewRepository.GetAllReviewsAsync(product.Id, paginationParams)
             };
             return View(vm);
         }

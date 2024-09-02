@@ -11,6 +11,7 @@
         IShoppingCartRepository ShoppingCartRepository { get; }
         IShippingRepository ShippingRepository { get; }
         IOrderRepository OrderRepository { get; }
+        IReviewRepository ReviewRepository { get; }
         Task<bool> Complete();
     }
 }

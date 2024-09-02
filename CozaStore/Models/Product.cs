@@ -29,7 +29,9 @@ namespace CozaStore.Models
 
         //Image
         public List<Image> Images { get; set; } = [];
-        
+
+        //Review
+        public List<Review> Reviews { get; set; } = [];
 
     }
 }
