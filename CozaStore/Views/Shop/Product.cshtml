@@ -1,0 +1,18 @@
+﻿@model ProductDetailVM
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="~/css/product-details.css">
+    <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
+    <link rel="stylesheet" href="~/css/custom-select2.css" />
+    <link rel="stylesheet" href="~/css/color-baged.css" />
+    <link href="~/css/custom-slick.css" rel="stylesheet" />
+}
+<!-- Product Detail -->
+@await Html.PartialAsync("~/Views/Shop/ProductDetailPartial.cshtml", Model)
+
+@section Scripts {
+    <script src="~/lib/select2/js/select2.min.js"></script>
+    <script src="~/js/product.js"></script>
+    <script>
+        productIdGlb = @Model.Id;
+    </script>
+}

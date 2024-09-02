@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
     <link rel="stylesheet" href="~/css/custom-select2.css" />
     <link rel="stylesheet" href="~/css/color-baged.css" />
-
+    <link href="~/css/custom-slick.css" rel="stylesheet" />
 }
 <div class="bg0 m-t-23 p-b-140">
     <div class="container">
@@ -145,7 +145,8 @@
 
                         <div class="block2-txt flex-w flex-t p-t-14">
                             <div class="block2-txt-child1 flex-col-l ">
-                                <a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                <a asp-controller="shop" asp-action="product" asp-route-productId="@product.Id" 
+                                class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                                     @product.Name
                                 </a>
 
@@ -249,7 +250,7 @@
 </div>
 
 <!-- Modal1 -->
-<partial name="_ProductDetailPartial" />
+<div id="product-detail"></div>
 
 @section Scripts {
     <script src="~/lib/select2/js/select2.min.js"></script>

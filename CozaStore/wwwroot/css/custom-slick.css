@@ -1,0 +1,10 @@
+﻿
+
+.wrap-pic-w {
+    max-height: 600px; /* Adjust this value as needed */
+    overflow: hidden;
+}
+
+.slick3-dots {
+    padding-left: 0;
+}

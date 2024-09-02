@@ -1,55 +1,18 @@
 ﻿let productIdGlb = 0;
-let defaultSizeList = [];
-let defaultColorList = [];
-let defaultPrice = 0;
+let selectedSize = '';
+let selectedColor = '';
+
 function GetProductDetail(productId) {
     productIdGlb = productId;
     console.log(productIdGlb);
     $.ajax({
         url: '/shop/GetProductDetail',
-        method: 'GET',
+        method: 'post',
         data: { id: productId },
         success: function (data) {
-            console.log(data);
-            $('.js-name-detail').text(data.name);
-            $('.product-price').text('$' + data.priceSell);
-            $('.product-description').html(data.description); // important @Html.Raw
-
-            defaultPrice = data.priceSell;
-            console.log("defaultprice1: " + defaultPrice);
-
-            // Populate size dropdown
-            var sizeOptions = '<option value="" selected>Choose an option</option>';
-            data.sizeList.forEach(function (size) {
-                sizeOptions += `<option value="${size.id}">${size.name}</option>`;
-            });
-            defaultSizeList = data.sizeList;
-            $('.size-select').html(sizeOptions);
-
-            // Populate color dropdown
-            var colorOptions = '<option value="" selected>Choose an option</option>';
-            data.colorList.forEach(function (color) {
-                colorOptions += `<option value="${color.id}">${color.name}</option>`;
-            });
-            defaultColorList = data.colorList;
-            $('.color-select').html(colorOptions);
-
-            $('.slick3').html('');
-            data.imageList.forEach(function (image) {
-                var imgHtml = `<div class="item-slick3" data-thumb="${image}">
-                        <div class="wrap-pic-w pos-relative">
-                                <img src="${image}" alt="IMG-PRODUCT">
-                            <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="${image}">
-                                <i class="fa fa-expand"></i>
-                            </a>
-                        </div>
-                    </div>`;
-                $('.slick3').append(imgHtml);
-            });
-
-            // refesh
-            refeshCount();
-            refeshSelect();
+            $("#product-detail").html(data);
+            $('#modal-product').addClass('show-modal1');
+            initModalScripts();
         },
         error: function () {
             alert('Failed to load product details');
@@ -57,175 +20,203 @@ function GetProductDetail(productId) {
     });
 }
 
-let selectedSize = '';
-let selectedColor = '';
+function initModalScripts() {
+    $('.gallery-lb').each(function () { // the containers for all your galleries
+        $(this).magnificPopup({
+            delegate: 'a', // the selector for gallery item
+            type: 'image',
+            gallery: {
+                enabled: true
+            },
+            mainClass: 'mfp-fade mfp-with-zoom'
+        });
+    });
+
+    // Khởi tạo lại slick slider
+    $('.wrap-slick3').each(function () {
+        $(this).find('.slick3').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            fade: true,
+            infinite: true,
+            autoplay: false,
+            autoplaySpeed: 6000,
+
+            arrows: true,
+            appendArrows: $(this).find('.wrap-slick3-arrows'),
+            prevArrow: '<button class="arrow-slick3 prev-slick3"><i class="fa fa-angle-left" aria-hidden="true"></i></button>',
+            nextArrow: '<button class="arrow-slick3 next-slick3"><i class="fa fa-angle-right" aria-hidden="true"></i></button>',
+
+            dots: true,
+            appendDots: $(this).find('.wrap-slick3-dots'),
+            dotsClass: 'slick3-dots',
+            customPaging: function (slick, index) {
+                var portrait = $(slick.$slides[index]).data('thumb');
+                return '<img src=" ' + portrait + ' "/><div class="slick3-dot-overlay"></div>';
+            },
+        });
+    });
+    initMainScripts();
+    refeshSelect();
+}
+function initMainScripts() {
+    $('.js-hide-modal1').on('click', function () {
+        $('.js-modal1').removeClass('show-modal1');
+    });
+
+    $('.btn-num-product-down').on('click', function () {
+        var numProduct = Number($(this).next().val());
+        if (numProduct > 0) $(this).next().val(numProduct - 1);
+    });
+
+    $('.btn-num-product-up').on('click', function () {
+        var numProduct = Number($(this).prev().val());
+        $(this).prev().val(numProduct + 1);
+    });
+}
+
+
 
 $(document).ready(function () {
-    // handle size change
-    $('.size-select').on('change', function () {
-        console.log("defaultprice2: " + defaultPrice);
+    initModalScripts();
+});
 
-        $('.product-price').text('$' + defaultPrice);
 
-        selectedSize = $(this).val();
+$(document).on('click', '.btn-add-cart', function () {
+    //get value
+    const sizeId = $('.size-select').val();
+    const colorId = $('.color-select').val();
+    const count = $('.num-product').val();
 
-        if (!selectedSize) {
-            refeshSelect();
-            return;
-        }
 
-        if (selectedColor && selectedSize) {
-            getPrice(selectedSize, selectedColor);
-            return;
-        }
-
-        if (!selectedColor) {
-            $.ajax({
-                url: `/shop/GetAvailableColors`,
-                method: 'GET',
-                data: { productId: productIdGlb, sizeId: selectedSize },
-                success: function (data) {
-                    $('.color-select').html('');
-                    var colorOptions = '<option value="" selected>Choose an option</option>';
-                    data.forEach(function (color) {
-                        colorOptions += `<option value="${color.id}">${color.name}</option>`;
-                    });
-                    $('.color-select').html(colorOptions);
-                },
-                error: function () {
-                    alert('Failed to GetAvailableColors');
+    $.ajax({
+        url: '/shop/addtocart',
+        method: 'post',
+        data: {
+            productId: productIdGlb,
+            sizeId: sizeId,
+            colorId: colorId,
+            count: count,
+        },
+        success: function (response) {
+            if (response.success === true) {
+                if (response.add === true) {
+                    const currentCount = parseInt($('.icon-shopping-cart.icon-header-noti').attr('data-notify')) || 0;
+                    const newCount = currentCount + 1;
+                    $('.icon-shopping-cart.icon-header-noti').attr('data-notify', newCount);
                 }
-            });
-        } 
-    });
-
-    // handle color change
-    $('.color-select').on('change', function () {
-        console.log("defaultprice3: " + defaultPrice);
-
-        $('.product-price').text('$' + defaultPrice);
-        selectedColor = $(this).val();
-
-        if (!selectedColor) {
-            refeshSelect();
-            return;
-        }
-
-        if (selectedColor && selectedSize) {
-            getPrice(selectedSize, selectedColor);
-            return;
-        }
-
-        if (!selectedSize) {
-            $.ajax({
-                url: `/shop/GetAvailableSizes`,
-                method: 'GET',
-                data: { productId: productIdGlb, colorId: selectedColor },
-                success: function (data) {
-                    $('.size-select').html('');
-                    // Populate size dropdown
-                    var sizeOptions = '<option value="" selected>Choose an option</option>';
-                    data.forEach(function (size) {
-                        sizeOptions += `<option value="${size.id}">${size.name}</option>`;
-                    });
-                    $('.size-select').html(sizeOptions);
-                },
-                error: function () {
-                    alert('Failed to GetAvailableSizes');
-                }
-            });
-        }
-    });
-
-    //add to cart
-    $('.btn-add-cart').click(function () {
-        //get value
-        const sizeId = $('.size-select').val();
-        const colorId = $('.color-select').val();
-        const count = $('.num-product').val();
-
-
-        $.ajax({
-            url: '/shop/addtocart',
-            method: 'post',
-            data: {
-                productId: productIdGlb,
-                sizeId: sizeId,
-                colorId: colorId,
-                count: count,
-            },
-            success: function (response) {
-                if (response.success === true) {
-                    if (response.add === true) {
-                        const currentCount = parseInt($('.icon-shopping-cart.icon-header-noti').attr('data-notify')) || 0;
-                        const newCount = currentCount + 1;
-                        $('.icon-shopping-cart.icon-header-noti').attr('data-notify', newCount);
-                    }
-                    toastr.success(response.message);
-                } else {
-                    toastr.error(response.message);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log("error: " + error.message);
-                if (xhr.status === 401) {
-                    toastr.error("You are not logged in. Please log in to add items to your cart.");
-                } else if (xhr.status === 403) {
-                    toastr.error("You do not have permission to add products to cart. Please contact admin for more details.");
-                } else {
-                    toastr.error("Adding product to cart error please try again later");
-                }
+                toastr.success(response.message);
+            } else {
+                toastr.error(response.message);
             }
-        })
+        },
+        error: function (xhr, status, error) {
+            console.log("error: " + error.message);
+            if (xhr.status === 401) {
+                toastr.error("You are not logged in. Please log in to add items to your cart.");
+            } else if (xhr.status === 403) {
+                toastr.error("You do not have permission to add products to cart. Please contact admin for more details.");
+            } else {
+                toastr.error("Adding product to cart error please try again later");
+            }
+        }
+    })
+});
+
+$(document).on('change', '.size-select', async function () {
+    selectedSize = $(this).val();
+
+    if (selectedColor && selectedSize) {
+        const success = await getPrice(selectedSize, selectedColor, "size");
+        if (success) {
+            return; // Exit early if `getPrice` returns `true`
+        }
+    }
+
+    $.ajax({
+        url: `/shop/GetAvailableColors`,
+        method: 'post',
+        data: { productId: productIdGlb, sizeId: selectedSize },
+        success: function (data) {
+            console.log(data);
+            $('.color-select').html('');
+            var colorOptions = '<option value="" selected>Choose an option</option>';
+            data.forEach(function (color) {
+                colorOptions += `<option value="${color.id}">${color.name}</option>`;
+            });
+            $('.color-select').html(colorOptions);
+        },
+        error: function () {
+            alert('Failed to GetAvailableColors');
+        }
     });
 });
 
-function getPrice(sizeId, colorId) {
-    console.log(productIdGlb, sizeId, colorId)
+
+$(document).on('change', '.color-select', async function () {
+    selectedColor = $(this).val();
+
+    if (selectedColor && selectedSize) {
+        const success = await getPrice(selectedSize, selectedColor, "color");
+        if (success) {
+            return; // Stop further execution if success is true
+        }
+    }
+
     $.ajax({
+        url: `/shop/GetAvailableSizes`,
+        method: 'post',
+        data: { productId: productIdGlb, colorId: selectedColor },
+        success: function (data) {
+            $('.size-select').html('');
+            // Populate size dropdown
+            var sizeOptions = '<option value="" selected>Choose an option</option>';
+            data.forEach(function (size) {
+                sizeOptions += `<option value="${size.id}">${size.name}</option>`;
+            });
+            $('.size-select').html(sizeOptions);
+        },
+        error: function () {
+            alert('Failed to GetAvailableSizes');
+        }
+    });
+});
+
+
+
+function getPrice(sizeId, colorId, currentSelect) {
+    console.log(productIdGlb, sizeId, colorId);
+    return $.ajax({
         url: `/shop/GetPrice`,
-        method: 'GET',
+        method: 'post',
         data: {
             sizeId: sizeId,
             colorId: colorId,
-            productId: productIdGlb
-        },
-        success: function (data) {
-            console.log(data);
-            if (data.success === false) {
-                toastr.error(data.message);
-                return;
-            }
-            
-            $('.product-price').text('$' + data);
-        },
-        error: function () {
-            alert('Failed to load price');
+            productId: productIdGlb,
+            currentSelect: currentSelect
         }
+    }).then(function (data) {
+        console.log(data);
+        if (data.success === false) {
+            if (data.select === "color") { // getsize (variant null)
+                $('.size-select').html("");
+            }
+
+            if (data.select === "size") { //getcolor (variant null)
+                $('.color-select').html("");
+            }
+            return false;
+        }
+
+        $('.product-price').text('$' + data);
+        return true;
+    }).catch(function () {
+        alert('Failed to load price');
+        return false;
     });
 }
 
 function refeshSelect() {
     selectedColor = '';
-    selectedSize = ''; 
-    //size
-    $('.size-select').html('');
-    var sizeOptions = '<option value="" selected>Choose an option</option>';
-    defaultSizeList.forEach(function (size) {
-        sizeOptions += `<option value="${size.id}">${size.name}</option>`;
-    });
-    $('.size-select').html(sizeOptions);
-    selectedColor = '';
-
-    //color
-    $('.color-select').html('');
-    var colorOptions = '<option value="" selected>Choose an option</option>';
-    defaultColorList.forEach(function (color) {
-        colorOptions += `<option value="${color.id}">${color.name}</option>`;
-    });
-    $('.color-select').html(colorOptions);
-}
-
-function refeshCount() {
-    $('.num-product').val(1);
+    selectedSize = '';
 }

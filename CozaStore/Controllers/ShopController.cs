@@ -58,7 +58,7 @@ namespace CozaStore.Controllers
             return View(vm);
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> GetProductDetail(int id)
         {
             var product = await _unitOfWork.ProductRepository.GetProductDetailAsync(id);
@@ -74,10 +74,10 @@ namespace CozaStore.Controllers
                 ImageList = product.Images.Select(x=>x.Url),
             };
 
-            return Json(vm);
+            return PartialView("_ProductDetailPartial", vm);
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> GetAvailableColors(int productId, int sizeId)
         {
             var colors = await _unitOfWork.ProductRepository.GetAvailableColorsAsync(productId, sizeId);
@@ -85,7 +85,7 @@ namespace CozaStore.Controllers
             return Json(colors);
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> GetAvailableSizes(int productId, int colorId)
         {
             var sizes = await _unitOfWork.ProductRepository.GetAvailableSizesAsync(productId, colorId);
@@ -93,18 +93,21 @@ namespace CozaStore.Controllers
             return Json(sizes);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetPrice(int productId, int sizeId, int colorId)
+        [HttpPost]
+        public async Task<IActionResult> GetPrice(int productId, int sizeId, int colorId, string currentSelect)
         {
             if (sizeId == 0 || colorId == 0)
                 return Json(new { success = false, message = "You have not selected size and color, please try again." });
 
             var variant = await _unitOfWork.ProductRepository.GetVariantOfProductAsync(productId, colorId,sizeId);
 
-            if(variant == null)
-                return Json(new { success = false, message = "You chose too fast, try again." });
-           
-            return Json(variant.PriceSell);
+            if(variant == null && currentSelect == "color") // getSize
+                return Json(new { success = false, message = "No variant", select = "color" });
+
+			if (variant == null && currentSelect == "size") // getSize
+				return Json(new { success = false, message = "No variant", select = "size" });
+
+			return Json(variant.PriceSell);
         }
 
         [HttpPost]
@@ -170,6 +173,23 @@ namespace CozaStore.Controllers
                 return Json(new { success = true, message = "Product added to cart successfully", add = cartIncreaseUI });
             } else
                 return Json(new { success = false, message = "Product added to cart failed" });
+        }
+
+        public async Task<IActionResult> Product(int productId)
+        {
+            var product = await _unitOfWork.ProductRepository.GetProductDetailAsync(productId);
+            var vm = new ProductDetailVM
+            {
+                Id = product.Id,
+                Name = product.Name,
+                PriceSell = product.PriceSell,
+                Quantity = product.Quantity,
+                Description = product.Description,
+                ColorList = product.Variants.Select(x => x.Color).Distinct(),
+                SizeList = product.Variants.Select(x => x.Size).Distinct(),
+                ImageList = product.Images.Select(x => x.Url),
+            };
+            return View(vm);
         }
     }
 }
