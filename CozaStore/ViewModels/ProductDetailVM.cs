@@ -1,4 +1,5 @@
-﻿using CozaStore.Models;
+﻿using CozaStore.Helpers;
+using CozaStore.Models;
 
 namespace CozaStore.ViewModels
 {
@@ -12,6 +13,6 @@ namespace CozaStore.ViewModels
         public IEnumerable<Color> ColorList { get; set; } = [];
         public IEnumerable<Size> SizeList { get; set; } = [];
         public IEnumerable<string> ImageList { get; set; } = [];
-        public List<Review> ReviewList { get; set; } = [];
+        public PagedList<Review>? ReviewList { get; set; }
     }
 }

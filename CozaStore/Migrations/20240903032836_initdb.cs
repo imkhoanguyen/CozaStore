@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CozaStore.Migrations
 {
     /// <inheritdoc />
-    public partial class initDb : Migration
+    public partial class initdb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -318,6 +318,7 @@ namespace CozaStore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDelete = table.Column<bool>(type: "bit", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false)
@@ -444,27 +445,6 @@ namespace CozaStore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ReviewFiles",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PublicId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReviewId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ReviewFiles", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ReviewFiles_Reviews_ReviewId",
-                        column: x => x.ReviewId,
-                        principalTable: "Reviews",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "OrderItem",
                 columns: table => new
                 {
@@ -559,11 +539,6 @@ namespace CozaStore.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReviewFiles_ReviewId",
-                table: "ReviewFiles",
-                column: "ReviewId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Reviews_ProductId",
                 table: "Reviews",
                 column: "ProductId");
@@ -630,7 +605,7 @@ namespace CozaStore.Migrations
                 name: "ProductCategory");
 
             migrationBuilder.DropTable(
-                name: "ReviewFiles");
+                name: "Reviews");
 
             migrationBuilder.DropTable(
                 name: "ShoppingCarts");
@@ -648,22 +623,19 @@ namespace CozaStore.Migrations
                 name: "Categories");
 
             migrationBuilder.DropTable(
-                name: "Reviews");
+                name: "Colors");
 
             migrationBuilder.DropTable(
-                name: "Colors");
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Sizes");
 
             migrationBuilder.DropTable(
-                name: "ShippingMethods");
-
-            migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "ShippingMethods");
         }
     }
 }

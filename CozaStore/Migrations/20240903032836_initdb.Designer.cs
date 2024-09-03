@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CozaStore.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240902153346_initDb")]
-    partial class initDb
+    [Migration("20240903032836_initdb")]
+    partial class initdb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -372,6 +372,9 @@ namespace CozaStore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -392,31 +395,6 @@ namespace CozaStore.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
-                });
-
-            modelBuilder.Entity("CozaStore.Models.ReviewFile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("PublicId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ReviewId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReviewId");
-
-                    b.ToTable("ReviewFiles");
                 });
 
             modelBuilder.Entity("CozaStore.Models.ShippingMethod", b =>
@@ -783,17 +761,6 @@ namespace CozaStore.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("CozaStore.Models.ReviewFile", b =>
-                {
-                    b.HasOne("CozaStore.Models.Review", "Review")
-                        .WithMany("ReviewFiles")
-                        .HasForeignKey("ReviewId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Review");
-                });
-
             modelBuilder.Entity("CozaStore.Models.ShoppingCart", b =>
                 {
                     b.HasOne("CozaStore.Models.Product", "Product")
@@ -908,11 +875,6 @@ namespace CozaStore.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("Variants");
-                });
-
-            modelBuilder.Entity("CozaStore.Models.Review", b =>
-                {
-                    b.Navigation("ReviewFiles");
                 });
 #pragma warning restore 612, 618
         }

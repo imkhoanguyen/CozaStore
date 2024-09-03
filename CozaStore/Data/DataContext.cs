@@ -24,7 +24,6 @@ namespace CozaStore.Data
         public DbSet<ShippingMethod> ShippingMethods { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Review> Reviews { get; set; }
-        public DbSet<ReviewFile> ReviewFiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

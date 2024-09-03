@@ -12,7 +12,129 @@
 @section Scripts {
     <script src="~/lib/select2/js/select2.min.js"></script>
     <script src="~/js/product.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
     <script>
         productIdGlb = @Model.Id;
+
+        $(document).on('submit', '#frm-review', function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serialize(); 
+            console.log(formData);
+
+            $.ajax({
+                type: 'POST',
+                url: '/shop/addreview',
+                data: formData,
+                success: function (response) {
+                    if(response.success === true) {
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function (error) {
+                    alert('There was an error submitting your review.');
+                }
+            });
+        });
+
+
+        
+
+        function generateStars(rating) {
+            var stars = '';
+            for (var i = 1; i <= rating; i++) {
+                stars += '<i class="item-rating pointer zmdi zmdi-star"></i>';
+            }
+            return stars;
+        }
+
+        function formatDateTime(dateString) {
+            var date = new Date(dateString);
+            return date.toLocaleString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+        }
+
+        // paging
+        $(document).on('click', '.pagination .page-link', function () {
+            let pageNumber = $(this).data('page');
+            if (pageNumber > @Model.ReviewList.TotalPages) return;
+            if (pageNumber < 1) return;
+            var productId = @Model.Id;
+            $('.current-page').text(pageNumber)
+            console.log(pageNumber);
+            $.ajax({
+                url: '@Url.Action("LoadReviews", "Shop")',
+                type: 'GET',
+                data: {
+                    productId: productId,
+                    pageNumber: pageNumber
+                },
+                success: function (result) {
+                    $('#review-container').html(result);
+                    let current = pageNumber;
+                    let next = current + 1;
+                    let pre = current - 1;
+                    $('.current-page').data('page', current);
+                    $('.pagination .page-item a[aria-label="Next"]').data('page', next);
+                    $('.pagination .page-item a[aria-label="Previous"]').data('page', pre);
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
+        // signal
+        var connection = new signalR.HubConnectionBuilder().withUrl("/hubs/review").build();
+
+        connection.start().then(function () {
+            console.log("SignalR Connected.");
+        }).catch(function (err) {
+            console.error("SignalR Connection Error: ", err);
+        });
+
+        connection.on("AddReview", (review) => {
+            addNewReview(review);
+        });
+
+
+        function addNewReview(review) {
+            var html = `
+                        <div class="flex-w flex-t p-b-68">
+                            <div class="wrap-pic-s size-109 bor0 of-hidden m-r-18 m-t-6">
+                                <img src="${review.appUser.image}" alt="AVATAR">
+                            </div>
+
+                            <div class="size-207">
+                                <div class="flex-w flex-sb-m p-b-17">
+                                    <span class="mtext-107 cl2 p-r-20">
+                                        ${review.appUser.fullName} - ${formatDateTime(review.created)}
+                                    </span>
+
+                                    <span class="fs-18 cl11 pointer">
+                                        ${generateStars(review.rating)}
+                                    </span>
+                                </div>
+
+                                <p class="stext-102 cl6">
+                                    ${review.content}
+                                </p>
+                            </div>
+                        </div>
+                    `;
+
+
+            document.getElementById("review-container").insertAdjacentHTML("afterbegin", html);
+        }
+
     </script>
 }

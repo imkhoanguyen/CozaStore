@@ -46,6 +46,8 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapHub<OrderHub>("/hubs/order");
+app.MapHub<ReviewHub>("/hubs/review");
+
 
 
 using var scope = app.Services.CreateScope();

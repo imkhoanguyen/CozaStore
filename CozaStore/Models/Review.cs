@@ -8,6 +8,7 @@ namespace CozaStore.Models
         public int Id { get; set; }
         public required string Content { get; set; }
         public int Rating { get; set; }
+        public DateTime Created { get; set; } = DateTime.Now;
         public bool IsDelete { get; set; } = false;
         //nav
         public required string UserId { get; set; }
@@ -20,6 +21,5 @@ namespace CozaStore.Models
 		[ValidateNever]
 		public Product? Product { get; set; }
 
-        public List<ReviewFile> ReviewFiles { get; set; } = [];
     }
 }

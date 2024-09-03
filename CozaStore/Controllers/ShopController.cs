@@ -1,10 +1,12 @@
 ﻿using CozaStore.Data;
 using CozaStore.Helpers;
+using CozaStore.Hubs;
 using CozaStore.Interfaces;
 using CozaStore.Models;
 using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -13,10 +15,13 @@ namespace CozaStore.Controllers
     public class ShopController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHubContext<ReviewHub> _reviewHub;
         private const int _pageSize = 8;
-        public ShopController(IUnitOfWork unitOfWork)
+
+        public ShopController(IUnitOfWork unitOfWork, IHubContext<ReviewHub> reviewHub)
         {
             _unitOfWork = unitOfWork;
+            _reviewHub = reviewHub;
         }
         public async Task<IActionResult> Index(ProductParams productParams)
         {
@@ -192,5 +197,44 @@ namespace CozaStore.Controllers
             };
             return View(vm);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddReview(int productId, int rating, string content)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var review = new Review
+            {
+                Rating = rating,
+                Content = content,
+                UserId = userId,
+                ProductId = productId,
+            };
+
+            _unitOfWork.ReviewRepository.Create(review);
+
+            if(await _unitOfWork.Complete())
+            {
+                var reviewFromDb = await _unitOfWork.ReviewRepository.GetReviewAsync(review.Id);
+                //signal
+                await _reviewHub.Clients.All.SendAsync("AddReview", reviewFromDb);
+				return Json(new {success = true, message = "Add review successfully"});
+            }
+                
+
+            return Json(new { success = false, message = "Problem with add review" });
+        }
+
+        public async Task<IActionResult> LoadReviews(int productId, int pageNumber)
+        {
+            if (pageNumber < 1) pageNumber = 1;
+            var paginationParams = new PaginationParams { PageNumber = pageNumber, PageSize = 5 };
+            var reviews = await _unitOfWork.ReviewRepository.GetAllReviewsAsync(productId, paginationParams);
+
+            return PartialView("~/Views/Shop/ReviewListPartial.cshtml", reviews);
+       
+        }
+
     }
 }
