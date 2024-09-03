@@ -156,6 +156,10 @@ namespace CozaStore.Controllers
                 userFromDb.Gender = vm.AppUser.Gender;
                 if (vm.Image != null)
                 {
+                    string flagPublicId = "";
+                    if (!userFromDb.PublicId.IsNullOrEmpty())
+                        flagPublicId = userFromDb.PublicId;
+
                     var resultUpload = await _imageService.AddImageAsync(vm.Image);
                     if (resultUpload.Error != null)
                     {
@@ -163,11 +167,23 @@ namespace CozaStore.Controllers
                         vm.AppUser = userFromDb;
 
                         TempData["error"] = resultUpload.Error.Message;
+                        return View(vm);
                     }
 
                     userFromDb.Image = resultUpload.SecureUri.AbsoluteUri;
                     userFromDb.PublicId = resultUpload.PublicId;
-                    TempData["success"] = "Edit information successfully";
+
+                    if(!flagPublicId.IsNullOrEmpty()) // delete img on cloud
+                    {
+                        var resultDelete = await _imageService.DeleteImageAsync(flagPublicId);
+                        if (resultDelete.Error != null)
+                        {
+                            vm.AddressList = userFromDb.AddressList;
+                            vm.AppUser = userFromDb;
+                            TempData["error"] = resultDelete.Error.Message;
+                            return View(vm);
+                        }
+                    } 
                 }
 
                 if (await _context.SaveChangesAsync() > 0)
