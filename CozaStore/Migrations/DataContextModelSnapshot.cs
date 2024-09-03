@@ -49,7 +49,7 @@ namespace CozaStore.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Address");
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("CozaStore.Models.AppUser", b =>

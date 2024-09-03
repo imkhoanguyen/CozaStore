@@ -205,7 +205,7 @@ namespace CozaStore.Controllers
             {
                 await _signInManager.RefreshSignInAsync(user); // dang nhap lai
                 TempData["success"] = "Your password has been changed.";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction(nameof(ChangeInformation));
             }
 
             foreach (var error in result.Errors)
@@ -214,6 +214,73 @@ namespace CozaStore.Controllers
             }
 
             return View(vm);
+        }
+
+        public IActionResult CreateAddress()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAddress(Address address)
+        {
+            if (!ModelState.IsValid) return View(address);
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            address.UserId = userId;
+            _context.Addresses.Add(address);
+            if(await _context.SaveChangesAsync() > 0)
+            {
+                TempData["success"] = "Create address successfully";
+                return RedirectToAction(nameof(ChangeInformation));
+            }
+
+            TempData["error"] = "Problem with create address";
+            return View(address);
+        }
+
+        public async Task<IActionResult> EditAddress(int id)
+        {
+            var address = await _context.Addresses.FirstOrDefaultAsync(x => x.Id == id);
+            if (address == null)
+                return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Address not found!!!" });
+
+            return View(address);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAddress(Address address)
+        {
+            var addressFromDb = await _context.Addresses.FirstOrDefaultAsync(x=>x.Id == address.Id);
+            if(addressFromDb == null)
+                return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Address not found!!!" });
+
+            addressFromDb.FullName = address.FullName;
+            addressFromDb.Phone = address.Phone;
+            addressFromDb.SpecificAddress = address.SpecificAddress;
+
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                TempData["success"] = "Edit address successfuly";
+                return RedirectToAction(nameof(ChangeInformation));
+            }
+
+            TempData["error"] = "Problem with edit address";
+            return View(address);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAddress(int id)
+        {
+            var address = await _context.Addresses.FirstOrDefaultAsync(x => x.Id == id);
+            if (address == null)
+                return Json(new { success = false, message = "Address not found" });
+
+            _context.Addresses.Remove(address);
+            if (await _context.SaveChangesAsync() > 0)
+                return Json(new { success = true, message = "Delete address successfully" });
+
+            return Json(new { success = false, message = "Problem with delete address" });
         }
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CozaStore.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240903124552_initDb")]
+    [Migration("20240903135154_initDb")]
     partial class initDb
     {
         /// <inheritdoc />
@@ -52,7 +52,7 @@ namespace CozaStore.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Address");
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("CozaStore.Models.AppUser", b =>
