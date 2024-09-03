@@ -9,7 +9,6 @@ namespace CozaStore.Models
         public required string FullName { get; set; }
         public required string Phone { get; set; }
         public required string SpecificAddress { get; set; }
-        public bool isDefault { get; set; } = false;
 
         //nav 
         public string? UserId { get; set; }

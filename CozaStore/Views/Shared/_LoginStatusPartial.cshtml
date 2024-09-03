@@ -37,17 +37,17 @@
                 <div class="dropdown-toggle d-flex gap-2 justify-content-center align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
 
                     <img src="@user.Image"
-                         alt="picture user" class="rounded-circle" style="max-width: 36px;
+                         alt="picture user" style="max-width: 36px; border-radius: 50%;
                                 border: 2px solid white;
                                 display: inline;">
                     <span>@user.FullName</span>
                 </div>
 
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Edit profile</a></li>
-                    <li><a class="dropdown-item" href="#">Check order</a></li>
+                    <li><a class="dropdown-item" asp-controller="account" asp-action="changeinformation">Edit profile</a></li>
+                    <li><a class="dropdown-item" >Check order</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#">Logout</a></li>
+                    <li><a class="dropdown-item" asp-controller="Account" asp-action="logout">Logout</a></li>
                 </ul>
             </div>
 

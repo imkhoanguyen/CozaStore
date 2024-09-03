@@ -77,11 +77,6 @@ function initMainScripts() {
 
 
 
-$(document).ready(function () {
-    initModalScripts();
-});
-
-
 $(document).on('click', '.btn-add-cart', function () {
     //get value
     const sizeId = $('.size-select').val();

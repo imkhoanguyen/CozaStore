@@ -1,0 +1,138 @@
+﻿@model EditUserVM
+<section class="bg0 m-t-23 p-b-140">
+    <div class="container">
+        <h1 class="text-center mb-5 mt-5">Profile</h1>
+        <div class=row>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center ">
+                        User Information <a asp-controller="account" asp-action="changepassword" class="btn btn-primary ms-auto">Change password</a>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" asp-controller="account" asp-action="changeinformation" class="row" enctype="multipart/form-data">
+                            <div class="mb-3 d-flex gap-2 flex-column align-items-center justify-content-center">
+                                <img class="img-user" src="@Model.AppUser.Image" alt="@Model.AppUser.UserName" style="width: 80px; height: 80px; border-radius: 50%;" />
+                                <input asp-for="@Model.Image" class="ps-5" />
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="AppUser.Id" class="form-label"></label>
+                                <input asp-for="AppUser.Id" class="form-control" readonly />
+                            </div>
+                            <div class="mb-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label asp-for="AppUser.UserName" class="form-label"></label>
+                                        <input asp-for="AppUser.UserName" class="form-control" readonly />
+                                        <span class="text-danger" asp-validation-for="AppUser.UserName"></span>
+                                    </div>
+                                    <div class="col-6">
+                                        <label asp-for="AppUser.Email" class="form-label"></label>
+                                        <input asp-for="AppUser.Email" class="form-control" readonly />
+                                        <span class="text-danger" asp-validation-for="AppUser.Email"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label asp-for="AppUser.FullName" class="form-label"></label>
+                                        <input asp-for="AppUser.FullName" class="form-control" />
+                                        <span class="text-danger" asp-validation-for="AppUser.FullName"></span>
+                                    </div>
+                                    <div class="col-6">
+                                        <label asp-for="AppUser.PhoneNumber" class="form-label"></label>
+                                        <input asp-for="AppUser.PhoneNumber" class="form-control" />
+                                        <span class="text-danger" asp-validation-for="AppUser.PhoneNumber"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label asp-for="AppUser.Gender" class="form-label"></label>
+                                        <select class="form-select" asp-for="AppUser.Gender">
+                                            <option value="0">Male</option>
+                                            <option value="1">Female</option>
+                                            <option value="2">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <label asp-for="AppUser.Created" class="form-label"></label>
+                                        <input asp-for="AppUser.Created" class="form-control" readonly />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 text-end">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center">
+                        Address List <a class="btn btn-primary ms-auto">Add address</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="fw-bold">
+                                    <tr>
+                                        <td>ID</td>
+                                        <td>Fullname</td>
+                                        <td>Phone</td>
+                                        <td>Address</td>
+                                        <td>Action</td>
+                                    </tr>
+                                </thead>
+                                <tbody class="align-midle">
+                                    @foreach(var address in Model.AddressList)
+                                    {
+                                        <tr>
+                                            <td>@address.Id</td>
+                                            <td>@address.FullName</td>
+                                            <td>@address.Phone</td>
+                                            <td>@address.SpecificAddress</td>
+                                            <td>
+                                                <div class="d-flex gap-2">
+                                                    <a asp-controller="product" asp-action="edit" asp-route-id="" class="btn btn-sm btn-primary">
+                                                        <i class="fa fa-pencil-alt"></i>
+                                                    </a>
+                                                    
+                                                    <a onclick="Delete(this,'/admin/product/delete/?productId=')"
+                                                       class="btn btn-sm btn-danger">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).on("change", "#Image", function() {
+            var input = this;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('.img-user').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        })
+    </script>
+}

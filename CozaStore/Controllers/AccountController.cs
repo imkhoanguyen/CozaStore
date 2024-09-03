@@ -1,7 +1,12 @@
-﻿using CozaStore.Models;
+﻿using CozaStore.Data;
+using CozaStore.Interfaces;
+using CozaStore.Models;
 using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace CozaStore.Controllers
 {
@@ -9,10 +14,15 @@ namespace CozaStore.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        private readonly DataContext _context;
+        private readonly IImageService _imageService;
+
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, DataContext context, IImageService imageService)
         {
             _signInManager = signInManager;
-            _userManager = userManager; 
+            _userManager = userManager;
+            _context = context;
+            _imageService = imageService;
         }
 
         public IActionResult Login()
@@ -23,7 +33,7 @@ namespace CozaStore.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginVM vm)
         {
-            if(!ModelState.IsValid) return View();
+            if (!ModelState.IsValid) return View();
 
             var appUser = vm.UserName.Contains("@")
              ? await _userManager.FindByEmailAsync(vm.UserName)
@@ -31,11 +41,12 @@ namespace CozaStore.Controllers
 
             var result = await _signInManager.PasswordSignInAsync(appUser, vm.Password, vm.RememberMe, lockoutOnFailure: false);
 
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
                 TempData["success"] = "Login success!!!";
                 return RedirectToAction("Index", "Home");
-            } else
+            }
+            else
             {
                 ModelState.AddModelError("Login", "Failed to login");
                 return View();
@@ -63,9 +74,12 @@ namespace CozaStore.Controllers
                 Image = "/img/avatar.png",
             };
 
-            var result =  await _userManager.CreateAsync(user, vm.Password);
+
+
+            var result = await _userManager.CreateAsync(user, vm.Password);
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user, "Customer");
                 TempData["success"] = "Register successfully!";
                 return RedirectToAction("Login", "Account");
             }
@@ -75,10 +89,131 @@ namespace CozaStore.Controllers
 
         private void AddErrors(IdentityResult result)
         {
-            foreach(var error in result.Errors)
+            foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
+        }
+
+
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> ChangeInformation()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var user = await _context.AppUser
+                        .Include(x => x.AddressList)
+                        .FirstOrDefaultAsync(x => x.Id == userId);
+
+
+            var vm = new EditUserVM
+            {
+                AppUser = user,
+                AddressList = user.AddressList
+            };
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeInformation(EditUserVM vm)
+        {
+            if (vm.AppUser.FullName.IsNullOrEmpty())
+            {
+                var user1 = await _context.AppUser
+                        .Include(x => x.AddressList)
+                        .FirstOrDefaultAsync(x => x.Id == vm.AppUser.Id);
+                vm.AppUser = user1;
+                vm.AddressList = user1.AddressList;
+                ModelState.AddModelError("AppUser.FullName", "FullName is required");
+                return View(vm);
+            }
+
+            if (vm.AppUser.PhoneNumber.IsNullOrEmpty())
+            {
+                var user1 = await _context.AppUser
+                        .Include(x => x.AddressList)
+                        .FirstOrDefaultAsync(x => x.Id == vm.AppUser.Id);
+                vm.AppUser = user1;
+                vm.AddressList = user1.AddressList;
+                ModelState.AddModelError("AppUser.PhoneNumber", "PhoneNumber is required");
+                return View(vm);
+            }
+
+            if (ModelState.IsValid)
+            {
+                var userFromDb = await _context.AppUser.Include(x => x.AddressList).FirstOrDefaultAsync(x => x.Id == vm.AppUser.Id);
+                if (userFromDb == null)
+                    RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "User not found!!!" });
+
+                userFromDb.FullName = vm.AppUser.FullName;
+                userFromDb.PhoneNumber = vm.AppUser.PhoneNumber;
+                userFromDb.Gender = vm.AppUser.Gender;
+                if (vm.Image != null)
+                {
+                    var resultUpload = await _imageService.AddImageAsync(vm.Image);
+                    if (resultUpload.Error != null)
+                    {
+                        vm.AddressList = userFromDb.AddressList;
+                        vm.AppUser = userFromDb;
+
+                        TempData["error"] = resultUpload.Error.Message;
+                    }
+
+                    userFromDb.Image = resultUpload.SecureUri.AbsoluteUri;
+                    userFromDb.PublicId = resultUpload.PublicId;
+                    TempData["success"] = "Edit information successfully";
+                }
+
+                if (await _context.SaveChangesAsync() > 0)
+                {
+                    vm.AddressList = userFromDb.AddressList;
+                    vm.AppUser = userFromDb;
+                    TempData["success"] = "Edit information successfully";
+                    return View(vm);
+                }
+            }
+            var user = await _context.AppUser
+                        .Include(x => x.AddressList)
+                        .FirstOrDefaultAsync(x => x.Id == vm.AppUser.Id);
+            vm.AppUser = user;
+            vm.AddressList = user.AddressList;
+            TempData["error"] = "Problem with edit information";
+            return View(vm);
+        }
+
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordVM vm)
+        {
+            if (!ModelState.IsValid) return View(vm);
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Login", "Account");
+
+            var result = await _userManager.ChangePasswordAsync(user, vm.CurrentPassword, vm.NewPassword);
+            if (result.Succeeded)
+            {
+                await _signInManager.RefreshSignInAsync(user); // dang nhap lai
+                TempData["success"] = "Your password has been changed.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return View(vm);
         }
     }
 }

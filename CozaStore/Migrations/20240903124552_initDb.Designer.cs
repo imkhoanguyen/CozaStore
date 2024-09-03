@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CozaStore.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240903032836_initdb")]
-    partial class initdb
+    [Migration("20240903124552_initDb")]
+    partial class initDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,9 +47,6 @@ namespace CozaStore.Migrations
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("isDefault")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -111,6 +108,9 @@ namespace CozaStore.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("PublicId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
