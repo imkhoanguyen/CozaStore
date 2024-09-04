@@ -15,7 +15,7 @@
                             Order List
                         </div>
                         <div class="card-body">
-                            <form method="get" asp-controller="order" asp-action="index" class="row">
+                            <form method="get" asp-controller="account" asp-action="manageorder" class="row">
                                 <div class="col-6">
                                     <div class="d-flex gap-2">
                                         <input name="PageSize" class="form-control" value="@Model.OrderList.PageSize" style="max-width: 50px;" data-val="false" />
@@ -32,7 +32,7 @@
                                         <button type="submit" style="width: 48px;" class="rounded btn btn-outline-dark p-0">
                                             <i class="fa-regular fa-magnifying-glass"></i>
                                         </button>
-                                        <a asp-controller="order" asp-action="index" style="width: 48px;" class="rounded btn btn-outline-dark px-0">
+                                        <a asp-controller="account" asp-action="manageorder" style="width: 48px;" class="rounded btn btn-outline-dark px-0">
                                             <i class="fa-sharp fa-regular fa-arrow-rotate-right"></i>
                                         </a>
                                     </div>

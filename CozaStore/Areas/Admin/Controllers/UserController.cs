@@ -104,5 +104,25 @@ namespace CozaStore.Areas.Admin.Controllers
             TempData["error"] = "Error while adding role";
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ToggleLockout(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return Json(new { success = false, message = "User not found" });
+            
+            if(user.LockoutEnd.HasValue && user.LockoutEnd > DateTimeOffset.Now) // was locked
+            {
+                // unlock
+                await _userManager.SetLockoutEndDateAsync(user, null);
+                await _userManager.ResetAccessFailedCountAsync(user); // reset failed login
+                return Json(new { success = true, message = "Unlock user successfully", action ="unlock", id = user.Id });
+            } else
+            {
+                await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+                return Json(new { success = true, message = "Lock user successfully", action = "lock", id = user.Id });
+            }
+        }
     }
 }

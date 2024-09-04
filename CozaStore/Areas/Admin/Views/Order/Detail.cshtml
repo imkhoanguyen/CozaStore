@@ -78,7 +78,7 @@
                                     Model.OrderStatus == (int)OrderStatus.Confirmed ? Html.Raw("<i class='fa-solid fa-check text-success'></i> order was confirmed")
                                     : Html.Raw("<i class='fa-solid fa-check text-danger'></i> order was canceled"))
                             </div>
-                            @if (Model.OrderStatus != (int)OrderStatus.Confirmed)
+                            @if (Model.OrderStatus == (int)OrderStatus.Unconfirmed)
                             {
                                 <button type="button" onclick="ConfirmOrder(this,'/admin/order/confirmOrder/?orderId=@Model.Id');" class="btn btn-primary px-3 py-2 text-uppercase ms-auto fw-bold">confirm</button>
                             }

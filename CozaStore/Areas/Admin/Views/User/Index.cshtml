@@ -11,9 +11,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header text-end">
-                        <a asp-controller="user" asp-action="create" class="btn btn-primary">
-                            <i class="fa-sharp fa-light fa-plus"></i> Add User
-                        </a>
+                        
                     </div>
                     <div class="card-body">
                         <form method="get" asp-controller="user" asp-action="index" class="row">
@@ -55,29 +53,24 @@
                                         int stt = 0;
                                         @foreach (var user in Model)
                                         {
-                                            <tr>
+                                            <tr data-user-id="@user.Id">
                                                 <td>@(++stt)</td>
                                                 <td>@user.FullName</td>
                                                 <td>@user.UserName</td>
                                                 <td>@user.Email</td>
                                                 <td>@(user.Gender == 0 ? "Male" : user.Gender == 1 ? "Female" : "Orther")</td>
                                                 <td>@user.Role</td>
-                                                <td>@user.LockoutEnabled</td>
+                                                <td>
+                                                    @(user.LockoutEnd.HasValue ? Html.Raw("<span class='badge bg-warning'>Locked</span> ") :
+                                                        Html.Raw("<span class='badge bg-primary'>Actived</span> "))
+                                                </td>
                                                 <td>
                                                     <div class="d-flex gap-2">
-                                                        <a asp-controller="role" asp-action="edit"
-                                                           class="btn btn-sm btn-primary">
+                                                        <a class="btn btn-sm btn-primary" asp-controller="user" asp-action="managerole" asp-route-userId="@user.Id">
                                                             <i class="fa fa-pencil-alt"></i>
                                                         </a>
-                                                        <a class="btn btn-sm btn-secondary" asp-controller="user" asp-action="managerole" asp-route-userId="@user.Id">
-                                                            <i class="fa-sharp fa-solid fa-eye"></i>
-                                                        </a>
-                                                        <a asp-controller="user" asp-action="edit" asp-route-id="@user.Id"
-                                                           class="btn btn-sm btn-warning text-white">
+                                                        <a onclick="ToggleLockout('/admin/user/ToggleLockout/?id=@user.Id')" class="btn btn-sm btn-danger">
                                                             <i class="fa-sharp fa-solid fa-lock"></i>
-                                                        </a>
-                                                        <a onclick="Delete('/admin/user/delete/?id=@user.Id')" class="btn btn-sm btn-danger">
-                                                            <i class="fa-solid fa-trash-can"></i>
                                                         </a>
                                                     </div>
 
@@ -159,26 +152,62 @@
 @section Scripts {
     <script src="~/sweetalert2/sweetalert2.min.js"></script>
     <script>
-        function DeleteColor(url) {
+        function ToggleLockout(url) {
             Swal.fire({
                 title: 'Are you sure?',
                 // text: "You won't be able to revert this!",
-                icon: 'warning',
+                icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
                         url: url,
                         type: 'post',
-                        success: function () {
-                            window.location.reload();
+                        success: function (response) {
+                            if (response.success) {
+                                toastr.success(response.message);
+                                if(response.action === "lock") {
+                                    updateStatusLock(response.id);
+                                } else if(response.action === "unlock") {
+                                    updateStatusActive(response.id);
+                                }
+                            } else {
+                                toastr.error(response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            toastr.error('An error occurred: ' + xhr.statusText);
                         }
                     })
                 }
             })
+        }
+
+        function updateStatusLock(id) {
+            let row = document.querySelector(`tr[data-user-id='${id}']`);
+
+            if (row) {
+                let cell = row.querySelector("td:nth-child(7) span");
+
+                cell.classList.remove("bg-primary");
+                cell.classList.add("bg-warning");
+                cell.innerHTML = "Locked";
+            }
+        }
+
+        function updateStatusActive(id) {
+            let row = document.querySelector(`tr[data-user-id='${id}']`);
+
+            if (row) {
+                let cell = row.querySelector("td:nth-child(7) span");
+
+                cell.classList.remove("bg-warning");
+                cell.classList.add("bg-primary");
+                cell.innerHTML = "Actived";
+            }
         }
     </script>
 }
