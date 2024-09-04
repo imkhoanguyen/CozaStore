@@ -386,5 +386,19 @@ namespace CozaStore.Controllers
 
             return Json(new { success = false, message = "Problem with cancel order" });
         }
+
+        public async Task<IActionResult> DeleteOrder(int orderId)
+        {
+            var order = await _unitOfWork.OrderRepository.GetAsync(orderId);
+
+            if (order == null) return Json(new { success = false, message = "Order not found!!!" });
+
+            _unitOfWork.OrderRepository.Delete(order);
+
+            if (await _unitOfWork.Complete())
+                return Json(new { success = true, message = "Delete order successfully" });
+
+            return Json(new { success = false, message = "Problem delete order!!!" });
+        }
     }
 }
