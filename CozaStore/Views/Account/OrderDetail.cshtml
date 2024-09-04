@@ -1,0 +1,183 @@
+﻿@model Order
+<section class="bg0 m-t-23 p-b-140">
+
+    <main class="content">
+        <div class="container-fluid p-0">
+
+            <h1 class="m-5 text-center fw-bold text-uppercase">Order Detail</h1>
+
+            <div class="row">
+                @* order imformation *@
+                <div class="col-8">
+                    <div class="card">
+                        <div class="card-header fw-bold">
+                            <div class="d-flex">
+                                <h5 class="fw-bold">
+                                    Order information #@Model.Id
+                                </h5>
+                                <div class="ms-auto">
+                                    <i class="fa-sharp fa-solid fa-clock"></i> @Model.OrderDate.ToString("dd/MM/yyyy hh:mm:ss tt")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @* desscription *@
+                            <h4 class="mb-3 fw-bold">Description</h4>
+                            <div class="alert alert-success mb-4" role="alert">
+                                @Html.Raw(Model.Description)
+                            </div>
+
+                            @* product *@
+                            <h4 class="mb-3 fw-bold">Products</h4>
+                            <div class="table-responsive mb-4">
+                                <table class="table table-bordered">
+                                    <thead class="fw-bold align-middle">
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Size</td>
+                                            <td>Color</td>
+                                            <td>Qty</td>
+                                            <td>Unit Cost</td>
+                                            <td>Price</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="align-middle table-border-bottom-0">
+                                        @foreach (var item in Model.OrderItemList)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex gap-2 align-items-center">
+                                                        <img src="@item.Url" alt="@item.Name" style="width: 80px; height: 80px; object-fit: cover;" />
+                                                        <span>@item.Name</span>
+                                                    </div>
+                                                </td>
+                                                <td>@(item.Size ?? "No")</td>
+                                                <td>@(item.Color ?? "No")</td>
+                                                <td class="fw-bold">@item.Count</td>
+                                                <td class="fw-bold">$@item.Price</td>
+                                                <td class="fw-bold">$@item.GetTotal()</td>
+                                            </tr>
+                                        }
+                                        <tr>
+                                            <td colspan="5" class="fw-bold text-end">Total Price: </td>
+                                            <td class="fw-bold ">$@Model.SubTotal</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" class="fw-bold text-end">Shipping Fee: </td>
+                                            <td class="fw-bold ">$@Model.ShippingFee</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" class="fw-bold text-end">Total Unit: </td>
+                                            <td class="fw-bold ">$@Model.GetTotal()</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="d-flex ">
+                                <div class="cancel-order-container d-flex gap-2 fs-5 text-uppercase align-items-center">
+                                    @(Model.OrderStatus == (int)OrderStatus.Unconfirmed ? Html.Raw("<i class='fa-solid fa-xmark fa-lg text-danger'></i> order not confirmed") :
+                                        Model.OrderStatus == (int)OrderStatus.Confirmed ? Html.Raw("<i class='fa-solid fa-check text-success'></i> order was confirmed")
+                                        : Html.Raw("<i class='fa-solid fa-check text-danger'></i> order was canceled"))
+                                </div>
+                                @if (Model.OrderStatus == (int)OrderStatus.Unconfirmed)
+                                {
+                                    <button type="button" onclick="CancelOrder(this,'/account/cancelorder/?orderId=@Model.Id');" class="btn btn-danger px-3 py-2 text-uppercase ms-auto fw-bold">cancel</button>
+                                }
+                            </div>
+                            <hr />
+
+                            <div class="d-flex align-items-center">
+                                <div class="d-flex flex-column gap-2">
+                                    <div class="confirm-payment-container d-flex gap-2 fs-5 text-uppercase align-items-center">
+                                        @(Model.PaymentStatus == (int)PaymentStatus.Pending ? Html.Raw("<i class='fa-solid fa-xmark fa-lg text-danger'></i> Payment") :
+                                            Html.Raw("<i class='fa-solid fa-check text-success'></i> Payment"))
+                                    </div>
+                                    <div>Payment method: @(Model.PaymentMethod == 0 ? "Cash on delivery" : "Payment with Stripe")</div>
+                                </div>
+                            </div>
+
+
+
+                            <hr />
+
+                            <div class="d-flex gap-2 fs-5 text-uppercase align-items-center">
+                                <i class='fa-solid fa-check text-success'></i> Delivery
+                            </div>
+                            <div>Shipping method: @Model.ShippingMethod.Name</div>
+                        </div>
+                    </div>
+                </div>
+
+                @* customer/shipping information *@
+                <div class="col-4">
+                    <div class="d-flex flex-column gap-3">
+                        @* customer infomation *@
+                        <div class="card w-100">
+                            <div class="card-header">
+                                <h5 class="fw-bold">Customer infomation</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex gap-2 mb-3">
+                                    <img src="@Model.AppUser.Image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;" ; alt="@Model.AppUser.FullName" />
+                                    <div class="d-flex gap-2 flex-column">
+                                        <div>@Model.AppUser.FullName</div>
+                                        <div class="d-flex gap-2 align-items-center">
+                                            <i class="fa-solid fa-venus-mars"></i>@(Model.AppUser.Gender == 0 ? "Male" : Model.AppUser.Gender == 1 ? "Female" : "Orther")
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="d-flex gap-2 mb-2 align-items-center">
+                                    <i class="fa-sharp fa-solid fa-phone"></i> @Model.AppUser.PhoneNumber
+                                </div>
+                                <a href="mailto:@Model.AppUser.Email">@Model.AppUser.Email</a>
+
+                            </div>
+                        </div>
+
+                        @* shipping info *@
+                        <div class="card w-100">
+                            <div class="card-header">
+                                <h5 class="fw-bold">Shipping address</h5>
+                            </div>
+                            <div class="card-body">
+                                <h4 class="fw-bold">@Model.SpecificAddress</h4>
+                                <hr>
+                                <div class="mb-0 d-flex gap-2 align-items-center"><i class="fa-sharp fa-solid fa-phone"></i>@Model.Phone - @Model.FullName</div>
+                            </div>
+                        </div>
+
+                        @* print-pdf *@
+                        <a asp-controller="order" asp-action="index" class="btn btn-secondary text-uppercase p-3 fw-bold">
+                            back to order
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</section>
+@section Scripts {
+    <script>
+        function CancelOrder(btn, url) {
+            $.ajax({
+                url: url,
+                method: "post",
+                success: function (response) {
+                    if (response.success === false) {
+                        toastr.error(response.message);
+                    } else {
+                        $(btn).siblings('.cancel-order-container').html("<i class='fa-solid fa-check text-danger'></i> order was canceled");
+                        btn.remove();
+                        toastr.success(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('An error occurred: ' + xhr.statusText);
+                }
+            });
+        }
+    </script>
+}

@@ -1,15 +1,33 @@
-﻿var connectionOrder = new signalR.HubConnectionBuilder().withUrl("/hubs/order").build();
+﻿//admin 
+var connectionOrder = new signalR.HubConnectionBuilder().withUrl("/hubs/order").build();
 
 connectionOrder.on("AddOrder", (data) => {
     toastr.success("New order #" + data.id);
     console.log(data);
     addNewRow(data);
-})
+});
 
 connectionOrder.on("PaymentSuccess", (orderId) => {
     toastr.success("Order #" + orderId + " was paid");
     updatePaymentStatusSuccess(orderId);
-})
+});
+
+connectionOrder.on("CancelOrder", (orderId) => {
+    toastr.error("Order #" + orderId + " was cancel");
+    updateOrderCancel(orderId);
+});
+
+function updateOrderCancel(orderId) {
+    let row = document.querySelector(`tr[data-order-id='${orderId}']`);
+
+    if (row) {
+        let orderCell = row.querySelector("td:nth-child(6) span");
+
+        orderCell.classList.remove("bg-warning");
+        orderCell.classList.add("bg-danger");
+        orderCell.innerHTML = "Canceled";
+    }
+}
 
 function addNewRow(order) {
     let paymentStatusClass = order.paymentStatus === 1 ? "text-primary" : "text-secondary";

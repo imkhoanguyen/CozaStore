@@ -271,7 +271,6 @@ namespace CozaStore.Controllers
                 OrderTotal = order.GetTotal(),
             };
             await _orderHub.Clients.All.SendAsync("AddOrder", dto);
-
             if (order.PaymentMethod == 0) // payment without stripe
             {
                 //delete shopping cart

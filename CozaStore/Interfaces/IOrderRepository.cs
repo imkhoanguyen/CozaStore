@@ -10,7 +10,7 @@ namespace CozaStore.Interfaces
         void UpdateStripePaymentId(int orderId, string stripeSessionId, string stripePaymentIntentId);
         void UpdateStatus(int orderId, int orderStatus);
         void UpdatePaymentStatus(int orderId, int paymentStatus);
-        Task<PagedList<Order>> GetAllAsync(OrderParams orderParams);
+        Task<PagedList<Order>> GetAllAsync(OrderParams orderParams, string userId);
         void Delete(Order order);
     }
 }

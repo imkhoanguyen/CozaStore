@@ -23,9 +23,15 @@ namespace CozaStore.Data
             _context.Orders.Remove(order);
         }
 
-        public async Task<PagedList<Order>> GetAllAsync(OrderParams orderParams)
+        public async Task<PagedList<Order>> GetAllAsync(OrderParams orderParams, string userId = "")
         {
             var query = _context.Orders.Include(x => x.ShippingMethod).AsQueryable();
+
+            if(!userId.IsNullOrEmpty())
+            {
+                query = query.Where(x => x.UserId == userId);
+            }
+
             if (!orderParams.SearchString.IsNullOrEmpty())
             {
                 query = query.Where(x => x.FullName.ToLower().Contains(orderParams.SearchString.ToLower())

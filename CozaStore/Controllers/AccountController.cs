@@ -1,9 +1,13 @@
 ﻿using CozaStore.Data;
+using CozaStore.Data.Enum;
+using CozaStore.Helpers;
+using CozaStore.Hubs;
 using CozaStore.Interfaces;
 using CozaStore.Models;
 using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -16,13 +20,18 @@ namespace CozaStore.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly DataContext _context;
         private readonly IImageService _imageService;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IHubContext<OrderHub> _orderHub;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, DataContext context, IImageService imageService)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, 
+            DataContext context, IImageService imageService, IUnitOfWork unitOfWork, IHubContext<OrderHub> orderHub)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _context = context;
             _imageService = imageService;
+            _unitOfWork = unitOfWork;
+            _orderHub = orderHub;
         }
 
         public IActionResult Login()
@@ -297,6 +306,85 @@ namespace CozaStore.Controllers
                 return Json(new { success = true, message = "Delete address successfully" });
 
             return Json(new { success = false, message = "Problem with delete address" });
+        }
+
+        public async Task<IActionResult> ManageOrder(OrderParams orderParams)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var orders = await _unitOfWork.OrderRepository.GetAllAsync(orderParams, userId);
+
+            var vm = new OrderVM
+            {
+                OrderList = orders,
+                CurrentSort = orderParams.SortOrder, // sort
+                //sort params
+                IdSortParm = orderParams.SortOrder == "id" ? "id_desc" : "id",
+                TotalSortParm = orderParams.SortOrder == "total" ? "total_desc" : "total",
+                CurrentFilter = orderParams.SearchString, // search query
+                // query params
+                SelectedShipping = orderParams.SelectedShipping,
+                SelectedPayment = orderParams.SelectedPayment,
+                SelectedStatus = orderParams.SelectedStatus,
+                DateStart = orderParams.DateStart,
+                DateEnd = orderParams.DateEnd,
+                PriceMin = orderParams.PriceMin,
+                PriceMax = orderParams.PriceMax,
+                //combobox
+                ShippingList = await _unitOfWork.ShippingRepository.GetAllContainDeleteAsync()
+            };
+
+            return View(vm);
+        }
+
+        public async Task<IActionResult> OrderDetail(int orderId)
+        {
+            var order = await _unitOfWork.OrderRepository.GetAsync(orderId);
+            return View(order);
+        }
+
+        public async Task<IActionResult> CancelOrder(int orderId)
+        {
+            var order = await _unitOfWork.OrderRepository.GetAsync(orderId);
+            if (order == null)
+                return Json(new { success = false, message = "Order not found!!!" });
+
+            _unitOfWork.OrderRepository.UpdateStatus(orderId, (int)OrderStatus.Canceled);
+            if(await _unitOfWork.Complete())
+            {
+                await _orderHub.Clients.All.SendAsync("CancelOrder", orderId);
+
+                if(order.PaymentStatus == (int)PaymentStatus.Paid) // restore qty when cancel
+                {
+                    foreach(var item in order.OrderItemList)
+                    {
+                        if ((item.Size == null && item.Color == null) || (item.Size.IsNullOrEmpty() && item.Color.IsNullOrEmpty())) // no variant
+                        {
+                            var productNoVariant = await _unitOfWork.ProductRepository.GetProductAsync(item.Name);
+                            productNoVariant.Quantity += item.Count;
+                        }
+                        else // have variant
+                        {
+                            var product = await _unitOfWork.ProductRepository.GetProductAsync(item.Name, item.Size, item.Color);
+                            if (product == null) return Json(new { success = false, message = "Update quantity product fail (product not found)!!!" });
+
+                            var variant = await _unitOfWork.ProductRepository.GetVariantOfProductAsync(product.Id, product.Variants.FirstOrDefault().ColorId,
+                                 product.Variants.FirstOrDefault().SizeId);
+
+                            if (variant == null) return Json(new { success = false, message = "Update quantity product fail (variant not found)!!!" });
+
+                            variant.Quantity += item.Count;
+                        }
+                    }
+
+                    await _unitOfWork.Complete();
+                    
+                }
+
+                return Json(new { success = true, message = "Order cancel successfully" });
+            }
+
+            return Json(new { success = false, message = "Problem with cancel order" });
         }
     }
 }

@@ -1,8 +1,12 @@
 ﻿using CozaStore.Data.Enum;
+using CozaStore.DTOs;
 using CozaStore.Helpers;
+using CozaStore.Hubs;
 using CozaStore.Interfaces;
 using CozaStore.ViewModels;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CozaStore.Areas.Admin.Controllers
@@ -11,14 +15,16 @@ namespace CozaStore.Areas.Admin.Controllers
     public class OrderController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHubContext<OrderHub> _orderHub;
 
-        public OrderController(IUnitOfWork unitOfWork)
+        public OrderController(IUnitOfWork unitOfWork, IHubContext<OrderHub> orderHub)
         {
             _unitOfWork = unitOfWork;
+            _orderHub = orderHub;
         }
         public async Task<IActionResult> Index(OrderParams orderParams)
         {
-            var orders = await _unitOfWork.OrderRepository.GetAllAsync(orderParams);
+            var orders = await _unitOfWork.OrderRepository.GetAllAsync(orderParams, "");
 
             var vm = new OrderVM
             {
@@ -60,7 +66,8 @@ namespace CozaStore.Areas.Admin.Controllers
 
             if (await _unitOfWork.Complete())
             {
-                if(order.PaymentStatus == (int)PaymentStatus.Paid) return Json(new { success = true, message = "Order confirmation successfully" });
+                await _orderHub.Clients.All.SendAsync("ConfirmOrder", order.Id);
+                if (order.PaymentStatus == (int)PaymentStatus.Paid) return Json(new { success = true, message = "Order confirmation successfully" });
                 
                 foreach (var item in order.OrderItemList)
                 {
@@ -84,7 +91,11 @@ namespace CozaStore.Areas.Admin.Controllers
                 }
 
                 if (await _unitOfWork.Complete())
+                {
+                    
                     return Json(new { success = true, message = "Order confirmation successfully" });
+                }
+                    
 
                 return Json(new { success = false, message = "Problem update quantity product!!!" });
 
@@ -104,7 +115,11 @@ namespace CozaStore.Areas.Admin.Controllers
             _unitOfWork.OrderRepository.UpdatePaymentStatus(order.Id, (int)PaymentStatus.Paid);
 
             if (await _unitOfWork.Complete())
+            {
+                await _orderHub.Clients.All.SendAsync("PaymentSuccess", order.Id);
                 return Json(new { success = true, message = "Confirm payment successfully" });
+            }
+                
 
             return Json(new { success = false, message = "Problem comfirm payment!!!" });
         }
