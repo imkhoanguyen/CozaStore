@@ -19,6 +19,7 @@
                             <div class="mb-3 d-flex gap-2 flex-column align-items-center justify-content-center">
                                 <img class="img-user" src="@Model.AppUser.Image" alt="@Model.AppUser.UserName" style="width: 80px; height: 80px; border-radius: 50%;" />
                                 <input asp-for="@Model.Image" class="ps-5" />
+                                <span class="text-danger" asp-validation-for="@Model.Image"></span>
                             </div>
                             <div class="mb-3">
                                 <label asp-for="AppUser.Id" class="form-label"></label>

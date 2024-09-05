@@ -11,6 +11,8 @@ namespace CozaStore.Models
         public int Gender { get; set; }
         public string? Image { get; set; }
         public string? PublicId { get; set; } // user delete img on cloudinary
+        [Phone(ErrorMessage = "Phone not valid")]
+        public override string? PhoneNumber { get; set; }
 
         [NotMapped]
         public string? Role { get; set; }

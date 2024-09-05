@@ -10,8 +10,8 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header text-end">
-                        
+                    <div class="card-header text-uppercase fw-bold">
+                        User List
                     </div>
                     <div class="card-body">
                         <form method="get" asp-controller="user" asp-action="index" class="row">
@@ -151,6 +151,8 @@
 
 @section Scripts {
     <script src="~/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/js/paging.js"></script>
+
     <script>
         function ToggleLockout(url) {
             Swal.fire({

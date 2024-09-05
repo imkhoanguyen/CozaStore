@@ -78,6 +78,11 @@ namespace CozaStore.Data
             return await PagedList<Order>.CreateAsync(query, orderParams.PageNumber, orderParams.PageSize);
         }
 
+        public async Task<IEnumerable<Order>> GetAllAsync()
+        {
+            return await _context.Orders.Include(x => x.OrderItemList).ToListAsync();
+        }
+
         public async Task<Order?> GetAsync(int id)
         {
             return await _context.Orders

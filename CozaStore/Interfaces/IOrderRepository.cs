@@ -11,6 +11,7 @@ namespace CozaStore.Interfaces
         void UpdateStatus(int orderId, int orderStatus);
         void UpdatePaymentStatus(int orderId, int paymentStatus);
         Task<PagedList<Order>> GetAllAsync(OrderParams orderParams, string userId);
+        Task<IEnumerable<Order>> GetAllAsync();
         void Delete(Order order);
     }
 }

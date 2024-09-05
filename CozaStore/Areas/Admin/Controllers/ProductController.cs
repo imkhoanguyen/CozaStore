@@ -5,6 +5,7 @@ using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using CozaStore.Data.Enum;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
@@ -80,7 +81,7 @@ namespace CozaStore.Areas.Admin.Controllers
                         {
                             TempData["error"] = resultUpload.Error.Message;
                             vm.CategoryList = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
-                            return View();
+                            return View(vm);
                         }
                         var productImg = new Image
                         {
@@ -114,7 +115,7 @@ namespace CozaStore.Areas.Admin.Controllers
 
             }
             vm.CategoryList = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
-            return View();
+            return View(vm);
         }
 
 
@@ -182,7 +183,7 @@ namespace CozaStore.Areas.Admin.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int productId)
         {
-            var product = await _unitOfWork.ProductRepository.GetProductAsync(productId);
+            var product = await _unitOfWork.ProductRepository.GetProductDetailAsync(productId);
             if (product == null)
                 return Json(new { success = false, message = "Product not found" });
 
@@ -365,6 +366,7 @@ namespace CozaStore.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> AddImages(AddProductImageVM vm)
         {
+            if (!ModelState.IsValid) return View(vm); 
             if (vm != null && vm.ProductId > 0)
             {
                 var product = await _unitOfWork.ProductRepository.GetProductAsync(vm.ProductId);
@@ -395,7 +397,7 @@ namespace CozaStore.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Detail), new { id = vm.ProductId });
                 }
             }
-            return View();
+            return View(vm);
         }
     }
 }

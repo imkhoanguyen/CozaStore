@@ -132,6 +132,16 @@ namespace CozaStore.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeInformation(EditUserVM vm)
         {
+            if(!ModelState.IsValid)
+            {
+                var user1 = await _context.AppUser
+                        .Include(x => x.AddressList)
+                        .FirstOrDefaultAsync(x => x.Id == vm.AppUser.Id);
+                vm.AppUser = user1;
+                vm.AddressList = user1.AddressList;
+                return View(vm);
+            }
+
             if (vm.AppUser.FullName.IsNullOrEmpty())
             {
                 var user1 = await _context.AppUser
