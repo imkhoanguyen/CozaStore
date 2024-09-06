@@ -111,6 +111,9 @@ namespace CozaStore.Areas.Admin.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
                 return Json(new { success = false, message = "User not found" });
+
+            if (user.UserName.ToLower() == "admin")
+                return Json(new { success = false, message = "Can not lock admin" });
             
             if(user.LockoutEnd.HasValue && user.LockoutEnd > DateTimeOffset.Now) // was locked
             {
