@@ -135,7 +135,7 @@ $(document).on('change', '.size-select', async function () {
         success: function (data) {
             console.log(data);
             $('.color-select').html('');
-            var colorOptions = '<option value="" selected>Choose an option</option>';
+            var colorOptions = '<option disabled selected>Choose an option</option>';
             data.forEach(function (color) {
                 colorOptions += `<option value="${color.id}">${color.name}</option>`;
             });
@@ -165,7 +165,7 @@ $(document).on('change', '.color-select', async function () {
         success: function (data) {
             $('.size-select').html('');
             // Populate size dropdown
-            var sizeOptions = '<option value="" selected>Choose an option</option>';
+            var sizeOptions = '<option disabled selected>Choose an option</option>';
             data.forEach(function (size) {
                 sizeOptions += `<option value="${size.id}">${size.name}</option>`;
             });

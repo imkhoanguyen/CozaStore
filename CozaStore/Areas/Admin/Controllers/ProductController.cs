@@ -4,8 +4,6 @@ using CozaStore.Interfaces;
 using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
-using CozaStore.Data.Enum;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
