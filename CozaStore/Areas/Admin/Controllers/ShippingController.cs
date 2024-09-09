@@ -1,6 +1,8 @@
-﻿using CozaStore.Helpers;
+﻿using CozaStore.Data;
+using CozaStore.Helpers;
 using CozaStore.Interfaces;
 using CozaStore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CozaStore.Areas.Admin.Controllers
@@ -14,6 +16,8 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             _unitOfWork = unitOfWork;
         }
+
+        [Authorize(Policy = ClaimStore.AccessShipping)]
         public async Task<IActionResult> Index(ShippingParams shippingParams)
         {
             ViewData["searchString"] = shippingParams.SearchString;
@@ -23,11 +27,13 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(shippingMethods);
         }
 
+        [Authorize(Policy = ClaimStore.Shipping_Create)]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Policy = ClaimStore.Shipping_Create)]
         [HttpPost]
         public async Task<IActionResult> Create(ShippingMethod shippingMethod)
         {
@@ -42,6 +48,8 @@ namespace CozaStore.Areas.Admin.Controllers
             return RedirectToAction("GetBadRequest", "Buggy", new { area = "", message = "Problem create shipping method" });
         }
 
+
+        [Authorize(Policy = ClaimStore.Shipping_Edit)]
         public async Task<IActionResult> Edit(int id)
         {
             var shippingMethod = await _unitOfWork.ShippingRepository.GetAsync(id);
@@ -51,6 +59,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(shippingMethod);
         }
 
+        [Authorize(Policy = ClaimStore.Shipping_Edit)]
         [HttpPost]
         public async Task<IActionResult> Edit(ShippingMethod shippingMethod)
         {
@@ -64,6 +73,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return RedirectToAction("GetBadRequest", "Buggy", new { area = "", message = "Problem edit shipping method" });
         }
 
+        [Authorize(Policy = ClaimStore.Shipping_Delete)]
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {

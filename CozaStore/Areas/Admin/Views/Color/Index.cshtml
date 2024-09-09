@@ -169,13 +169,17 @@
                                 // Use closest('tr') to find and remove the table row containing the delete button
                                 $(element).closest('tr').remove();
                                 toastr.success(response.message);
-                                }
-                                },
-                                error: function (xhr, status, error) {
-                                    toastr.error('An error occurred: ' + xhr.statusText);
-                                }
-                            });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            if (xhr.status === 403) {
+                                toastr.error('Forbidden: You dont have permission access');
+                            } else {
+                                toastr.error(xhr.statusText);
+                            }
                         }
+                    });
+                }
                     });
                 }
     </script>

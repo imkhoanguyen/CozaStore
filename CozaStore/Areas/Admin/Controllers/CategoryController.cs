@@ -2,6 +2,8 @@
 using CozaStore.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using CozaStore.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using CozaStore.Data;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
@@ -14,6 +16,7 @@ namespace CozaStore.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [Authorize(Policy = ClaimStore.AccessCategory)]
         public async Task<IActionResult> Index(CategoryParams categoryParams)
         {
             ViewData["searchString"] = categoryParams.SearchString;
@@ -22,13 +25,14 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(categories);
         }
 
-        //[Authorize(Policy = ClaimStore.Category_Create)]
+        [Authorize(Policy = ClaimStore.Category_Create)]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Policy = ClaimStore.Category_Create)]
         public async Task<IActionResult> Create(Category category)
         {
             if (ModelState.IsValid)
@@ -44,6 +48,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View();
         }
 
+        [Authorize(Policy = ClaimStore.Category_Edit)]
         public async Task<IActionResult> Edit(int categoryId)
         {
             var category = await _unitOfWork.CategoryRepository.GetCategoryAsync(categoryId);
@@ -52,6 +57,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(category);
         }
 
+        [Authorize(Policy = ClaimStore.Category_Edit)]
         [HttpPost]
         public async Task<IActionResult> Edit(Category category)
         {
@@ -68,6 +74,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View();
         }
 
+        [Authorize(Policy = ClaimStore.Category_Delete)]
         [HttpDelete]
         public async Task<IActionResult> Delete(int categoryId)
         {

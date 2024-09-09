@@ -4,6 +4,8 @@ using CozaStore.Interfaces;
 using CozaStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using Microsoft.AspNetCore.Authorization;
+using CozaStore.Data;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
@@ -17,6 +19,8 @@ namespace CozaStore.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
             _imageService = imageService;
         }
+
+        [Authorize(Policy = ClaimStore.AccessProduct)]
         public async Task<IActionResult> Index(ProductParams productParams)
         {
             var categories = await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
@@ -55,6 +59,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(vm);
         }
 
+        [Authorize(Policy = ClaimStore.Product_Create)]
         public async Task<IActionResult> Create()
         {
             ProductCreateVM vm = new ProductCreateVM();
@@ -64,6 +69,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(vm);
         }
 
+        [Authorize(Policy = ClaimStore.Product_Create)]
         [HttpPost]
         public async Task<IActionResult> Create(ProductCreateVM vm)
         {
@@ -116,7 +122,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(vm);
         }
 
-
+        [Authorize(Policy = ClaimStore.Product_Edit)]
         public async Task<IActionResult> Edit(int id)
         {
             var product = await _unitOfWork.ProductRepository.GetProductAsync(id);
@@ -131,6 +137,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(vm);
         }
 
+        [Authorize(Policy = ClaimStore.Product_Edit)]
         [HttpPost]
         public async Task<IActionResult> Edit(ProductCreateVM vm)
         {
@@ -178,6 +185,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(vm);
         }
 
+        [Authorize(Policy = ClaimStore.Product_Delete)]
         [HttpDelete]
         public async Task<IActionResult> Delete(int productId)
         {
@@ -192,6 +200,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return Json(new { success = true, message = "Problem delete product" });
         }
 
+        [Authorize(Policy = ClaimStore.AccessProduct)]
         public async Task<IActionResult> Detail(int id)
         {
             var product = await _unitOfWork.ProductRepository.GetProductDetailAsync(id);
@@ -200,6 +209,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(product);
         }
 
+        [Authorize(Policy = ClaimStore.Product_Create)]
         public async Task<IActionResult> CreateVariant(int productId)
         {
             Variant variant = new Variant();
@@ -221,6 +231,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View("variantcreate", vm);
         }
 
+        [Authorize(Policy = ClaimStore.Product_Create)]
         [HttpPost]
         public async Task<IActionResult> CreateVariant(VariantCreateVM vm)
         {
@@ -243,6 +254,8 @@ namespace CozaStore.Areas.Admin.Controllers
             return View();
         }
 
+
+        [Authorize(Policy = ClaimStore.Product_Edit)]
         public async Task<IActionResult> EditVariant(int productId, int variantId)
         {
             var product = await _unitOfWork.ProductRepository.GetProductAsync(productId);
@@ -260,6 +273,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View("variantedit", vm);
         }
 
+        [Authorize(Policy = ClaimStore.Product_Edit)]
         [HttpPost]
         public async Task<IActionResult> EditVariant(VariantCreateVM vm)
         {
@@ -279,6 +293,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View();
         }
 
+        [Authorize(Policy = ClaimStore.Product_Delete)]
         [HttpDelete]
         public async Task<IActionResult> DeleteVariant(int variantId)
         {
@@ -294,7 +309,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return Json(new { success = false, message = "Problem delete variant!!!" });
         }
 
-
+        [Authorize(Policy = ClaimStore.Product_Edit)]
         [HttpPost]
         public async Task<IActionResult> SetMainImage(int productId, int imgId)
         {
@@ -326,6 +341,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = ClaimStore.Product_Delete)]
         [HttpDelete]
         public async Task<IActionResult> DeleteImage(int productId, int imgId)
         {
@@ -354,6 +370,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return Json(new { success = false, message = "Problem deleting image" });
         }
 
+        [Authorize(Policy = ClaimStore.Product_Edit)]
         public IActionResult AddImages(int productId)
         {
             AddProductImageVM vm = new AddProductImageVM();
@@ -361,6 +378,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(vm);
         }
 
+        [Authorize(Policy = ClaimStore.Product_Edit)]
         [HttpPost]
         public async Task<IActionResult> AddImages(AddProductImageVM vm)
         {

@@ -2,6 +2,8 @@
 using CozaStore.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using CozaStore.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using CozaStore.Data;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
@@ -13,6 +15,8 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             _unitOfWork = unitOfWork;
         }
+
+        [Authorize(Policy = ClaimStore.AccessSize)]
         public async Task<IActionResult> Index(SizeParams sizeParams)
         {
             ViewData["searchString"] = sizeParams.SearchString;
@@ -21,12 +25,13 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(sizes);
         }
 
-
+        [Authorize(Policy = ClaimStore.Size_Create)]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Policy = ClaimStore.Size_Create)]
         [HttpPost]
         public async Task<IActionResult> Create(Size size)
         {
@@ -43,6 +48,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View();
         }
 
+        [Authorize(Policy = ClaimStore.Size_Edit)]
         public async Task<IActionResult> Edit(int id)
         {
             var size = await _unitOfWork.SizeRepository.GetSizeAsync(id);
@@ -51,6 +57,7 @@ namespace CozaStore.Areas.Admin.Controllers
 
         }
 
+        [Authorize(Policy = ClaimStore.Size_Edit)]
         [HttpPost]
         public async Task<IActionResult> Edit(Size size)
         {
@@ -66,6 +73,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View();
         }
 
+        [Authorize(Policy = ClaimStore.Size_Delete)]
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {

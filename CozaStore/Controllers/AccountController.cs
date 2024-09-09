@@ -410,5 +410,10 @@ namespace CozaStore.Controllers
 
             return Json(new { success = false, message = "Problem delete order!!!" });
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }

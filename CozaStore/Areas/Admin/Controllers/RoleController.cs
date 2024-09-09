@@ -5,6 +5,7 @@ using CozaStore.DTOs;
 using CozaStore.Helpers;
 using CozaStore.Models;
 using CozaStore.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,8 @@ namespace CozaStore.Areas.Admin.Controllers
             _context = context;
             _roleManager = roleManager;
         }
+
+        [Authorize(Policy = ClaimStore.AccessRole)]
         public async Task<IActionResult> Index(RoleParams roleParams)
         {
             ViewData["searchString"] = roleParams.SearchString;
@@ -36,11 +39,13 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(role);
         }
 
+        [Authorize(Policy = ClaimStore.Role_Create)]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Policy = ClaimStore.Role_Create)]
         [HttpPost]
         public async Task<IActionResult> Create(RoleCreateVM vm)
         {
@@ -69,6 +74,7 @@ namespace CozaStore.Areas.Admin.Controllers
             }
         }
 
+        [Authorize(Policy = ClaimStore.Role_Edit)]
         public async Task<IActionResult> Edit(string id)
         {
             var role = await _context.AppRole.FindAsync(id);
@@ -85,6 +91,8 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(vm);
         }
 
+
+        [Authorize(Policy = ClaimStore.Role_Edit)]
         [HttpPost]
         public async Task<IActionResult> Edit(RoleCreateVM vm)
         {
@@ -113,6 +121,8 @@ namespace CozaStore.Areas.Admin.Controllers
             }
         }
 
+
+        [Authorize(Policy = ClaimStore.Role_Delete)]
         [HttpDelete]
         public async Task<IActionResult> Delete(string id)
         {
@@ -141,6 +151,7 @@ namespace CozaStore.Areas.Admin.Controllers
             }
         }
 
+        [Authorize(Policy = ClaimStore.User_UpdateUserRole)]
         public async Task<IActionResult> ManagePermission(string roleId)
         {
             var role = await _context.AppRole.FindAsync(roleId);
@@ -166,6 +177,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(vm);
         }
 
+        [Authorize(Policy = ClaimStore.User_UpdateUserRole)]
         [HttpPost]
         public async Task<IActionResult> ManagePermission(RolePermissionVM vm)
         {

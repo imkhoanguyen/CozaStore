@@ -3,6 +3,7 @@ using CozaStore.Data;
 using CozaStore.Helpers;
 using CozaStore.Models;
 using CozaStore.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,8 @@ namespace CozaStore.Areas.Admin.Controllers
             _context = context;
             _userManager = userManager;
         }
+
+        [Authorize(Policy = ClaimStore.AccessUser)]
         public async Task<IActionResult> Index(UserParams userParams)
         {
             ViewData["searchString"] = userParams.SearchString;
@@ -47,6 +50,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(users);
         }
 
+        [Authorize(Policy = ClaimStore.User_UpdateUserRole)]
         public async Task<IActionResult> ManageRole(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -78,6 +82,8 @@ namespace CozaStore.Areas.Admin.Controllers
             }
         }
 
+
+        [Authorize(Policy = ClaimStore.User_UpdateUserRole)]
         [HttpPost]
         public async Task<IActionResult> ManageRole(UserRoleVM vm)
         {
@@ -105,6 +111,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Policy = ClaimStore.User_Lockout)]
         [HttpPost]
         public async Task<IActionResult> ToggleLockout(string id)
         {

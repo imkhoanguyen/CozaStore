@@ -2,6 +2,8 @@
 using CozaStore.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using CozaStore.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using CozaStore.Data;
 
 namespace CozaStore.Areas.Admin.Controllers
 {
@@ -13,6 +15,8 @@ namespace CozaStore.Areas.Admin.Controllers
         {
             _unitOfWork = unitOfWork;
         }
+
+        [Authorize(Policy = ClaimStore.AccessColor)]
         public async Task<IActionResult> Index(ColorParams colorParams)
         {
             ViewData["searchString"] = colorParams.SearchString;
@@ -21,11 +25,13 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(colors);
         }
 
+        [Authorize(Policy = ClaimStore.Color_Create)]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Policy = ClaimStore.Color_Create)]
         [HttpPost]
         public async Task<IActionResult> Create(Color color)
         {
@@ -42,6 +48,8 @@ namespace CozaStore.Areas.Admin.Controllers
             return View();
         }
 
+
+        [Authorize(Policy = ClaimStore.Color_Edit)]
         public async Task<IActionResult> Edit(int id)
         {
             var color = await _unitOfWork.ColorRepository.GetColorAsync(id);
@@ -49,6 +57,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return RedirectToAction("GetNotFound", "Buggy", new { area = "", message = "Color not found" });
         }
 
+        [Authorize(Policy = ClaimStore.Color_Edit)]
         [HttpPost]
         public async Task<IActionResult> Edit(Color color)
         {
@@ -65,6 +74,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return View();
         }
 
+        [Authorize(Policy = ClaimStore.Color_Delete)]
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {

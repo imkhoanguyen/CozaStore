@@ -181,7 +181,11 @@
                             }
                         },
                         error: function (xhr, status, error) {
-                            toastr.error('An error occurred: ' + xhr.statusText);
+                            if (xhr.status === 403) {
+                                toastr.error('Forbidden: You dont have permission access');
+                            } else {
+                                toastr.error(xhr.statusText);
+                            }
                         }
                     })
                 }

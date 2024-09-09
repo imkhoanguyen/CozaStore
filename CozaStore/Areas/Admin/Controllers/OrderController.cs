@@ -1,10 +1,10 @@
-﻿using CozaStore.Data.Enum;
-using CozaStore.DTOs;
+﻿using CozaStore.Data;
+using CozaStore.Data.Enum;
 using CozaStore.Helpers;
 using CozaStore.Hubs;
 using CozaStore.Interfaces;
 using CozaStore.ViewModels;
-using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
@@ -22,6 +22,8 @@ namespace CozaStore.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
             _orderHub = orderHub;
         }
+
+        [Authorize(Policy = ClaimStore.AccessOrder)]
         public async Task<IActionResult> Index(OrderParams orderParams)
         {
             var orders = await _unitOfWork.OrderRepository.GetAllAsync(orderParams, "");
@@ -49,12 +51,14 @@ namespace CozaStore.Areas.Admin.Controllers
             return View(vm);
         }
 
+        [Authorize(Policy = ClaimStore.AccessOrder)]
         public async Task<IActionResult> Detail(int orderId)
         {
             var order = await _unitOfWork.OrderRepository.GetAsync(orderId);
             return View(order);
         }
 
+        [Authorize(Policy = ClaimStore.Order_Comfirm)]
         [HttpPost]
         public async Task<IActionResult> ConfirmOrder(int orderId)
         {
@@ -98,13 +102,13 @@ namespace CozaStore.Areas.Admin.Controllers
                     
 
                 return Json(new { success = false, message = "Problem update quantity product!!!" });
-
             }
                 
 
             return Json(new { success = false, message = "Problem comfirm order!!!" });
         }
 
+        [Authorize(Policy = ClaimStore.Order_ComfirmPayment)]
         [HttpPost]
         public async Task<IActionResult> ConfirmPayment(int orderId)
         {
@@ -124,6 +128,7 @@ namespace CozaStore.Areas.Admin.Controllers
             return Json(new { success = false, message = "Problem comfirm payment!!!" });
         }
 
+        [Authorize(Policy = ClaimStore.Order_Delete)]
         [HttpDelete]
         public async Task<IActionResult> Delete(int orderId)
         {
