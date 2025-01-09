@@ -15,7 +15,7 @@
 ## Main features:
 
 - Manage products
-- Manage orders
+- Manage orders with Real-Time Updates using SignalR
 - Basic Comments with Real-Time Updates using SignalR
 - Payment with Stripe
 - Dynamic Role-Based
