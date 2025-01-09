@@ -44,15 +44,7 @@
                         <li class="nav-item ">
                             <a class="nav-link text-dark @(ViewContext.RouteData.Values["controller"].ToString() == "Shop" ? "text-purple" : "")" asp-area="" asp-controller="shop" asp-action="index">Shop</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Blog</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Contact</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin</a>
-                        </li>
+                        
                     </ul>
                     <partial name="_LoginStatusPartial" />
                 </div>

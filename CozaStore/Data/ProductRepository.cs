@@ -188,5 +188,11 @@ namespace CozaStore.Data
         {
             return await _context.Products.FirstAsync(x => x.Name == name);
         }
+
+        public async Task<int> GetTotalProduct()
+        {
+            var products = await _context.Products.ToListAsync();
+            return products.Count();
+        }
     }
 }

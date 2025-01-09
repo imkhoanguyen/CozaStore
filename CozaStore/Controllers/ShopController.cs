@@ -116,9 +116,13 @@ namespace CozaStore.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = ClaimStore.Cart_Add)]
         public async Task<IActionResult> AddToCart(int productId, int sizeId, int colorId, int count)
         {
+           
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Json(new { success = false, message = "You need to be logged in to add products to the cart." });
+            }
             decimal price = 0;
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;

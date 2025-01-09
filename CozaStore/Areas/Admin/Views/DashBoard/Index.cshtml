@@ -1,1 +1,172 @@
-﻿<h1>dashboard</h1>
+﻿@model DashboardVM
+<main class="content">
+    <div class="container-fluid p-0">
+
+        <div class="row mb-5">
+            <div class="col-3">
+                <div class="card p-3">
+                    <div class="d-flex gap-5 align-items-center">
+                        <i class="fa-sharp fa-solid fa-users" style="font-size: 40px;"></i>
+                        <div class="d-flex flex-column">
+                            <div style="font-size: 20px; color: #ccc;">Tài khoản</div>
+                            <div class="fw-bold" style="font-size: 24px;">@Model.TotalUser</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <div class="col-3">
+                <div class="card p-3">
+                    <div class="d-flex gap-5 align-items-center">
+                        <i class="fa-sharp fa-solid fa-box" style="font-size: 40px;"></i>
+                        <div class="d-flex flex-column">
+                            <div style="font-size: 20px; color: #ccc;">Đơn hàng</div>
+                            <div class="fw-bold" style="font-size: 24px;">@Model.TotalOrder</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-3">
+                <div class="card p-3">
+                    <div class="d-flex gap-5 align-items-center">
+                        <i class="fa-sharp fa-solid fa-shirt-long-sleeve" style="font-size: 40px;"></i>
+                        <div class="d-flex flex-column">
+                            <div style="font-size: 20px; color: #ccc;">Sản phẩm</div>
+                            <div class="fw-bold" style="font-size: 24px;">@Model.TotalProduct</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-3">
+                <div class="card p-3">
+                    <div class="d-flex gap-5 align-items-center">
+                        <i class="fa-sharp fa-solid fa-money-bill-1-wave" style="font-size: 40px;"></i>
+                        <div class="d-flex flex-column">
+                            <div style="font-size: 20px; color: #ccc;">Doanh thu (hôm nay)</div>
+                            <div class="fw-bold" style="font-size: 24px;">$@Model.TotalPriceToday</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-8">
+                <div class="card flex-fill w-100">
+                    <div class="card-body">
+                        <h5 class="mb-3" style="color: #ccc">
+                            Revenue and Order Statistics Chart for the Year
+                        </h5>
+                        <div class="chart">
+                            <canvas id="chartjs-line"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+
+                <div class="card p-3">
+                    <h5 class="mb-3" style="color: #ccc">
+                        Top 5 Best-Selling Products
+                    </h5>
+                    <div class="d-flex flex-column gap-3 justify-content-center">
+                    @{
+                        var i = 1;
+                        foreach(var item in Model.TopProductList) {
+
+                                <div class="d-flex gap-2 align-items-center">
+                                    <span style="width: 20px;">#@(i++)</span>
+                                    <img src="@item.ImgUrl" alt="@item.Name" style="width: 80px; height: 80px; object-fit: cover" />
+                                    <span>@item.Name</span>
+                                </div>
+                            
+                            
+                        }
+                    }
+                    </div>
+                    
+                 
+                    
+                </div>
+            </div>
+        </div>
+
+        
+
+
+    </div>
+</main>
+
+@section Scripts {
+    <script src="~/js/admin/app.js"></script>
+    <script>
+        // Serialize the data into JSON format
+        var totalPriceList = @Html.Raw(Json.Serialize(Model.TotalPriceList));
+        var totalOrdersList = @Html.Raw(Json.Serialize(Model.TotalOrderList));
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Line chart
+            new Chart(document.getElementById("chartjs-line"), {
+                type: "line",
+                data: {
+                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    datasets: [{
+                        label: "Sales ($)",
+                        fill: true,
+                        backgroundColor: "transparent",
+                        borderColor: window.theme.primary,
+                        data: totalPriceList
+                    }, {
+                        label: "Orders",
+                        fill: true,
+                        backgroundColor: "transparent",
+                        borderColor: "#adb5bd",
+                        borderDash: [4, 4],
+                        data: totalOrdersList
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        intersect: false
+                    },
+                    hover: {
+                        intersect: true
+                    },
+                    plugins: {
+                        filler: {
+                            propagate: false
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            reverse: true,
+                            gridLines: {
+                                color: "rgba(0,0,0,0.05)"
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                stepSize: 500
+                            },
+                            display: true,
+                            borderDash: [5, 5],
+                            gridLines: {
+                                color: "rgba(0,0,0,0)",
+                                fontColor: "#fff"
+                            }
+                        }]
+                    }
+                }
+            });
+        });
+
+    </script>
+}

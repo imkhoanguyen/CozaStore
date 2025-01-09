@@ -23,6 +23,6 @@ namespace CozaStore.Interfaces
 
         Task<Product?> GetProductAsync(string name, string size, string color);
         Task<Product?> GetProductAsync(string name);
-
+        Task<int> GetTotalProduct();
     }
 }
